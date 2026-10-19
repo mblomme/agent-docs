@@ -63,10 +63,12 @@ report an unavailable required SDK rather than silently changing it.
 - Create root-level `src/` and `tests/` directories.
 - Follow the `technology-stacks/dotnet.md` specification for dotnet instructions.
 - Follow the `topologies/<selected-topology>.md` specification for the topology instructions.
-- Follow the documented layer responsibilities conventions in the `core-rules` folder. Create
-  only folders with a current purpose, especially within Infrastructure and
-  Main. An empty Infrastructure project is acceptable when no adapters are
-  required; do not populate it with speculative folder trees.
+- Follow the documented layer responsibilities conventions in the `core-rules` folder. 
+- For the layers `Main` and `Infrastructure` create
+  other folders only when they have a current purpose.
+  An empty Infrastructure project is acceptable when no adapters are
+  required; do not populate it with speculative folder trees. In ´Main´ an empty `Modules/` folder is acceptable when no setup files are required; do not populate it with speculative folder trees.
+- Don't create a README.md
 
 ## 4. Write a simple root AGENTS.md
 
@@ -97,5 +99,7 @@ of duplicating them in `AGENTS.md`.
 - Confirm omitted company names leave no leading dots, project references follow
   the architecture, and no unrequested adapter folders or template examples
   remain. Confirm the copied architecture retains its directory structure.
+- Confirm every Application project contains `Contracts/Driving/` and
+  `Contracts/Driven/`, with `.gitkeep` files when otherwise empty.
 - Summarize the created structure, selected inputs, verification results, and
   any unresolved issues. Include the command to run Main.

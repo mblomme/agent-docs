@@ -4,7 +4,6 @@ status: canonical
 depends_on:
   - ../00-topology-overview.md
   - ./02-application-layer.md
-  - ../contracts/integration-event.schema.json
 summary: Defines independent driving and driven adapters, persistence mapping, outbox delivery, and vendor isolation.
 ---
 

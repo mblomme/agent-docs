@@ -2,7 +2,12 @@
 
 - Each layer is a separate .NET class library project (`classlib`).
 - Main is a Web project (`web`) and the application entrypoint.
-- Projects should be names {CompanyName}.{BoundedContext}.{Layer}, e.g. `Acme.Inventory.Domain`.
+- Projects and there folders should be named {CompanyName}.{BoundedContext}.{Layer}, e.g. `Acme.Inventory.Domain`.
+  - e.g. src/
+    - Acme.Inventory.Domain/
+    - Acme.Inventory.Application/
+    - Acme.Inventory.Infrastructure/
+    - Acme.Inventory.Main/
   - CompanyName is optional
 - Run the application by running the Main project.
 - Use CSharpier with `.csharpierrc` and `printWidth: 80`.

@@ -6,7 +6,6 @@ depends_on:
   - ../core-rules/02-application-layer.md
   - ../core-rules/03-infrastructure-layer.md
   - ../core-rules/04-main-composition-root.md
-  - ../contracts/integration-event.schema.json
 summary: Defines independently deployed contexts, private storage, network contracts, and durable event delivery.
 ---
 
