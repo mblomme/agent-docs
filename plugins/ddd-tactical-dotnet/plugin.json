@@ -1,0 +1,16 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "ddd-tactical-dotnet",
+  "version": "0.1.0",
+  "description": "Build and refactor tactical DDD aggregates, repositories, entities, value objects, and domain services in C# and .NET.",
+  "keywords": [
+    "dotnet",
+    "csharp",
+    "ddd",
+    "aggregates",
+    "repositories",
+    "entities",
+    "value-objects",
+    "domain-services"
+  ]
+}

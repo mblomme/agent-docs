@@ -5,10 +5,10 @@
   },
   "plugins": [
     {
-      "name": "dotnet-ddd-tactical",
+      "name": "ddd-tactical-dotnet",
       "source": {
         "source": "local",
-        "path": "./plugins/dotnet-ddd-tactical"
+        "path": "./plugins/ddd-tactical-dotnet"
       },
       "policy": {
         "installation": "AVAILABLE",

@@ -8,9 +8,9 @@
   },
   "plugins": [
     {
-      "name": "dotnet-ddd-tactical",
-      "source": "./plugins/dotnet-ddd-tactical",
-      "description": "Design, implement, and review tactical Domain-Driven Design patterns in C# and .NET."
+      "name": "ddd-tactical-dotnet",
+      "source": "./plugins/ddd-tactical-dotnet",
+      "description": "Build and refactor tactical DDD aggregates, repositories, entities, value objects, and domain services in C# and .NET."
     }
   ]
 }
