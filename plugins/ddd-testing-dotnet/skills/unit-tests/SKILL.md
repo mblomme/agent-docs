@@ -49,6 +49,14 @@ Every unit test must visibly follow the AAA pattern, with `// Arrange`, `// Act`
 
 Parameterized tests must follow the same structure for each case. Keep fixture helpers focused on setup so the behavior under test remains visible.
 
+## Rules
+
+- Test the aggregates
+- Test the aggregate assert classes
+- Test the domain services
+- Test the value objects
+- Mocks and other shared test helpers must be in the `Domain/Shared` folder.
+
 ## Exclusions
 
 - Never directly unit test tactical DDD pattern base classes, such as base aggregate roots, entities, value objects, domain events, repositories, or domain services. Cover inherited behavior only as observed through concrete business types; do not add base-class test files or dummy subclasses solely to test the framework.
