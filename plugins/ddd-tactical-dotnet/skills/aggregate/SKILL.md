@@ -1,56 +1,110 @@
 ---
 name: aggregate
-description: Build or refactor DDD aggregates in C# and .NET, including consistency boundaries, root-controlled state transitions, and protection of invariants across owned entities.
+description: Build or refactor DDD aggregates in C# and .NET.
 ---
 
 # Aggregates in .NET
 
-Inspect the target framework, nearby domain types, persistence mappings, error conventions, and tests. Identify the business rule and what must change atomically before choosing the boundary. Preserve project conventions; do not add a base framework, packages, CQRS, or a new topology merely to introduce this pattern.
+The scope, boundary and invariants of an aggregate should already be defined and documented in the domain model. This skill will help you implement the aggregate in C# and .NET. Warn the user if the documentation is missing, vague or contradictory.
 
-## Implementation and refactoring
+## Workflow
 
-- Put externally initiated changes behind named root methods. Validate the entire transition before changing state so rejected operations leave no partial mutation.
-- Keep owned entity construction and mutation under root control. A read-only collection interface does not prevent casting to its mutable backing collection; expose a wrapper or immutable snapshot and inspect child mutators too.
-- Reference other aggregates by identity, preferably typed IDs when supported by existing conventions. Do not grow the boundary merely to navigate object graphs.
-- Supply time, generated IDs, and external facts as inputs. Application code coordinates I/O and transactions; the domain stays independent of ORM and transport frameworks.
-- Separate validated creation from reconstitution. Loading persisted state must not replay commands or produce creation events. If events are used, collect facts only after successful transitions; application code controls dispatch.
-- When refactoring public setters, trace all callers and persistence hydration paths before replacing them. Preserve observable behavior except where the requested invariant requires a change.
+1. Keep external references to other aggregates as typed IDs unless the project has a clear exception.
+2. Encapsulate child collections behind private fields and read-only views.
+3. Put domain transitions on public methods of the root and keep child mutation internal to the boundary.
+4. Create domain events for all documented domain events for that aggregate.
+5. Invariants must be checked in public methods by using Ensure methods. These ensure methods should be bundled in a seperate assert static class per aggregate.
 
-## C# example
 
-This small root owns a quantity invariant. Use the project's normal error representation in real code.
+## Rules
+
+- Declare the Aggregate and its AggregateId in the same file.
+- Only aggregate roots should have repositories.
+- Mutate child entities or collections directly only through the aggregate root.
+- Avoid cross-aggregate invariants that require multiple roots to be loaded for one rule.
+- Use value objects for descriptive inputs and typed IDs for references.
+- When the code base contains multiple aggregates, use a base class or interface to share common behavior and enforce consistency.
+- Only the public methods of the aggregate can raise domain events.
+- Common ensure methods to multiple aggregates should be placed in a shared static DomainAsserts class.
+- Create a private constructor without parameters for the aggregate root to support ORM frameworks.
+- Creation of an aggregate should be done through a static factory method on the aggregate root. This means the constructor of the aggregate root should be private and the factory method should be public and static. The factory method should return a new instance of the aggregate root.
+
+
+## Examples
+
+Example of a common aggregate ID implementation:
 
 ```csharp
-public sealed class Reservation
+public interface IEntityId
 {
-    public Guid Id { get; }
-    public Guid ProductId { get; } // Another aggregate's identity
-    public int Quantity { get; private set; }
+    Guid Value { get; }
+}
 
-    private Reservation(Guid id, Guid productId, int quantity)
+public static class EntityId
+{
+    private static readonly ConcurrentDictionary<Type, Delegate> _constructors =
+        new();
+
+    public static TId New<TId>(Guid? guid = default)
+        where TId : struct, IEntityId
     {
-        if (id == Guid.Empty || productId == Guid.Empty)
-            throw new ArgumentException("Identity is required.");
-        if (quantity <= 0) throw new ArgumentOutOfRangeException(nameof(quantity));
-        Id = id;
-        ProductId = productId;
-        Quantity = quantity;
+        var factory =
+            (Func<Guid, TId>)
+                _constructors.GetOrAdd(typeof(TId), CreateFactory<TId>);
+
+        Guid id = guid ?? Guid.CreateVersion7();
+
+        return factory(id);
     }
 
-    public static Reservation Create(Guid id, Guid productId, int quantity)
-        => new Reservation(id, productId, quantity);
-
-    public void Increase(int amount)
+    private static Func<Guid, TId> CreateFactory<TId>(Type type)
+        where TId : struct
     {
-        if (amount <= 0) throw new ArgumentOutOfRangeException(nameof(amount));
-        var next = checked(Quantity + amount);
-        Quantity = next;
+        var constructor =
+            type.GetConstructor([typeof(Guid)])
+            ?? throw new InvalidOperationException(
+                $"Type {type.Name} must have a constructor accepting a Guid."
+            );
+
+        var param = Expression.Parameter(typeof(Guid), "value");
+        var newExpr = Expression.New(constructor, param);
+        var lambda = Expression.Lambda<Func<Guid, TId>>(newExpr, param);
+
+        return lambda.Compile();
     }
 }
 ```
 
-## Mistakes and verification
+Example of a common aggregate root implementation:
 
-Avoid roots that only expose setters, child methods that bypass root invariants, and cross-aggregate graph mutations hidden inside one command. Do not assume every multi-aggregate workflow needs one large aggregate.
+```csharp
+public interface IAggregateRoot
+{
+    long ConcurrencyVersion { get; }
+    IReadOnlyCollection<IDomainEvent> DomainEvents { get; }
+    void ClearDomainEvents();
+}
 
-Test valid transitions, boundary values, overflow, and rejection without state changes. For roots with children, verify callers cannot mutate the collection or a child to bypass rules. Where persistence or events are involved, verify round trips preserve invariants and loading records no new events.
+public abstract class AggregateRoot<TId> : Entity<TId>, IAggregateRoot
+    where TId : struct, IEntityId
+{
+    public long ConcurrencyVersion { get; private set; }
+    private readonly IList<IDomainEvent> _domainEvents = [];
+    public IReadOnlyCollection<IDomainEvent> DomainEvents =>
+        _domainEvents.AsReadOnly();
+
+    protected AggregateRoot(TId id)
+        : base(id) { }
+
+    protected AggregateRoot() { }
+
+    protected void RaiseDomainEvent(IDomainEvent domainEvent)
+    {
+        _domainEvents.Add(domainEvent);
+    }
+
+    public void ClearDomainEvents()
+    {
+        _domainEvents.Clear();
+    }
+```

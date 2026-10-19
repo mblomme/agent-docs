@@ -1,52 +1,102 @@
 ---
 name: entity
-description: Build or refactor DDD entities in C# and .NET with stable identity, controlled lifecycle and mutation, and aggregate-owned child behavior.
+description: Build or refactor DDD entities in C# and .NET.
 ---
 
 # Entities in .NET
 
-Inspect existing identity types, equality conventions, aggregate ownership, mappings, target framework, and tests. Establish what makes this concept the same entity over time. Preserve the project's libraries, errors, and layout; the pattern alone does not justify new dependencies or base classes.
+This skill will help you implement the entity in C# and .NET.
 
-## Implementation and refactoring
+## Workflow
 
-- Use stable identity independent of mutable attributes. Follow existing typed-ID conventions; define the policy for transient/unassigned IDs before relying on equality.
-- Prefer a class for entities. Record-generated value equality and copying usually conflict with entity identity and controlled mutation.
-- Choose equality deliberately: retain reference equality when appropriate, or implement identity equality consistently with hashing, entity type, and ORM proxy behavior. Never hash mutable business attributes.
-- Validate creation and expose business methods instead of public setters. An aggregate-owned child must be created and mutated through its root; a public child method can undermine the boundary even when its collection is read-only.
-- Keep restoration separate from new creation. Reconstitution validates persisted structural invariants without replaying business commands, checking today's external eligibility rules, or emitting creation events.
-- When removing setters, update callers and hydration together. Keep infrastructure details outside the domain; do not introduce a new architecture or equality hierarchy as an incidental refactor.
+1. Use a typed ID that remains stable throughout the entity's lifecycle.
+2. Encapsulate state behind private setters or fields and expose read-only views of child collections.
+3. Implement documented domain transitions as methods. Keep creation and mutation of child entities internal to the owning aggregate boundary.
+4. Check invariants before changing state by using Ensure methods in the owning aggregate's static assert class.
 
-## C# example
+## Rules
 
-This child uses reference equality and exposes identity explicitly. The root must keep the child private and return immutable snapshots to external callers. `internal` limits callers but alone does not enforce root ownership within the assembly.
+- Declare the entity and its typed ID in the same file.
+- Use classes for entities; record-generated value equality and copying do not represent entity identity.
+- Only aggregate roots should have repositories. Create and mutate child entities through their aggregate root.
+- Use value objects for descriptive inputs and typed IDs for references to other aggregates.
+- When the code base contains multiple entities, use a base class or interface to share common behavior and enforce consistency.
+- Only the public methods of the aggregate root can raise domain events.
+- Common ensure methods to multiple aggregates should be placed in a shared static DomainAsserts class.
+- Create a private constructor without parameters for concrete entities to support ORM frameworks. Give abstract base entities a protected constructor without parameters.
+
+## Examples
+
+Example of a common entity implementation, using the shared IEntityId contract:
 
 ```csharp
-internal sealed class OrderLine
+#pragma warning disable S4035
+public abstract class Entity<TId> : IEquatable<Entity<TId>>
+    where TId : struct, IEntityId
 {
-    public Guid Id { get; }
-    public int Quantity { get; private set; }
+    public TId Id { get; private set; }
 
-    private OrderLine(Guid id, int quantity)
+    protected Entity(TId id)
     {
-        if (id == Guid.Empty) throw new ArgumentException("Identity is required.");
-        if (quantity <= 0) throw new ArgumentOutOfRangeException(nameof(quantity));
         Id = id;
-        Quantity = quantity;
     }
 
-    internal static OrderLine Create(Guid id, int quantity)
-        => new OrderLine(id, quantity);
+    protected Entity() { }
 
-    internal void ChangeQuantity(int quantity)
+    public override bool Equals(object? obj)
     {
-        if (quantity <= 0) throw new ArgumentOutOfRangeException(nameof(quantity));
-        Quantity = quantity;
+        if (obj is null)
+            return false;
+        if (ReferenceEquals(this, obj))
+            return true;
+        if (obj.GetType() != GetType())
+            return false;
+
+        return Equals((Entity<TId>)obj);
+    }
+
+    public bool Equals(Entity<TId>? other)
+    {
+        if (other is null)
+            return false;
+        if (ReferenceEquals(this, other))
+            return true;
+        if (other.GetType() != GetType())
+            return false;
+
+        // Optimized: Compare the primitive GUID values directly
+        return Id.Value.Equals(other.Id.Value);
+    }
+
+    public override int GetHashCode()
+    {
+        return Id.Value.GetHashCode();
+    }
+
+    public static bool operator ==(Entity<TId>? left, Entity<TId>? right)
+    {
+        if (left is null && right is null)
+            return true;
+        if (left is null || right is null)
+            return false;
+        return left.Equals(right);
+    }
+
+    public static bool operator !=(Entity<TId>? left, Entity<TId>? right)
+    {
+        return !(left == right);
+    }
+
+    public virtual void ValidateState()
+    {
+        // This method can be overridden by derived classes to implement state validation logic
     }
 }
+#pragma warning restore S4035
 ```
 
-## Mistakes and verification
+Example of a typed entity ID:
 
-Avoid identity inferred from a name, record copying that duplicates identity, publicly mutable child objects, and event-producing hydration. Do not conflate an ORM entity with a domain entity solely because both have a database key.
-
-Verify identity remains stable across allowed changes, invalid changes leave state intact, and construction rejects invalid input. Test the chosen equality and hash policy explicitly if customized. For persisted entities, verify reconstitution preserves identity and creates no new events; for children, test mutations through the root's public API.
+```csharp
+public readonly record struct OrderLineId(Guid Value) : IEntityId;
+```

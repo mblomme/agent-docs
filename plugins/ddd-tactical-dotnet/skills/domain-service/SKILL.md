@@ -1,43 +1,22 @@
 ---
 name: domain-service
-description: Build or refactor pure DDD domain services in C# and .NET for business calculations or policies that have no natural entity or value-object owner.
+description: Create or refactor stateless C# DDD domain services in a project-agnostic Domain Layer. Use when a domain rule or calculation spans concepts and does not naturally belong to one aggregate or value object, while avoiding application orchestration, infrastructure adapters, dependency injection, and side effects.
 ---
 
-# Domain services in .NET
+# DDD Domain Service
 
-Inspect related entities, value objects, application workflows, target framework, and tests. Identify the business decision and explain why no existing domain object naturally owns it. Preserve project conventions and dependencies; a service does not require an interface, DI registration, or a new project.
+## Workflow
 
-## Implementation and refactoring
+1. First try to place the behavior on an aggregate, entity, or value object.
+2. Use a domain service only when the rule truly spans multiple domain concepts or is awkward on a single model object.
+3. Keep the service stateless and name methods in domain language.
+4. Depend only on domain concepts or domain-owned abstractions.
+5. Return domain values, booleans, or domain errors; do not coordinate application workflows.
+6. Test the rule with deterministic inputs and no external services.
 
-- Keep behavior on its natural entity or value object when it owns the invariant. Use a domain service for a named business calculation or policy spanning supplied concepts without a natural owner.
-- Accept domain values, objects, and explicit facts. Return a domain result or decision; let roots enforce state transitions. Do not create a second path around aggregate invariants.
-- Keep the service deterministic and free of I/O. Application code loads aggregates and external facts, supplies time or rates, coordinates transactions, and persists results.
-- Distinguish domain decisions from application orchestration: HTTP, repositories, message publication, retries, and transaction coordination do not belong in this service.
-- When extracting behavior from an application handler, move only the business calculation. Preserve the ordering and ownership of I/O and mutations. Do not move all entity logic into a service layer.
+## Rules
 
-## C# example
-
-Assume the use case prices shipping from destination and weight, with no existing domain object owning this policy. The thresholds are illustrative business rules.
-
-```csharp
-public sealed class ShippingPricePolicy
-{
-    public decimal Calculate(decimal weightKg, bool isDomestic)
-    {
-        if (weightKg <= 0)
-            throw new ArgumentOutOfRangeException(nameof(weightKg));
-
-        var basePrice = isDomestic ? 5m : 15m;
-        var excessKg = Math.Max(0m, weightKg - 1m);
-        return checked(basePrice + excessKg * 2m);
-    }
-}
-```
-
-Use existing weight/money types where the project models those concepts. If pricing requires a carrier API, the application fetches the quote and supplies it as a fact; the domain service does not call the carrier.
-
-## Mistakes and verification
-
-Avoid anemic entities whose rules all migrate into services, services that resolve dependencies to load aggregates, and calculations that read the clock or configuration implicitly. A domain service must not quietly mutate several aggregates and assume atomic persistence.
-
-Test the business decision table, threshold boundaries, invalid inputs, and determinism for identical supplied facts. Verify inputs remain unchanged. Keep orchestration tests in the application layer; test domain decisions without network, database, or DI setup.
+- Domain services express domain decisions, not use case orchestration.
+- Do not inject application ports, logging, configuration, clocks from infrastructure, or repositories unless the repository interface is domain-owned and the rule genuinely needs it.
+- Prefer pure functions when possible.
+- Keep side effects inside aggregate behavior, not hidden in services.

@@ -12,7 +12,6 @@
     "entities",
     "value-objects",
     "domain-services",
-    "domain-events",
-    "factories"
+    "domain-events"
   ]
 }
