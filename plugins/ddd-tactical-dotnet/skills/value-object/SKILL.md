@@ -18,6 +18,7 @@ description: Build or refactor immutable DDD value objects in C# and .NET with v
 - Keep value objects free of persistence, serialization, request binding, and display formatting concerns.
 - Do not expose mutating methods or public setters.
 - Use domain errors or exceptions consistent with the project.
+- Value objects must extend a common base class like in the example below.
 
 ## Example
 

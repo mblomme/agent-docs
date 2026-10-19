@@ -18,6 +18,7 @@ Each aggregate should have a repository interface on the same level as the aggre
 
 - Repositories belong to aggregate roots only, not child entities or value objects.
 - Repository interfaces are ports, but they are the domain-layer exception: place aggregate repository interfaces in the Domain layer, not in Application contracts.
+- Repository interfaces must extend a common interface.
 
 ## Example
 
