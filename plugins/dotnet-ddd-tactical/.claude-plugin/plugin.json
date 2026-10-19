@@ -1,0 +1,13 @@
+{
+  "name": "dotnet-ddd-tactical",
+  "version": "0.1.0",
+  "description": "Design, implement, and review tactical Domain-Driven Design patterns in C# and .NET.",
+  "keywords": [
+    "dotnet",
+    "csharp",
+    "ddd",
+    "aggregates",
+    "value-objects",
+    "domain-events"
+  ]
+}

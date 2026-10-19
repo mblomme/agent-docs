@@ -1,0 +1,16 @@
+{
+  "name": "agent-docs",
+  "owner": {
+    "name": "mblomme"
+  },
+  "metadata": {
+    "description": "Reusable agent plugins for software design and development."
+  },
+  "plugins": [
+    {
+      "name": "dotnet-ddd-tactical",
+      "source": "./plugins/dotnet-ddd-tactical",
+      "description": "Design, implement, and review tactical Domain-Driven Design patterns in C# and .NET."
+    }
+  ]
+}
