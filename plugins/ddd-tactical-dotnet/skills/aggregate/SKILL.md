@@ -13,19 +13,24 @@ The scope, boundary and invariants of an aggregate should already be defined and
 2. Encapsulate child collections behind private fields and read-only views.
 3. Put domain transitions on public methods of the root and keep child mutation internal to the boundary.
 4. Create domain events for all documented domain events for that aggregate.
-5. Invariants must be checked in public methods by using Ensure methods. These ensure methods should be bundled in a seperate assert static class per aggregate.
+5. DomainEvents are raised by a common base class method called `RaiseDomainEvent`.
+6. Check invariants in public methods before changing state by calling intent-revealing static `Ensure...` methods.
 
 
 ## Rules
 
 - Declare the Aggregate and its AggregateId in the same file.
 - Only aggregate roots should have repositories.
+- An repository must be build for each aggregate.
+- When using entities, make sure they make sure they are built according to the entity skill.
 - Mutate child entities or collections directly only through the aggregate root.
 - Avoid cross-aggregate invariants that require multiple roots to be loaded for one rule.
 - Use value objects for descriptive inputs and typed IDs for references.
 - When the code base contains multiple aggregates, use a base class or interface to share common behavior and enforce consistency.
 - Only the public methods of the aggregate can raise domain events.
-- Common ensure methods to multiple aggregates should be placed in a shared static DomainAsserts class.
+- Group static `Ensure...` methods in a separate static assert class per aggregate. Name each method after the domain rule it enforces, such as `OrderAsserts.EnsureOrderCanBeCancelled(order)`.
+- An `Ensure...` method may delegate to a generic validation helper, but its name must explain the domain intent at the call site.
+- Put static `Ensure...` methods for domain rules shared by multiple aggregates in a shared static `DomainAsserts` class.
 - Create a private constructor without parameters for the aggregate root to support ORM frameworks.
 - Creation of an aggregate should be done through a static factory method on the aggregate root. This means the constructor of the aggregate root should be private and the factory method should be public and static. The factory method should return a new instance of the aggregate root.
 

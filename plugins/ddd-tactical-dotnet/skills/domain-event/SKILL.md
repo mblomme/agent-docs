@@ -7,14 +7,15 @@ description: Build or refactor DDD domain events in C# and .NET, including immut
 
 ## Workflow
 
-2. Name the event as a past-tense business fact.
-3. The data of the event should be documented in the domain model.
+1. Name the event as a past-tense business fact.
+2. The data of the event should be documented in the domain model.
 3. Include only domain data needed by downstream domain or application reactions.
 4. Raise the event from the aggregate only.
 
 ## Rules
 
 - Domain events are facts, not commands or integration messages.
+- One domain event per file.
 - Keep events immutable and free of transport, persistence, and serialization concerns.
 - Prefer typed IDs and value objects in event payloads.
 - Do not publish events, map broker messages, or perform side effects in the domain layer.

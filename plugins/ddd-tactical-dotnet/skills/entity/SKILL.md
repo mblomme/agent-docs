@@ -12,17 +12,19 @@ This skill will help you implement the entity in C# and .NET.
 1. Use a typed ID that remains stable throughout the entity's lifecycle.
 2. Encapsulate state behind private setters or fields and expose read-only views of child collections.
 3. Implement documented domain transitions as methods. Keep creation and mutation of child entities internal to the owning aggregate boundary.
-4. Check invariants before changing state by using Ensure methods in the owning aggregate's static assert class.
+4. Check invariants before changing state by calling intent-revealing static `Ensure...` methods in the owning aggregate's static assert class.
 
 ## Rules
 
 - Declare the entity and its typed ID in the same file.
+- Entities must make use of an entity base class.
 - Use classes for entities; record-generated value equality and copying do not represent entity identity.
 - Only aggregate roots should have repositories. Create and mutate child entities through their aggregate root.
 - Use value objects for descriptive inputs and typed IDs for references to other aggregates.
 - When the code base contains multiple entities, use a base class or interface to share common behavior and enforce consistency.
 - Only the public methods of the aggregate root can raise domain events.
-- Common ensure methods to multiple aggregates should be placed in a shared static DomainAsserts class.
+- Name each static `Ensure...` method after the domain rule it enforces, such as `OrderAsserts.EnsureQuantityCanBeChanged(orderLine)`. It may delegate to a generic validation helper, but its name must explain the domain intent at the call site.
+- Put static `Ensure...` methods for domain rules shared by multiple aggregates in a shared static `DomainAsserts` class.
 - Create a private constructor without parameters for concrete entities to support ORM frameworks. Give abstract base entities a protected constructor without parameters.
 
 ## Examples
