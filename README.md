@@ -1,6 +1,6 @@
 # Agent Docs
 
-Reusable agent plugins live in [`plugins/`](plugins/). The catalogs currently include `ddd-tactical-dotnet`, a plugin with six tactical Domain-Driven Design skills for C# and .NET: `aggregate`, `repository`, `entity`, `value-object`, `domain-service`, and `domain-event`.
+Reusable agent plugins live in [`plugins/`](plugins/). The catalogs currently include `ddd-tactical-dotnet`, a plugin with seven tactical Domain-Driven Design skills for C# and .NET: `aggregate`, `repository`, `entity`, `value-object`, `domain-service`, `domain-event`, and `factory`.
 
 ## Client marketplaces
 
