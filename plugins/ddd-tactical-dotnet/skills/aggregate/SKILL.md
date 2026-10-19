@@ -20,13 +20,14 @@ The scope, boundary and invariants of an aggregate should already be defined and
 ## Rules
 
 - Declare the Aggregate and its AggregateId in the same file.
+- An AggregateId must make use of a common IEntityId contract.
+- An Aggregate must make use of an AggregateRoot base class.
 - Only aggregate roots should have repositories.
 - An repository must be build for each aggregate.
 - When using entities, make sure they make sure they are built according to the entity skill.
 - Mutate child entities or collections directly only through the aggregate root.
 - Avoid cross-aggregate invariants that require multiple roots to be loaded for one rule.
 - Use value objects for descriptive inputs and typed IDs for references.
-- When the code base contains multiple aggregates, use a base class or interface to share common behavior and enforce consistency.
 - Only the public methods of the aggregate can raise domain events.
 - Group static `Ensure...` methods in a separate static assert class per aggregate. Name each method after the domain rule it enforces, such as `OrderAsserts.EnsureOrderCanBeCancelled(order)`.
 - An `Ensure...` method may delegate to a generic validation helper, but its name must explain the domain intent at the call site.

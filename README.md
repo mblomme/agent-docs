@@ -2,6 +2,8 @@
 
 Reusable agent plugins live in [`plugins/`](plugins/). The catalogs currently include `ddd-tactical-dotnet`, a plugin with seven tactical Domain-Driven Design skills for C# and .NET: `aggregate`, `repository`, `entity`, `value-object`, `domain-service`, `domain-event`, and `factory`.
 
+[`ddd-testing-dotnet`](plugins/ddd-testing-dotnet/) provides the `domain-unit-testing` skill for domain-layer unit tests in C# and .NET. It organizes tests under `UnitTests/Domain/` by aggregate, with separate files for aggregates, domain services, and domain assert classes. It requires AAA tests, keeps mocks in `Domain/Shared/Mocks/`, and excludes standalone entity tests and direct tests of tactical DDD base classes.
+
 ## Client marketplaces
 
 | Client | Repository catalog |
@@ -19,6 +21,7 @@ After these files are pushed, register the repository and install the plugin:
 ```sh
 claude plugin marketplace add mblomme/agent-docs
 claude plugin install ddd-tactical-dotnet@agent-docs
+claude plugin install ddd-testing-dotnet@agent-docs
 ```
 
 For a local checkout, run `claude plugin marketplace add .` from this directory instead.
@@ -28,6 +31,7 @@ For a local checkout, run `claude plugin marketplace add .` from this directory 
 ```sh
 codex plugin marketplace add https://github.com/mblomme/agent-docs.git
 codex plugin add ddd-tactical-dotnet@agent-docs
+codex plugin add ddd-testing-dotnet@agent-docs
 ```
 
 #### Repository scope with `.agents`

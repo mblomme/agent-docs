@@ -13,7 +13,7 @@ description: Build or refactor immutable DDD value objects in C# and .NET with v
 
 ## Rules
 
-- Prefer `sealed record` or `readonly record struct` when local conventions allow.
+- Value objects must make use of a common base class.
 - Use named factories when construction needs validation or normalization.
 - Keep value objects free of persistence, serialization, request binding, and display formatting concerns.
 - Do not expose mutating methods or public setters.
@@ -22,7 +22,7 @@ description: Build or refactor immutable DDD value objects in C# and .NET with v
 
 ## Example
 
-An example of a value object base class.
+An example of a value object common base class.
 
 ```csharp
 #pragma warning disable S2094

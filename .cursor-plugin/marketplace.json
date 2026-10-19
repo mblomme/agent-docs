@@ -11,6 +11,11 @@
       "name": "ddd-tactical-dotnet",
       "source": "./plugins/ddd-tactical-dotnet",
       "description": "Build and refactor tactical DDD aggregates, repositories, entities, value objects, domain services, domain events, and aggregate factories in C# and .NET."
+    },
+    {
+      "name": "ddd-testing-dotnet",
+      "source": "./plugins/ddd-testing-dotnet",
+      "description": "Write and refactor domain-layer unit tests for tactical DDD models in C# and .NET, organized by aggregate with Arrange-Act-Assert."
     }
   ]
 }
