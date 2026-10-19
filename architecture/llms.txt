@@ -15,3 +15,9 @@
 - [./topologies/single-service.md](./topologies/single-service.md): Simple client-server backend, public API boundaries, optional persistence, and modular DI setup — MUST read when building one service for browser, desktop, mobile, or other network clients.
 - [./topologies/modular-monolith.md](./topologies/modular-monolith.md): Module facades, bootstrap entrypoints, shared kernels, and logical data isolation — MUST read when deploying multiple bounded contexts in one process.
 - [./topologies/microservices.md](./topologies/microservices.md): Independent deployments, private storage, versioned network contracts, and reliable delivery — MUST read when implementing distributed bounded contexts.
+
+## Technology Stacks
+- [./technology-stacks/dotnet.md](./technology-stacks/dotnet.md): .NET project boundaries, naming, formatting, and test tooling — MUST read when implementing or scaffolding .NET projects.
+
+## Project Bootstrap Guides
+- [./bootstrap/bootstrap-dotnet.md](./bootstrap/bootstrap-dotnet.md): Required inputs, architecture copying, .NET scaffolding, root AGENTS.md guidance, and verification — MUST read when bootstrapping a .NET project.

@@ -37,7 +37,7 @@ scope before generating additional contexts or deployables.
    `architecture/bootstrap/bootstrap-dotnet.md`, its containing architecture
    directory is `../` relative to the prompt's directory. Prefer that local
    source when accessible. Resolve paths relative to the source file, not the
-   target repository's working directory.
+   target repository's working directory. When nothing is provided check:https://github.com/mblomme/agent-docs/architecture
 2. If no local source is available, ask for an architecture directory path or
    repository URL. For a repository URL, obtain its `architecture/` directory
    using the user-specified revision, or the default branch when unspecified.
@@ -62,8 +62,8 @@ report an unavailable required SDK rather than silently changing it.
 
 - Create root-level `src/` and `tests/` directories.
 - Follow the `technology-stacks/dotnet.md` specification for dotnet instructions.
-- Follow the `topologies/<selected-topology>.md` specification to create the project layout.
-- Follow the documented layer responsibilities conventions in the architecture folder. Create
+- Follow the `topologies/<selected-topology>.md` specification for the topology instructions.
+- Follow the documented layer responsibilities conventions in the `core-rules` folder. Create
   only folders with a current purpose, especially within Infrastructure and
   Main. An empty Infrastructure project is acceptable when no adapters are
   required; do not populate it with speculative folder trees.
