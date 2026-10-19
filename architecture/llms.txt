@@ -1,0 +1,17 @@
+# Canonical Architecture Reference (Ports & Adapters (Hexagonal) + DDD)
+
+> Agents generating, refactoring, or reviewing code MUST follow these dependency and topology rules. Resolve depends_on paths relative to the declaring Markdown file and read dependencies before the target specification. Deployment rules supplement, but do not reverse, core dependency rules. Stop and report conflicts rather than silently choosing a contradictory rule.
+
+## Read First: Architecture and Topology Selection
+- [./00-topology-overview.md](./00-topology-overview.md): Architectural zones, source import matrix, and deployment topology selection — MUST read before creating, moving, or reviewing architectural components.
+
+## Ports and adapters Specifications
+- [./core-rules/01-domain-layer.md](./core-rules/01-domain-layer.md): Aggregates, entities, value objects, domain services, and internal domain events — MUST read when implementing business behavior or persistence hydration.
+- [./core-rules/02-application-layer.md](./core-rules/02-application-layer.md): Use cases, queries, policies, ports, DTOs, and transaction ownership — MUST read when defining interfaces or orchestrating workflows.
+- [./core-rules/03-infrastructure-layer.md](./core-rules/03-infrastructure-layer.md): Adapter independence, driving/driven boundaries, mappers, outbox relay, and transport isolation — MUST read when integrating databases, transports, or vendor SDKs.
+- [./core-rules/04-main-composition-root.md](./core-rules/04-main-composition-root.md): Language-agnostic DI, selectable logical setup modules, one activation entrypoint, and lifecycle — MUST read when wiring dependencies, enabling/disabling modules, or changing startup/shutdown.
+
+## Deployment Topologies
+- [./topologies/single-service.md](./topologies/single-service.md): Simple client-server backend, public API boundaries, optional persistence, and modular DI setup — MUST read when building one service for browser, desktop, mobile, or other network clients.
+- [./topologies/modular-monolith.md](./topologies/modular-monolith.md): Module facades, bootstrap entrypoints, shared kernels, and logical data isolation — MUST read when deploying multiple bounded contexts in one process.
+- [./topologies/microservices.md](./topologies/microservices.md): Independent deployments, private storage, versioned network contracts, and reliable delivery — MUST read when implementing distributed bounded contexts.
