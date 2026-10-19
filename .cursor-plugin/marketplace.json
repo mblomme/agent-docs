@@ -10,7 +10,7 @@
     {
       "name": "ddd-tactical-dotnet",
       "source": "./plugins/ddd-tactical-dotnet",
-      "description": "Build and refactor tactical DDD aggregates, repositories, entities, value objects, and domain services in C# and .NET."
+      "description": "Build and refactor tactical DDD aggregates, repositories, entities, value objects, domain services, and domain events in C# and .NET."
     }
   ]
 }
