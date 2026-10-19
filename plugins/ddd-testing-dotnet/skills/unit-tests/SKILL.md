@@ -1,5 +1,5 @@
 ---
-name: domain-unit-testing
+name: unit-tests
 description: Write or refactor C# and .NET domain-layer unit tests for DDD aggregates, domain services, and domain assert classes. Use for domain behavior coverage and test organization; excludes application, infrastructure, integration, and end-to-end tests.
 ---
 
