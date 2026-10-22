@@ -18,6 +18,3 @@
 
 ## Technology Stacks
 - [./technology-stacks/dotnet.md](./technology-stacks/dotnet.md): .NET project boundaries, naming, formatting, and test tooling — MUST read when implementing or scaffolding .NET projects.
-
-## Project Bootstrap Guides
-- [./bootstrap/bootstrap-dotnet.md](./bootstrap/bootstrap-dotnet.md): Required inputs, architecture copying, .NET scaffolding, root AGENTS.md guidance, and verification — MUST read when bootstrapping a .NET project.

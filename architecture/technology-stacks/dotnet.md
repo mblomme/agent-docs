@@ -12,7 +12,7 @@ The architecture documents are mostly technology agnostic. This documents makes 
     - Acme.Inventory.Infrastructure/
     - Acme.Inventory.Main/
   - CompanyName is optional
-  - Also apply the same naming convention to the test projects
+- Dotnet projects in the tests folder follow the same the same naming convention as above.
 - Run the application by running the Main project.
 - Use CSharpier with `.csharpierrc` and `printWidth: 80`.
 - Add `dotnet-tools.json` at the repository root.
@@ -20,7 +20,7 @@ The architecture documents are mostly technology agnostic. This documents makes 
 
 ## Check
 
-- Verify that all dotnet projects are named correctly according to the naming convention.
+- Verify that all dotnet projects in the `src` and `tests` folder are named correctly according to the naming convention.
 - Verify that the `dotnet-tools.json` file is present at the repository root.
 - Verify that the `.csharpierrc` file is present at the repository root and has `printWidth: 80`.
 - Verify that the `Main` project is a Web project and the application entrypoint.

@@ -24,7 +24,7 @@ Test observable business behavior through public domain APIs: valid transitions,
 Example layout:
 
 ```text
-UnitTests/
+Some.Prefix.UnitTests/
 └── Domain/
     ├── Order/
     │   ├── OrderTests.cs
