@@ -31,6 +31,8 @@ Based on the info in section `spec folder structure` create the contents of `spe
 
 ## llms.txt template
 
+Follow this template below and do not add or invent any additional information or sections.
+
 ```txt
 # Specification index
 
