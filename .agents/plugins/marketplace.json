@@ -5,10 +5,10 @@
   },
   "plugins": [
     {
-      "name": "ddd-tactical-dotnet",
+      "name": "ddd-sdd",
       "source": {
         "source": "local",
-        "path": "./plugins/ddd-tactical-dotnet"
+        "path": "./plugins/ddd-sdd"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -17,10 +17,10 @@
       "category": "Developer Tools"
     },
     {
-      "name": "ddd-testing-dotnet",
+      "name": "ddd-tactical-dotnet",
       "source": {
         "source": "local",
-        "path": "./plugins/ddd-testing-dotnet"
+        "path": "./plugins/ddd-tactical-dotnet"
       },
       "policy": {
         "installation": "AVAILABLE",
