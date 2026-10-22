@@ -81,6 +81,7 @@ Include only:
 - A brief reminder that dependencies point inward, Main owns composition,
   adapters remain independent, and adapter/setup folders are added only when
   required.
+- Metion to remove .gitkeep files when the folder is no longer empty.
 
 Keep detailed design and architecture rules in `spec/`; link to them instead
 of duplicating them in `AGENTS.md`.
