@@ -58,6 +58,7 @@ report an unavailable required SDK rather than silently changing it.
 - Follow the `technology-stacks/dotnet.md` specification for dotnet instructions.
 - Follow the `topologies/<selected-topology>.md` specification for the topology instructions.
 - Follow the documented layer responsibilities conventions in the `core-rules` folder.
+- For the layer `Application` you can already scaffold the the empty directories as mentioned in the documentation of the application layer.
 - For the layers `Main` and `Infrastructure` create
   other folders only when they have a current purpose.
   An empty Infrastructure project is acceptable when no adapters are

@@ -43,6 +43,8 @@ This file is the entry point for all architecture and design information. All pa
 below are relative to this file. Read applicable documents and their dependencies
 before changing code.
 
+Don't mention that the directory is empty but the goal of the directory instead.
+
 ## Specification directories
 
 List and describe the current contents of the specification directories. Only describe what is documented in this file do not invent any additional information.
