@@ -12,6 +12,8 @@
     "entities",
     "value-objects",
     "domain-services",
-    "domain-events"
+    "domain-events",
+    "docs",
+    "documentation"
   ]
 }
