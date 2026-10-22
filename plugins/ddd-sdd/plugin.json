@@ -1,0 +1,17 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "ddd-sdd",
+  "version": "0.1.0",
+  "description": "All skills bundled to do spec driven development with DDD",
+  "keywords": [
+    "dotnet",
+    "csharp",
+    "ddd",
+    "aggregates",
+    "repositories",
+    "entities",
+    "value-objects",
+    "domain-services",
+    "domain-events"
+  ]
+}
