@@ -5,7 +5,7 @@ description: This skill creates a `spec/` folder at the target repository root a
 
 # Spec Directory
 
-Create a `spec/` folder based on the structure below and populate the file `spec/llms.txt` with the documented architecture information.
+Create a `spec/` folder based on the structure below and populate the file `spec/llms.txt` with the documented architecture information. Mention the `Bounded Context` name in the llms.txt file if available. Mention and link `spec/llms.txt` in the AGENTS.md file.
 
 ## Spec folder structure
 
@@ -28,3 +28,9 @@ The file `spec/llms.txt` is the entry point for all design information. It conta
 ## llms.txt contents
 
 Based on the info in section `spec folder structure` create the contents of `spec/llms.txt`. Only describe what is documented do not invent any additional information.
+
+## Verification
+
+- Spec folder is created at the target repository root.
+- llms.txt is created and contains the documented architecture information.
+- AGENTS.md is updated with a relative link to `spec/llms.txt`.
