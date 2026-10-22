@@ -29,8 +29,25 @@ The file `spec/llms.txt` is the entry point for all design information. It conta
 
 Based on the info in section `spec folder structure` create the contents of `spec/llms.txt`. Only describe what is documented do not invent any additional information.
 
+## llms.txt template
+
+```txt
+# Specification index
+
+Company: {Company Name} (skip if not available)
+Bounded Context: {Bounded Context name}
+
+This file is the entry point for all architecture and design information. All paths
+below are relative to this file. Read applicable documents and their dependencies
+before changing code.
+
+## Specification directories
+
+List and describe the current contents of the specification directories. Only describe what is documented in this file do not invent any additional information.
+```
+
 ## Verification
 
 - Spec folder is created at the target repository root.
-- llms.txt is created and contains the documented architecture information.
+- llms.txt is created and contains the documented information according to the template above.
 - AGENTS.md is updated with a relative link to `spec/llms.txt`.
