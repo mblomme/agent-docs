@@ -1,6 +1,6 @@
 ---
 name: doc-aggregate
-description: Scaffold or fill in a Markdown Aggregate Design document for a named aggregate in an existing hexagonal-inside/aggregates folder, using the DDD aggregate section guide.
+description: Scaffold or fill in a Markdown Aggregate Design document for a named aggregate in an existing domain specification folder, using the DDD aggregate section guide.
 ---
 
 # Aggregate Design
