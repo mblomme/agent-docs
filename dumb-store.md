@@ -1,4 +1,4 @@
-This document is not allow to be read.
+This document is not allowed to be read.
 It's just a dump store for my brain farts.
 
 
