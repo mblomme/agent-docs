@@ -15,13 +15,13 @@ Imagine a domain driven design analysis for the backend side of the system based
   - The technology stack
   - The topology
 
-- Use the bootstrap skill to scaffold this empty project with the provided information.
+- Use the bootstrap skill to fully scaffold the project with the provided information.
 
 - Turn the provided prompt and gathered information into a `product-brief` document.
 
 - Do a careful domain driven design analysis and create in the spec folder the specification for the domain only. Limit yourself to the domain, don't imagine the application layer, the adapters or the infrastructure. Use the available ddd-skills to create the specification.
 
-- Limit yourself to the core domain bounded context. Do not imagine any other bounded contexts. The will be created in other repositories.
+- Limit yourself to the core domain bounded context. Do not imagine any other bounded contexts. They will be created in other repositories.
 
 - Create the domain specification documents. (Bounded context, aggregates, ...). Use the ddd-sdd skills starting with doc-*. only
 
@@ -29,7 +29,8 @@ Imagine a domain driven design analysis for the backend side of the system based
 
 ## Rules
 
-- Do not generate any code.
+- Do not remove any bootstrap files, folders or configuration.
+- Do not generate any code except code involved in the bootstrap process.
 - Only domain specification is imagined. Do not imagine the application layer, the adapters or the infrastructure.
 - Only the core bounded context is created in the specification
 - The domain specification matches the provided prompt, documentation and project-brief. If it doesn't, ask for clarification in one concise question.
