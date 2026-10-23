@@ -11,7 +11,7 @@ functionality or integrations. Reuse information the user has already supplied.
 
 ## 1. Establish the inputs
 
-Before scaffolding, collect any missing required inputs in one concise question:
+Before scaffolding, collect any missing required inputs in one concise question with some clickable options.:
 
 - **Bounded context name**: required; use it in project and namespace names.
 - **Company name**: optional; offer it alongside the required inputs. If omitted,
@@ -28,6 +28,8 @@ Before scaffolding, collect any missing required inputs in one concise question:
   | `single-service` | `topologies/single-service.md` |
   | `modular-monolith` | `topologies/modular-monolith.md` |
   | `microservice` | `topologies/microservices.md` |
+
+
 
 Do not ask for adapter or host requirements at this stage.
 
