@@ -40,9 +40,9 @@ Do not ask for adapter or host requirements at this stage.
    source when accessible. Resolve paths relative to the source file, not the
    target repository's working directory. 
    - When nothing is provided use:https://github.com/mblomme/agent-docs/architecture
-3. Place the contents of the architecture directory into `spec/architecture/`, preserving
+3. Place the contents of the architecture directory into the appropriate sub folder of `spec/`, preserving
    relative paths and dotfiles.
-4. Read `spec/architecture/llms.txt` as the entry point for all architecture
+4. Read `spec/technical/llms.txt` as the entry point for all architecture
    information. Read the topology overview, the selected technology and topology
    specifications, and the core layer rules. Resolve each `depends_on` path
    relative to its declaring document and read dependencies before dependents.
