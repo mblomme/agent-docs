@@ -74,8 +74,8 @@ its instructions and request guidance for conflicting changes.
 Include only:
 
 - The bounded context, company when supplied, selected technology, and topology.
-- A relative link to [`spec/llms.txt`](spec/architecture/llms.txt),
-  identifying it as the entry point for all architecture information. Instruct
+- A relative link to [`spec/llms.txt`](,
+  identifying it as the entry point for all technical and product information. Instruct
   agents to read it and the applicable specifications and dependencies before
   changing code, and to report missing or conflicting guidance.
 - A brief reminder that dependencies point inward, Main owns composition,
