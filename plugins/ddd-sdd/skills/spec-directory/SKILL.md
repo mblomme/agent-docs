@@ -14,11 +14,13 @@ Create a `spec/` folder based on the structure below and populate the file `spec
     - technical // Contains the technical specification of the software system
         - architecture // Contains the architecture specification
         - deployment // The deployment specification of the software system
+        - llms.txt // The entry point for all technical specification information.
     - product // The design and product specification of the software system
-        - domain // The domain model specification
-        - application // Use cases, queries, policies and other application layer specifications
+        - domain // The domain model specification and everything related domain driven design
+        - application // Use cases, queries, policies, domain orchestration and other application layer specifications
         - adapters // Inbound and outbound adapters specifications
         - stake-holder-collaboration // A holistic view of the software system as the result of stakeholder collaboration(domain storytelling, event storming, interviews, etc.)
+        - llms.txt // The entry point for all product specification information.
     - llms.txt // The entry point for all design information.
 ```
 
@@ -51,6 +53,6 @@ List and describe the current contents of the specification directories. Only de
 
 ## Verification
 
-- Spec folder is created at the target repository root.
-- llms.txt is created and contains the documented information according to the template above.
+- Spec folder is created at the target repository root according to the structure above.
+- llms.txt files are reated and contains the documented information according to the template above.
 - AGENTS.md is updated with a relative link to `spec/llms.txt`.
