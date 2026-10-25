@@ -32,6 +32,11 @@ an existing brief before updating it. Preserve established decisions and useful
 content unless the new input supersedes them. Surface material contradictions
 instead of silently resolving them.
 
+Write the brief as a complete, self-contained product document. Include the
+relevant information directly in the brief; do not refer to the original prompt,
+notes, or source files, or require readers to consult them. When updating an
+existing brief, replace such references with the information they convey.
+
 Keep the entire resulting file **under 200 lines** (at most 199, including blank
 lines). Use concise, high-level language and a structure suited to the product.
 Always include:
@@ -74,7 +79,8 @@ especially the specification root index and an existing product index.
 
 Count the final brief's lines and shorten it if necessary. Confirm mission,
 vision, and high-level goals are present, unsupported claims are absent, and
-every added or changed index link resolves from its declaring file.
+the brief contains no references to the original prompt or source files.
+Confirm every added or changed index link resolves from its declaring file.
 
 Report the brief's path, its line count, the indexes changed, and any material
 open questions. Link to the resulting files.

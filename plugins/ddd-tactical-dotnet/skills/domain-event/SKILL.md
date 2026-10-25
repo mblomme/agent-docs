@@ -5,17 +5,17 @@ description: Build or refactor DDD domain events in C# and .NET, including immut
 
 # Domain events in .NET
 
+# DDD Definition
+
+A domain event is a discrete, immutable, and observable fact that has occurred in the domain. Domain events are raised by aggregates to notify other parts of the system about changes in state or significant occurrences. They are used to decouple different parts of the system and enable reactive behavior.
+
 ## Workflow
 
-1. Name the event as a past-tense business fact.
-2. The data of the event should be documented in the domain model.
-3. Include only domain data needed by downstream domain or application reactions.
-4. Raise the event from the aggregate only.
-
-## Rules
-
+- Use the available common base classes to create new domain events.
+- Name the event as a past-tense business fact.
+- The data of the event should be available in the domain model specfication.
+- Raise the event from the aggregates only.
 - Domain events are facts, not commands or integration messages.
-- One domain event per file.
 - Keep events immutable and free of transport, persistence, and serialization concerns.
 - Prefer typed IDs and value objects in event payloads.
 - Do not publish events, map broker messages, or perform side effects in the domain layer.
@@ -23,23 +23,14 @@ description: Build or refactor DDD domain events in C# and .NET, including immut
 
 ## DomainEvent structure
 
-Each aggregate should have a base domain event class that provides the fully qualified domain name (FQDN) and timestamp. Concrete events inherit from the aggregate base and carry only the business data needed by downstream reactions.
-
-Example structure
-```text
-IDomainEvent
-└── BaseDomainEvent
-    └── GameDomainEvent
-        ├── GameCreated
-        └── GameStarted
-```
-
 1. **The shared base provides metadata.**  
    - `FQDN`: an event name built from company, bounded context, aggregate, and event name.
    - `OccurredOn`: the UTC time when the event object is constructed.
 
 2. **An aggregate-specific base supplies naming context.**  
-   Fills in `company`, `bounded context`, and `aggregate name`. A creation event therefore has this FQDN:
+   Fills in `company`, `bounded context`, and `aggregate name`. 
+   
+   A creation event therefore has this FQDN:
    ```text
    Company.BoundedContext.AggregateName.DomainEventName
    ```

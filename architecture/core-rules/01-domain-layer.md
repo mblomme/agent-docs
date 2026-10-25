@@ -8,6 +8,11 @@ summary: Defines aggregate consistency, entities, value objects, domain services
 
 # Layer Specification: Domain Inside the Core
 
+The domain layer is the hearth of the system, here live the business rules and invariants that define the problem space. It is the only layer that contains business logic; all other layers are orchestration, translation, or infrastructure. The domain layer is a pure model of the business, with no dependencies on frameworks, I/O, or other layers.
+
+The domain layer makes use of pure Domain Driven Design as much as possible.
+
+
 ## Domain Layer: Directory Responsibilities
 
 ```text
@@ -54,6 +59,44 @@ graph TD
     SERVICE[Pure domain service] --> VO
 ```
 
+## Command-to-Event Flow
+
+In Alberto Brandolini's EventStorming notation, domain events are past-tense facts arranged in time; commands express intent, and policies can react to events by issuing further commands.
+
+```mermaid
+flowchart LR
+    ACTOR["Actor"] -->|issues| COMMAND["Command"]
+    COMMAND -->|handled by| AGGREGATE["Aggregate"]
+    AGGREGATE -->|produces| EVENT(["Domain Event"])
+    EVENT -->|may trigger| POLICY["Policy"]
+    POLICY -->|issues| NEXT_COMMAND["Command"]
+    EVENT -->|updates| READ_MODEL["Read Model"]
+
+    classDef actor fill:#f9e79f,stroke:#333,color:#111
+    classDef command fill:#85c1e9,stroke:#333,color:#111
+    classDef aggregate fill:#f9e79f,stroke:#333,color:#111
+    classDef event fill:#f5b041,stroke:#333,color:#111
+    classDef policy fill:#d7bde2,stroke:#333,color:#111
+    classDef readModel fill:#abebc6,stroke:#333,color:#111
+    class ACTOR actor
+    class COMMAND,NEXT_COMMAND command
+    class AGGREGATE aggregate
+    class EVENT event
+    class POLICY policy
+    class READ_MODEL readModel
+```
+
+## Command-to-Event technical translation
+
+In a ports-and-adapters architecture, the command-to-event flow is implemented as follows:
+
+- Actor: no technical translation, this is a human or external system that initiates a command.
+- Command: an application layer UseCase
+- Aggregate: a domain layer aggregate root
+- Domain Event: a domain layer event type
+- Policy: an application layer orchestration class (Policy) that reacts to a domain event
+- Read Model: an application layer data class that is updated by some system (this could be infrastructure or application layer projection)
+
 ## Domain Layer Invariants (DO NOT VIOLATE)
 
 1. Domain code MUST NOT perform I/O, read environment variables, sample clocks/randomness, or initiate asynchronous external work.
@@ -61,3 +104,6 @@ graph TD
 3. All externally initiated aggregate mutations MUST pass through the aggregate root.
 4. Reconstitution MUST NOT record or dispatch new business events.
 5. Domain events and entities MUST NOT become cross-context contracts.
+6. Public state changing methods on an aggregate MUST end with the raise of a domain event or a domain exception. Query methods MUST NOT raise events. If the specification does not specify a domain event, create a domain event for future use and raise it.
+7. Only public state changing methods on an aggregate root are allowed to raise domain events.
+

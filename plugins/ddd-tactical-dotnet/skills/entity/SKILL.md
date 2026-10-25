@@ -7,98 +7,14 @@ description: Build or refactor DDD entities in C# and .NET.
 
 This skill will help you implement the entity in C# and .NET.
 
-## Workflow
+## DDD Definition
 
-1. Use a typed ID that remains stable throughout the entity's lifecycle.
-2. Encapsulate state behind private setters or fields and expose read-only views of child collections.
-3. Implement documented domain transitions as methods. Keep creation and mutation of child entities internal to the owning aggregate boundary.
-4. Check invariants before changing state by calling intent-revealing static `Ensure...` methods in the owning aggregate's static assert class.
+An entity is a domain object that has a unique identity and a lifecycle. Entities are mutable and can change state over time, but their identity remains constant. They are used to model concepts in the domain that have a distinct identity and can be tracked throughout their lifecycle.
 
 ## Rules
 
-- Declare the entity and its typed ID in the same file.
-- Entities must make use of an entity base class.
-- Use classes for entities; record-generated value equality and copying do not represent entity identity.
-- Only aggregate roots should have repositories. Create and mutate child entities through their aggregate root.
+- Encapsulate state behind private setters or fields and expose read-only views of child collections.
+- Implement documented domain transitions as methods. Keep creation and mutation of child entities internal to the owning aggregate boundary.
+- Check invariants before changing state by calling intent-revealing `Ensure...` methods.
+- Make use of the common base classes for entities and entity IDs.
 - Use value objects for descriptive inputs and typed IDs for references to other aggregates.
-- When the code base contains multiple entities, use a base class or interface to share common behavior and enforce consistency.
-- Only the public methods of the aggregate root can raise domain events.
-- Name each static `Ensure...` method after the domain rule it enforces, such as `OrderAsserts.EnsureQuantityCanBeChanged(orderLine)`. It may delegate to a generic validation helper, but its name must explain the domain intent at the call site.
-- Put static `Ensure...` methods for domain rules shared by multiple aggregates in a shared static `DomainAsserts` class.
-- Create a private constructor without parameters for concrete entities to support ORM frameworks. Give abstract base entities a protected constructor without parameters.
-
-## Examples
-
-Example of a common entity implementation, using the shared IEntityId contract:
-
-```csharp
-#pragma warning disable S4035
-public abstract class Entity<TId> : IEquatable<Entity<TId>>
-    where TId : struct, IEntityId
-{
-    public TId Id { get; private set; }
-
-    protected Entity(TId id)
-    {
-        Id = id;
-    }
-
-    protected Entity() { }
-
-    public override bool Equals(object? obj)
-    {
-        if (obj is null)
-            return false;
-        if (ReferenceEquals(this, obj))
-            return true;
-        if (obj.GetType() != GetType())
-            return false;
-
-        return Equals((Entity<TId>)obj);
-    }
-
-    public bool Equals(Entity<TId>? other)
-    {
-        if (other is null)
-            return false;
-        if (ReferenceEquals(this, other))
-            return true;
-        if (other.GetType() != GetType())
-            return false;
-
-        // Optimized: Compare the primitive GUID values directly
-        return Id.Value.Equals(other.Id.Value);
-    }
-
-    public override int GetHashCode()
-    {
-        return Id.Value.GetHashCode();
-    }
-
-    public static bool operator ==(Entity<TId>? left, Entity<TId>? right)
-    {
-        if (left is null && right is null)
-            return true;
-        if (left is null || right is null)
-            return false;
-        return left.Equals(right);
-    }
-
-    public static bool operator !=(Entity<TId>? left, Entity<TId>? right)
-    {
-        return !(left == right);
-    }
-
-    public virtual void ValidateState()
-    {
-        // This method can be overridden by derived classes to implement state validation logic
-    }
-}
-#pragma warning restore S4035
-```
-
-Example of a typed entity ID:
-
-```csharp
-public readonly record struct OrderLineId(Guid Value) : IEntityId;
-```

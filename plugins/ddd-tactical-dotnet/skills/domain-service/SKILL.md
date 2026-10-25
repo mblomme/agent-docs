@@ -5,6 +5,10 @@ description: Create or refactor stateless C# DDD domain services in a project-ag
 
 # DDD Domain Service
 
+## DDD Definition
+
+A domain service is a stateless service that encapsulates domain logic or calculations that do not naturally belong to a single aggregate or value object. Domain services are used when a domain rule or operation spans multiple concepts and cannot be easily placed on an aggregate, entity, or value object.
+
 ## Workflow
 
 1. First try to place the behavior on an aggregate, entity, or value object.
