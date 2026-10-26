@@ -13,8 +13,8 @@
       "description": "All skills bundled to do spec driven development with DDD with a hexagonal architecture."
     },
     {
-      "name": "ddd-tactical-dotnet",
-      "source": "./plugins/ddd-tactical-dotnet",
+      "name": "ddd-hexagonal",
+      "source": "./plugins/ddd-hexagonal",
       "description": "Build and refactor tactical DDD aggregates, repositories, entities, value objects, domain services, domain events, and aggregate factories in C# and .NET."
     }
   ]

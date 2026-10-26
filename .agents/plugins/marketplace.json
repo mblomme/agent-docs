@@ -17,10 +17,10 @@
       "category": "Developer Tools"
     },
     {
-      "name": "ddd-tactical-dotnet",
+      "name": "ddd-hexagonal",
       "source": {
         "source": "local",
-        "path": "./plugins/ddd-tactical-dotnet"
+        "path": "./plugins/ddd-hexagonal"
       },
       "policy": {
         "installation": "AVAILABLE",

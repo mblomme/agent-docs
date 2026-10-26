@@ -14,7 +14,7 @@ It's just a dump store for my brain farts.
         - doc-messaging-requirements
         - doc-persistence-requirements
 
-- ddd-tactical-dotnet
+- ddd-hexagonal
     - skills
         - tactical-pattern1
         - tactical-pattern2
