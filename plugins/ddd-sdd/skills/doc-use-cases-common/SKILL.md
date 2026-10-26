@@ -1,6 +1,6 @@
 ---
 name: doc-use-cases-common
-description: Distill common command use cases, including aggregate creation, from product aggregate and bounded context specifications into _common-use-cases.md using doc-use-case and shared typical-flow references. Update specification indexes without generating code.
+description: Distill common command use cases, including aggregate creation, from product aggregate and bounded context specifications into _common-use-cases.md using doc-use-case and typical flows documented in the same file. Update specification indexes without generating code.
 ---
 
 # Common use case specifications
@@ -40,23 +40,32 @@ Create or update exactly one `_common-use-cases.md` in the resolved application
 folder. Group entries by bounded context and aggregate, with a stable heading for
 each use case. Adapt the base template to record:
 
-- Use case name, actors, and goal.
+- An explicit **Use Case Name** property for every entry, even when its heading
+  already includes the name. Use a self-descriptive, action-oriented PascalCase
+  name starting with a verb, such as `MarkAllTasksAsDone` or `CreateTask`.
+  Express the user's intended action using the product's domain vocabulary;
+  avoid vague names such as `Process` or `Update` without an object.
+- Actors and goal.
 - Input fields and their mapping to documented aggregate operation parameters,
   including the aggregate identifier for an existing aggregate.
 - Target aggregate and constructor, factory, or state-changing method, with a
   link to its specification.
 - Orchestration preconditions and postconditions, applicable exceptions, and
   return information: normally void, an ID, or the bare minimum needed by callers.
-- A **Typical flow** link to the applicable existing-aggregate or creation
-  section of the skill's reference. Do not include normal or alternative flow
-  steps in this file.
+- A **Typical flow** property linking to the applicable shared flow section
+  within `_common-use-cases.md`, for example
+  `[Existing aggregate](#existing-aggregate)` or
+  `[Aggregate creation](#aggregate-creation)`.
 
-Read [references/typical-flow.md](references/typical-flow.md) before assigning
-flows. Resolve its actual location in the installed skill and generate links
-relative to the output document, including the section anchor. Do not assume
-the skill is inside the target repository or copy the reference into the product
-specification. These links depend on the installed skill remaining available;
-report this dependency with the resulting document.
+Read [references/typical-flow.md](references/typical-flow.md) and document its
+flows directly in a shared **Typical flows** section near the start of
+`_common-use-cases.md`, before the use case entries. Include both **Existing
+aggregate** and **Aggregate creation** subsections with their full ordered steps
+and the reference's authorization, domain-rule, and failure/completion guidance.
+Keep this documentation self-contained so readers do not need the installed
+skill. Each entry refers to its applicable local flow; do not repeat the steps
+per use case. When updating an older document, replace links to the installed
+skill's flows with links to these local sections.
 
 Keep preconditions, postconditions, and exceptions at the application
 orchestration level. Business rules and invariant enforcement belong exclusively
@@ -79,10 +88,13 @@ Do not delete unrelated documentation or change dates merely because of a rerun.
   existing documentation and this file. Do not create extra nested indexes
   solely for this document or modify indexes outside the specification folder.
 - Verify all added or changed links, including typical-flow anchors. Confirm
-  that every common entry changes one aggregate root, contains no flow steps or
-  business-rule enforcement, and is not already specified elsewhere.
+  that the shared typical flows are fully documented in the file, every entry
+  has an action-oriented PascalCase **Use Case Name** property and a resolving
+  local **Typical flow** link, and flow steps are not repeated per entry.
+  Confirm each common entry changes one aggregate root, contains no business-rule
+  enforcement, and is not already specified elsewhere.
 - Report the output path, changed indexes, uncovered operations and missing
-  details, and the dependency on the installed typical-flow reference. Generate
+  details. Generate
   no separate use case files or implementation artifacts during this workflow.
 
 ## Rules
