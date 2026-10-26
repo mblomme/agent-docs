@@ -52,20 +52,7 @@ each use case. Adapt the base template to record:
   link to its specification.
 - Orchestration preconditions and postconditions, applicable exceptions, and
   return information: normally void, an ID, or the bare minimum needed by callers.
-- A **Typical flow** property linking to the applicable shared flow section
-  within `_common-use-cases.md`, for example
-  `[Existing aggregate](#existing-aggregate)` or
-  `[Aggregate creation](#aggregate-creation)`.
-
-Read [references/typical-flow.md](references/typical-flow.md) and document its
-flows directly in a shared **Typical flows** section near the start of
-`_common-use-cases.md`, before the use case entries. Include both **Existing
-aggregate** and **Aggregate creation** subsections with their full ordered steps
-and the reference's authorization, domain-rule, and failure/completion guidance.
-Keep this documentation self-contained so readers do not need the installed
-skill. Each entry refers to its applicable local flow; do not repeat the steps
-per use case. When updating an older document, replace links to the installed
-skill's flows with links to these local sections.
+- A **Flow** property including the typical flows as mentioned in `typical-flow.md`.
 
 Keep preconditions, postconditions, and exceptions at the application
 orchestration level. Business rules and invariant enforcement belong exclusively
