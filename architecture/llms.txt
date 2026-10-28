@@ -4,6 +4,7 @@
 
 ## Read First: Architecture and Topology Selection
 - [./00-topology-overview.md](./00-topology-overview.md): Architectural zones, source import matrix, and deployment topology selection — MUST read before creating, moving, or reviewing architectural components.
+- [./01-general-rules-and-principles.md](./01-general-rules-and-principles.md): General principles for all layers, MUST read when designing or implementing architectural components.
 
 ## Ports and adapters Specifications
 - [./core-rules/01-domain-layer.md](./core-rules/01-domain-layer.md): Aggregates, entities, value objects, domain services, and internal domain events — MUST read when implementing business behavior or persistence hydration.

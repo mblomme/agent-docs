@@ -33,11 +33,11 @@ Each aggregate has its own plural-named folder. Keep its root, owned entities, a
 ## Domain Layer: Tactical DDD Rules
 
 - **Aggregates:** Expose named command methods on aggregate roots. Keep child entity collections and mutation inaccessible to callers; root methods control invariant checks and event recording. Reference other aggregates by typed IDs, not live object references. Prefer one aggregate per consistency boundary; workflows spanning boundaries require an explicit application transaction or eventual consistency design.
-- **Entities:** Use private/protected construction where the language supports it, or equivalent encapsulation. `create(...)` validates a new entity; `reconstitute(...)` restores valid persisted state without creation events. Child creation and mutation occur through the root. Reject corrupt persisted state without replaying business actions.
+- **Entities:** Use private/protected construction where the language supports it, or equivalent encapsulation. `create(...)` validates a new entity. Child creation and mutation occur through the root.
 - **Value objects:** Model domain concepts such as email addresses, IDs, and money as immutable values with value equality and construction validation. Primitives remain appropriate inside value objects, for incidental values, and at DTO boundaries.
 - **Domain events:** Immutable, past-tense business facts such as `OrderPlacedEvent`. Roots collect events in memory. Domain objects never publish to brokers or invoke policies; the application controls transaction and dispatch timing. These event types are private to the bounded context.
 - **Domain services:** Pure business calculations that do not fit an entity or value object. They can use supplied domain objects and values, but cannot load aggregates or coordinate external calls.
-- **Repositories:** Provide a persistence-agnostic interface for aggregate reconstitution and storage. They are implemented in the infrastructure layer. A repository is a port interface that exceptionally is located in the domain because it's fundamental to the aggregate lifecyle.
+- **Repositories:** Provide a persistence-agnostic interface for aggregate retrieval and storage. They are implemented in the infrastructure layer. A repository is a port interface that exceptionally is located in the domain because it's fundamental to the aggregate lifecyle.
 
 ## Domain Layer: Source Dependency Matrix
 
@@ -102,8 +102,7 @@ In a ports-and-adapters architecture, the command-to-event flow is implemented a
 1. Domain code MUST NOT perform I/O, read environment variables, sample clocks/randomness, or initiate asynchronous external work.
 2. Domain code MUST NOT contain ORM, HTTP, serialization-framework, or dependency-injection annotations.
 3. All externally initiated aggregate mutations MUST pass through the aggregate root.
-4. Reconstitution MUST NOT record or dispatch new business events.
-5. Domain events and entities MUST NOT become cross-context contracts.
-6. Public state changing methods on an aggregate MUST end with the raise of a domain event or a domain exception. Query methods MUST NOT raise events. If the specification does not specify a domain event, create a domain event for future use and raise it.
-7. Only public state changing methods on an aggregate root are allowed to raise domain events.
+4. Domain events and entities MUST NOT become cross-context contracts.
+5. Public state changing methods on an aggregate MUST end with the raise of a domain event or a domain exception. Query methods MUST NOT raise events. If the specification does not specify a domain event, create a domain event for future use and raise it.
+6. Only public state changing methods on an aggregate root are allowed to raise domain events.
 

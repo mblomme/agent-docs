@@ -23,3 +23,4 @@ When asked to imagine a domain driven design solution, complete this bounded con
 
 - Only work in the specification folder.
 - Do not read or write any code in the src folder.
+- The file is created in domain specification folder

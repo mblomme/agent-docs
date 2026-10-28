@@ -17,7 +17,7 @@ A domain event is a discrete, immutable, and observable fact that has occurred i
 - Raise the event from the aggregates only.
 - Domain events are facts, not commands or integration messages.
 - Keep events immutable and free of transport, persistence, and serialization concerns.
-- Prefer typed IDs and value objects in event payloads.
+- Prefer value objects in event payloads.
 - Do not publish events, map broker messages, or perform side effects in the domain layer.
 - Avoid raising events from setters or external services that bypass aggregate behavior.
 

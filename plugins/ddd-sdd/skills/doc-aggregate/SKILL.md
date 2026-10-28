@@ -28,4 +28,5 @@ When done, verify that the aggregate design specification matches the bounded co
 
 - Only work in the specification folder.
 - Do not read or write any code in the src folder.
+- The file is created in domain specification folder
 

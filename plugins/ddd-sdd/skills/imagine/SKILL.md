@@ -40,3 +40,4 @@ The following information is required and blocking to create the domain specific
 - Only the core bounded context is created in the specification
 - The domain specification matches the provided prompt, documentation and project-brief. If it doesn't, ask for clarification in one concise question.
 - The ddd-sdd skills are used to create the specification.
+- Use the domain specification folder in the spec folder to create the domain specification documents.

@@ -34,7 +34,7 @@ Each adapter MUST live in its own subfolder; do not place adapter files directly
 
 Driving adapters parse and validate transport input, map it to application DTOs, invoke an injected driving interface, and translate results or errors into transport responses. Broker consumers map public integration events into local event DTOs. They must not instantiate or import concrete use cases.
 
-Driven adapters implement driven interfaces. Persistence adapters keep ORM models separate from domain aggregates with explicit `toDomain(record)` and `toPersistence(aggregate)` mappers. Hydration invokes reconstitution without generating new events. Database transactions implement the application unit-of-work contract, including repositories and outbox writers sharing one transaction.
+Driven adapters implement driven interfaces. Persistence adapters keep ORM models separate from domain aggregates.
 
 Adapters can contain technical decisions such as retries, serialization, and connection management. Business decisions, pricing, eligibility, and workflow selection belong inside the core. SDK request/response objects and database exceptions are mapped at the boundary.
 
@@ -60,7 +60,7 @@ An adapter may use its own implementation helpers, pure mappers, vendor clients,
 1. Adapters MUST translate formats and perform technical I/O without embedding business rules.
 2. Vendor types MUST NOT leak into application contracts or domain code.
 3. Infrastructure MUST NOT import concrete application implementations or main.
-4. Persistence MUST use explicit domain mapping and event-free reconstitution.
+4. Persistence MUST use explicit domain mapping.
 5. The relay MUST publish only committed records and preserve identity across retries.
 6. Consumers MUST tolerate duplicate delivery; nontransactional external effects need explicit idempotency or coordination.
 7. Adapters MUST NOT depend on or call other adapters, including through interfaces; application workflows coordinate their ports.
