@@ -12,6 +12,9 @@
     "entities",
     "value-objects",
     "domain-services",
-    "domain-events"
+    "domain-events",
+    "unit-tests",
+    "tdd",
+    "unit testing"
   ]
 }

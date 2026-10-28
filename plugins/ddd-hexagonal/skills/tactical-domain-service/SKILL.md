@@ -13,10 +13,11 @@ A domain service is a stateless service that encapsulates domain logic or calcul
 
 1. First try to place the behavior on an aggregate, entity, or value object.
 2. Use a domain service only when the rule truly spans multiple domain concepts or is awkward on a single model object.
-3. Keep the service stateless and name methods in domain language.
+3. The domain service is stateless and name methods in domain language.
 4. Depend only on domain concepts or domain-owned abstractions.
 5. Return domain values, booleans, or domain errors; do not coordinate application workflows.
-6. Test the rule with deterministic inputs and no external services.
+6. Test the rule with deterministic inputs and no external services
+7. The name of the domain services must end with the word Service.
 
 ## Rules
 

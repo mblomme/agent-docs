@@ -15,20 +15,25 @@ The domain layer makes use of pure Domain Driven Design as much as possible.
 
 ## Domain Layer: Directory Responsibilities
 
+Adhere to the following example directory structure as much as possible
+
 ```text
 Domain/
 ├── Orders/                         # One folder per aggregate, named in plural
 │   ├── Events/                     # Events owned by this aggregate
 │   ├── ValueObjects/               # Values owned by this aggregate
 │   ├── Order                       # Aggregate root
-│   ├── OrderRepository             # Optional domain-owned repository port
+│   ├── OrderRepository             # One repository interface per aggregate
 │   ├── OrderAsserts                # Aggregate invariant assertions
 │   ├── OrderLine                   # Aggregate-owned entity
 │   └── ...
-└── DomainServices                  # Pure operations without a natural entity owner
+├── Shared/                           # location for common base classes or interfaces
+└── CrossAggregates                  # All concepts that span multiple aggregates
+    ├── ValueObjects/                # If no single aggregate owns the value, put it here
+    └── Domain1Service1.cs           # Location of a pure domain service that spans multiple aggregates
 ```
 
-Each aggregate has its own plural-named folder. Keep its root, owned entities, assertions, and aggregate-specific types in that folder; put its events and value objects in the corresponding child folders. Domain services that do not belong to one aggregate live directly under `Domain/`. Use the language's normal file-naming convention. A repository interface may live beside its aggregate when it is fundamental to that aggregate; infrastructure provides its implementation.
+Each aggregate has its own plural-named folder. Keep its root, owned entities, assertions, and aggregate-specific types in that folder; put its events and value objects in the corresponding child folders. Domain services that do not belong to one aggregate live directly under `Domain/DomainServices`. Use the language's normal file-naming convention. A repository interface lives beside its aggregate; infrastructure provides its implementation.
 
 ## Domain Layer: Tactical DDD Rules
 
@@ -105,4 +110,3 @@ In a ports-and-adapters architecture, the command-to-event flow is implemented a
 4. Domain events and entities MUST NOT become cross-context contracts.
 5. Public state changing methods on an aggregate MUST end with the raise of a domain event or a domain exception. Query methods MUST NOT raise events. If the specification does not specify a domain event, create a domain event for future use and raise it.
 6. Only public state changing methods on an aggregate root are allowed to raise domain events.
-

@@ -9,16 +9,22 @@ description: Write or refactor domain-layer unit tests for DDD aggregates, domai
 
 The domain unit tests verifies the domain layer only in a BDD style.
 
-## Scope and workflow
+## Prerequisites
 
-Inspect the domain model and existing domain unit test project before editing.
+- Read the product specification to understand the domain model.
+- Read the technical specification to understand folder structure.
+- Read the DesignTests suite to discover the location of the tactical ddd patterns.
+
+## Scope and workflow
 
 Inspect the domain model specification folder to understand the required behavior and verification tests. Use the specification as the sole source of truth for required behavior. Do not infer requirements from existing code, existing tests, or examples.
 
 ## Type of testing
 
-Londen school of unit testing in a BDD style.
-That means that the unit tests are written in a Given-When-Then style, with a common DSL behind the test suite. Avoid technical details. The unit tests must be readable and understandable by a non-technical domain expert. That means that all arrange, asserts, method invocations and mocks must be hidden behind a DSL respecting the ubiquitous language. The language used in the unit tests are selfdescriptive. The test reads like a story agreed upon by the domain experts and the developers.
+Unit testing in BDD style.
+That means that the unit tests according to BDD, with a common DSL behind the test suite. Avoid technical details. The unit tests must be understandable by a non-technical domain expert. That means that all arrange, asserts, method invocations and mocks must be replaces by human readable alternative available a DSL respecting the ubiquitous language. 
+
+The unit tests reads like a sequence of steps written in the language of the domain experts and according to the ubiquitous language and builds up a story. Don't hide steps, just like a domain expert would not hide steps when explaining a process.
 
 ## Files and folders
 
@@ -56,7 +62,8 @@ The names are illustrative; create files only for domain types that exist and ne
 - Test the aggregate assert classes
 - Test the domain services
 - All domain layer unit test make use of the common DSL layer in `UnitTest/Domain/Dsl/` and the domain-specific test helpers, builders, and assert classes.
-- Only the domain layer is tested.
+- Only unit tests for the domain layer are written.
+
 
 ## Exclusions
 
