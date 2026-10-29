@@ -1,0 +1,17 @@
+{
+  "description": "Format, analyze, and test FocusFlow before completing a turn.",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "root=\"$PWD\"; while [ ! -f \"$root/.codex/hooks/qa.sh\" ] && [ \"$root\" != / ]; do root=$(dirname \"$root\"); done; bash \"$root/.codex/hooks/qa.sh\"",
+            "timeout": 600,
+            "statusMessage": "Formatting, checking analyzers, and running tests. BLOCKING: errors must be fixed before continuing."
+          }
+        ]
+      }
+    ]
+  }
+}

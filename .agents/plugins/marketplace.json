@@ -15,18 +15,6 @@
         "authentication": "ON_INSTALL"
       },
       "category": "Developer Tools"
-    },
-    {
-      "name": "ddd-hexagonal",
-      "source": {
-        "source": "local",
-        "path": "./plugins/ddd-hexagonal"
-      },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Developer Tools"
     }
   ]
 }

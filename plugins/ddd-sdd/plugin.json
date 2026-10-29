@@ -2,10 +2,10 @@
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "ddd-sdd",
   "version": "0.1.0",
-  "description": "All skills bundled to do spec driven development with DDD with a hexagonal architecture.",
+  "description": "Language-agnostic specification and implementation skills for DDD and hexagonal architecture.",
   "keywords": [
-    "dotnet",
-    "csharp",
+    "language-agnostic",
+    "hexagonal",
     "ddd",
     "aggregates",
     "repositories",

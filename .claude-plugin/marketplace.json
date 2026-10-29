@@ -10,12 +10,7 @@
     {
       "name": "ddd-sdd",
       "source": "./plugins/ddd-sdd",
-      "description": "All skills bundled to do spec driven development with DDD with a hexagonal architecture."
-    },
-    {
-      "name": "ddd-hexagonal",
-      "source": "./plugins/ddd-hexagonal",
-      "description": "Build and refactor tactical DDD aggregates, repositories, entities, value objects, domain services, domain events, and aggregate factories in C# and .NET."
+      "description": "Language-agnostic specification and implementation skills for DDD and hexagonal architecture."
     }
   ]
 }
