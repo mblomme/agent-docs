@@ -17,7 +17,7 @@ A domain service is a stateless service that encapsulates domain logic or calcul
 4. Depend only on domain concepts or domain-owned abstractions.
 5. Return domain values, booleans, or domain errors; do not coordinate application workflows.
 6. Test the rule with deterministic inputs and no external services
-7. The name of the domain services must end with the word Service.
+7. The name of a domain service class and file must end with the word Service.
 
 ## Rules
 

@@ -14,3 +14,4 @@ Avoid premature abstraction. Abstract only when there is a clear need for it. Ne
 
 The inside should be designed and implemented first, technical details and concerns should be addressed in the infrastructure layer as much as possible. The inside layers are product and ubuiquitous language first and easy to understand by developers or product owners. Implementing the inside first helps to avoid technical debt and complexity and focuses on the core domain and business value.
 
+JOEHOIE

@@ -33,7 +33,7 @@ Domain/
     └── Domain1Service1.cs           # Location of a pure domain service that spans multiple aggregates
 ```
 
-Each aggregate has its own plural-named folder. Keep its root, owned entities, assertions, and aggregate-specific types in that folder; put its events and value objects in the corresponding child folders. Domain services that do not belong to one aggregate live directly under `Domain/DomainServices`. Use the language's normal file-naming convention. A repository interface lives beside its aggregate; infrastructure provides its implementation.
+Each aggregate has its own plural-named folder. Keep its root, owned entities, assertions, and aggregate-specific types in that folder; put its events and value objects in the corresponding child folders. Domain services that do not belong to one aggregate live directly under `Domain/CrossAggregates`. Use the language's normal file-naming convention. A repository interface lives beside its aggregate; infrastructure provides its implementation.
 
 ## Domain Layer: Tactical DDD Rules
 
