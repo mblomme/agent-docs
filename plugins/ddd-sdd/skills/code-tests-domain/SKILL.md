@@ -31,7 +31,7 @@ The unit tests reads like a sequence of steps written in the language of the dom
 
 ## Files and folders
 
-- The DSL layer is implemented in `UnitTest/Domain/Dsl/` and is shared across all domain unit tests. It contains the domain-specific test helpers, including the Given-When-Then DSL, the aggregate builders, and the domain assert classes.
+- The DSL layer is implemented in `UnitTests/Domain/Dsl/` and is shared across all domain unit tests. It contains the domain-specific test helpers, including the Given-When-Then DSL, the aggregate builders, and the domain assert classes.
 - Put all domain unit tests in `UnitTests/Domain/`, relative to the existing test project layout. If the unit test project is named with a prefix, such as `Sales.UnitTests`, use its `Domain/` folder rather than creating a second test project.
 - Bundle tests for each aggregate in `Domain/<AggregateName>/`.
 - Use one separate `<AggregateName>Tests` file per aggregate. Keep all tests for that aggregate in that file.
@@ -44,18 +44,20 @@ Example layout:
 ```text
 Some.Prefix.UnitTests/
 └── Domain/
+    ├── Dsl/
+    ├── DomainServices/
+    │   ├── OrderPricingServiceTests.file-extension
+    │   └── CurrencyConversionServiceTests.file-extension
     ├── Order/
     │   ├── OrderTests.file-extension
-    │   ├── OrderPricingServiceTests.file-extension
     │   └── OrderAssertsTests.file-extension
     └── Shared/
-        ├── CurrencyConversionServiceTests.file-extension
         ├── MoneyAssertsTests.file-extension
         └── Mocks/
             └── ExchangeRateProviderMock.file-extension
 ```
 
-The names are illustrative; create files only for domain types that exist and need coverage. An assert class means production domain logic, not a test assertion library or a test-only assertion helper.
+The names are illustrative; create test files only for domain types that exist and need coverage, and DSL files as needed to support those tests. An assert class means production domain logic, not a test assertion library or a test-only assertion helper.
 
 ## Rules
 
@@ -66,7 +68,7 @@ The names are illustrative; create files only for domain types that exist and ne
 - Test the aggregates
 - Test the aggregate assert classes
 - Test the domain services
-- All domain layer unit test make use of the common DSL layer in `UnitTest/Domain/Dsl/` and the domain-specific test helpers, builders, and assert classes.
+- All domain layer unit test make use of the common DSL layer in `UnitTests/Domain/Dsl/` and the domain-specific test helpers, builders, and assert classes.
 - Only unit tests for the domain layer are written.
 
 ## BDD rules and best practices

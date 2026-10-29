@@ -13,19 +13,18 @@ Imagine a domain driven design analysis for the backend side of the system based
 - The product-brief document is available in the product specification folder.
 - The repository can be built and run with the provided technology stack.
 
-## Required information
+## Extra information
+The following information is optional but can help to create a better domain specification:
+- The company name (optional)
 
-The following information is required and blocking to create the domain specification:
-
-- The bounded context name (it's mostly the app name )
-- The company name
-- The technology stack
-- The topology
+The following information is needed to create the domain specification:
+- The bounded context name (required, it's mostly the app name )
+- The technology stack (required)
+- The topology (required)
 
 ## Steps
 
 - Verify the pre-requisites are met and required information is available. If not, ask for it in simple multiple choice questions.
-- Use the `code-bootstrap` skill to fully scaffold the project with the provided information.
 - As an expert in strategic and tactical domain driven design, do a careful analysis and create in the spec folder the specification for the domain only. Limit yourself to the domain, don't imagine the application layer, the adapters or the infrastructure. Use the available ddd-sdd skills to create the specification.
 - Limit yourself to the core domain bounded context. Do not imagine any other bounded contexts. They will be created in other repositories. By seperate teams.
 - Create the domain specification documents.

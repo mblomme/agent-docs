@@ -19,7 +19,7 @@ Application/
 ├── Policies/           # Event-triggered follow-up workflows
 └── Contracts/
     ├── Driving/        # Application interfaces and command/query/event DTOs
-    └── Driven/         # Repository, read model, transaction, clock, and gateway ports
+    └── Driven/         # Read model, transaction, gateway ports and other driven interfaces
 ```
 
 Directory names start with a capital letter. Place each use case directly under `Application/` in its own file, named with the action verb (for example, `CreateOrder`). Do not add a `Use-Cases/` subfolder. Use the language's normal file-naming convention.

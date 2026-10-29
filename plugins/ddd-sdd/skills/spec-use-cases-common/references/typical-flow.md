@@ -30,5 +30,4 @@ perform it after fetching and before invoking the state-changing operation.
 
 Creation does not fetch a preexisting aggregate or apply its not-found branch.
 Neither flow completes the unit of work successfully when authorization,
-loading, domain invocation, or persistence fails. Describe only documented
-exception contracts; do not invent retry, transaction, or compensation policies.
+loading, domain invocation, or persistence fails. Describe only documented behavior.

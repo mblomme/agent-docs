@@ -1,6 +1,6 @@
 ---
 name: spec-directory
-description: This skill creates a `spec/` folder at the target repository root and copies or downloads the complete architecture directory and its contents into `spec/architecture/`, preserving relative paths and dotfiles. It does not copy repository metadata such as `.git/`. If source and destination are the same directory, it uses the existing copy. It never overwrites conflicting existing files without user guidance.
+description: This skill creates a `spec/` folder at the target repository root and copies or downloads the complete architecture directory and its contents into `spec/technical/architecture/`, preserving relative paths and dotfiles. It does not copy repository metadata such as `.git/`. If source and destination are the same directory, it uses the existing copy. It never overwrites conflicting existing files without user guidance.
 ---
 
 # Spec Directory
@@ -24,7 +24,7 @@ Create a `spec/` folder based on the structure below and populate the file `spec
     - llms.txt // The entry point for all design information.
 ```
 
-The file `spec/llms.txt` is the entry point for all design information. It contains a list of all architecture documents, their relative paths, and their dependencies.
+The file `spec/llms.txt` is the entry point for specification information. It contains a list and description of the first level entries of the spec folder.
 
 ## llms.txt contents
 

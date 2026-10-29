@@ -25,8 +25,7 @@ Only update the target project's specification folder; do not generate code.
 - Inventory documented aggregate creation operations and public state-changing
   methods. Derive use cases from documented intent, inputs, and operations; do
   not invent aggregate APIs, actors, authorization policies, or business behavior.
-- A common use case changes exactly one aggregate root and fits one of the
-  [typical flows](references/typical-flow.md). Include creation through a
+- A common use case changes exactly one aggregate root (except bulk operation on the same aggregate type) and fits one of the [typical flows](references/typical-flow.md). Include creation through a
   documented constructor or factory. Exclude queries and operations requiring
   nonstandard orchestration or changes to multiple aggregate roots.
 - Compare each candidate with use cases anywhere else in the product
@@ -87,5 +86,5 @@ Do not delete unrelated documentation or change dates merely because of a rerun.
 ## Rules
 - This skill does not generate code or implementation artifacts. It only updates the specification.
 - Check that all public state-changing operations on aggregates are covered by a use case, either in this file or elsewhere in the specification.
-- Only one aggregate root change per use case unless it's a bulk operation.
+- Only one aggregate root change per use case. The only exception is a bulk operation on the same type of aggregat.
 - Only aggregate state changes are use cases; queries and multi-aggregate operations are not.

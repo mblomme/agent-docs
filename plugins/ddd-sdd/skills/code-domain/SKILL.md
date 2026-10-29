@@ -9,7 +9,7 @@ Follow the target project's programming language, toolchain, and conventions.
 Express these object-oriented design rules using the language's supported
 constructs; do not assume a particular framework, SDK, or test library.
 
-Implement the domain layer in a TDD manner. First create the complete domain unit test suite based on the specification, then implement the domain layer to make the tests pass. The specification in `spec/` is the sole source of truth for required behavior.
+Implement the domain layer in a TDD manner. First create the complete domain unit test suite based on the specification, then implement the domain layer to make the tests pass. The specification in `spec/` is the sole source of truth for required behavior unless it's for creating extra domain events.
 
 ## Pre-requisites
 

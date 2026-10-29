@@ -13,7 +13,7 @@ summary: Defines architectural zones, source dependencies, and deployment topolo
 
 Each bounded context contains `domain` (business behavior with DDD) and `application` (orchestration and ports) on the inside
 
-The inside has no third-party runtime dependencies: language features and standard-library pure data utilities are allowed. Database, network, filesystem, environment, real-time clock, and random-source access belong outside and reach application code through ports.
+The inside has no third-party runtime dependencies: language features and standard-library pure data utilities are allowed. Database, network, filesystem, environment belong outside and reach application code through ports.
 
 ### Outside: Infrastructure and Main
  `infrastructure` (frameworks, libraries and I/O adapters) is on the outside. `main` is the composition root, not a business layer. It constructs and connects the objects and manages process lifecycle.

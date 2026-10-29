@@ -26,6 +26,6 @@ A domain service is a stateless service that encapsulates domain logic or calcul
 ## Rules
 
 - Domain services express domain decisions, not use case orchestration.
-- Do not inject application ports, logging, configuration, clocks from infrastructure, or repositories unless the repository interface is domain-owned and the rule genuinely needs it.
+- Do not inject application ports, logging, configuration, or repositories.
 - Prefer pure functions when possible.
 - Keep side effects inside aggregate behavior, not hidden in services.

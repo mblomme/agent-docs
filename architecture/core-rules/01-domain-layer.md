@@ -33,7 +33,7 @@ Domain/
     └── Domain1Service1.cs           # Location of a pure domain service that spans multiple aggregates
 ```
 
-Each aggregate has its own plural-named folder. Keep its root, owned entities, assertions, and aggregate-specific types in that folder; put its events and value objects in the corresponding child folders. Domain services that do not belong to one aggregate live directly under `Domain/CrossAggregates`. Use the language's normal file-naming convention. A repository interface lives beside its aggregate; infrastructure provides its implementation.
+Each aggregate has its own plural-named folder. Keep its root, owned entities, assertions, and aggregate-specific types in that folder; put its events and value objects in the corresponding child folders. Domain services that do not belong to one aggregate live directly under `Domain/CrossAggregates`. Use the language's normal file-naming convention. A repository interface lives in a seperate file beside its aggregate; infrastructure provides its implementation.
 
 ## Domain Layer: Tactical DDD Rules
 
@@ -104,7 +104,7 @@ In a ports-and-adapters architecture, the command-to-event flow is implemented a
 
 ## Domain Layer Invariants (DO NOT VIOLATE)
 
-1. Domain code MUST NOT perform I/O, read environment variables, sample clocks/randomness, or initiate asynchronous external work.
+1. Domain code MUST NOT perform I/O, read environment variables or initiate asynchronous external work.
 2. Domain code MUST NOT contain ORM, HTTP, serialization-framework, or dependency-injection annotations.
 3. All externally initiated aggregate mutations MUST pass through the aggregate root.
 4. Domain events and entities MUST NOT become cross-context contracts.

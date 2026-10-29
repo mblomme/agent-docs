@@ -21,4 +21,4 @@ A repository is a domain-layer abstraction that provides access to aggregate roo
 - Define only the methods the domain or application needs to load, add, save, or remove aggregate roots.
 - Use typed IDs and domain concepts in signatures.
 - Repositories belong to aggregate roots only, not child entities or value objects.
-- Repository interfaces are ports, but they are the domain-layer exception: place aggregate repository interfaces in the Domain layer, not in Application contracts.
+- Repository interfaces are ports, but they are the domain-layer exception: place aggregate repository interfaces in the Domain layer besides it's aggregate, not in Application contracts.
