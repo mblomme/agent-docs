@@ -1,6 +1,6 @@
 ---
 name: spec-architecture-update
-description: Replace a target project's spec/architecture folder with the canonical architecture documentation from agent-docs and update spec/llms.txt.
+description: Replace a target project's spec/technical/architecture folder with the canonical architecture documentation from agent-docs and update spec/llms.txt.
 ---
 
 # Update Architecture Docs

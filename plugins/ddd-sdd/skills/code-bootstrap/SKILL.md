@@ -55,40 +55,7 @@ opinionated code style checks?" Pass the answer to the technology-specific
 skill, which invokes the matching `install-code-style` skill when selected.
 Do not install these optional checks when the answer is No.
 
-## 3. Obtain and read the architecture
-
-1. Use the `spec-directory` skill to create a `spec/` folder.
-2. Locate the source architecture directory supplied by the user.When no source is provided, use the `architecture/` directory from
-   `https://github.com/mblomme/agent-docs`.
-3. Place the contents of the architecture directory into the appropriate sub folder of `spec/`, preserving
-   relative paths and dotfiles.
-4. Read `spec/technical/llms.txt` as the entry point for all architecture
-   information. Read the topology overview, the selected topology
-   specification, and the core layer rules. Resolve each `depends_on` path
-   relative to its declaring document and read dependencies before dependents.
-
-## 4. Scaffold the project through the technology-specific skill
-
-Preserve existing work. Inspect the target repository before generating files,
-reuse compatible configuration, and report conflicts before overwriting.
-Use the selected language's compatible installed compiler, runtime, build tools,
-and package manager. Respect repository version pins and lockfiles; report
-unavailable required tooling rather than silently changing the language or stack.
-
-- Create root-level `src/` and `tests/` directories.
-- Execute the loaded technology-specific skill with the established inputs and
-  code-style choice. Follow its bundled references and the repository's
-  compatible language, package, module, naming, and test conventions.
-- Follow the topology specification mapped in the input table above.
-- Follow the documented layer responsibilities conventions in the `core-rules` folder.
-- For the layer `application` you can already scaffold the the empty directories as mentioned in the documentation of the application layer.
-- For the layers `main` and `infrastructure` create
-  other folders only when they have a current purpose.
-  An empty Infrastructure project is acceptable when no adapters are
-  required; do not populate it with speculative folder trees. In ´main´ an empty `modules/` folder is acceptable when no setup files are required; do not populate it with speculative folder trees.
-- Don't create a README.md
-
-## 5. Write a simple root AGENTS.md
+## 3. Write a simple root AGENTS.md
 
 Generate a short `AGENTS.md` at the target repository root with the actual
 values and commands for the generated project. If one already exists, preserve
@@ -109,6 +76,40 @@ Include only:
 
 Keep detailed design and architecture rules in `spec/`; link to them instead
 of duplicating them in `AGENTS.md`.
+
+## 4. Obtain and read the architecture
+
+1. Use the `spec-directory` skill to create a `spec/` folder.
+2. Locate the source architecture directory supplied by the user.When no source is provided, use the `architecture/` directory from
+   `https://github.com/mblomme/agent-docs`.
+3. Place the contents of the architecture directory into the appropriate sub folder of `spec/`, preserving
+   relative paths and dotfiles.
+4. Read `spec/technical/llms.txt` as the entry point for all architecture
+   information. Read the topology overview, the selected topology
+   specification, and the core layer rules. Resolve each `depends_on` path
+   relative to its declaring document and read dependencies before dependents.
+
+## 5. Scaffold the project through the technology-specific skill
+
+Preserve existing work. Inspect the target repository before generating files,
+reuse compatible configuration, and report conflicts before overwriting.
+Use the selected language's compatible installed compiler, runtime, build tools,
+and package manager. Respect repository version pins and lockfiles; report
+unavailable required tooling rather than silently changing the language or stack.
+
+- Create root-level `src/` and `tests/` directories.
+- Execute the loaded technology-specific skill with the established inputs and
+  code-style choice. Follow its bundled references and the repository's
+  compatible language, package, module, naming, and test conventions.
+- Follow the topology specification mapped in the input table above.
+- Follow the documented layer responsibilities conventions in the `core-rules` folder.
+- For the layer `application` you can already scaffold the the empty directories as mentioned in the documentation of the application layer.
+- For the layers `main` and `infrastructure` create
+  other folders only when they have a current purpose.
+  An empty Infrastructure project is acceptable when no adapters are
+  required; do not populate it with speculative folder trees. In ´main´ an empty `modules/` folder is acceptable when no setup files are required; do not populate it with speculative folder trees.
+- Don't create a README.md
+
 
 ## 6. Verify and report
 

@@ -22,7 +22,7 @@ Read [references/section-guide.md](references/use-case-template.md) for a descri
 
 1. Create a use case design document in the `spec/product/application/` folder of the target project. The filename should be derived from the use case name, following the same rules as for aggregate design documents (see below). If the file already exists, leave it untouched and report its path. Otherwise, create the file according to the format described above.
 
-2. If the file is new (created in step 1), read the available information in the `spec/` folder and the user's input, fill in the sections of the use case design document.
+2. If the file is new (created in step 1), read the available information in the `spec/` folder and the user's input, fill in the sections of the use case design document. If no usefull information is available, leave the sections empty.
 
 ## Rules
 
