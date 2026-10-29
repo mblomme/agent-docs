@@ -104,7 +104,7 @@ In a ports-and-adapters architecture, the command-to-event flow is implemented a
 
 ## Domain Layer Invariants (DO NOT VIOLATE)
 
-1. Domain code MUST NOT perform I/O, read environment variables or initiate asynchronous external work.
+1. Domain code MUST NOT perform I/O, read environment variables or initiate asynchronous external work except for date/datetime variables.
 2. Domain code MUST NOT contain ORM, HTTP, serialization-framework, or dependency-injection annotations.
 3. All externally initiated aggregate mutations MUST pass through the aggregate root.
 4. Domain events and entities MUST NOT become cross-context contracts.

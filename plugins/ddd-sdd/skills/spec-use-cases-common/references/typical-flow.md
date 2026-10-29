@@ -1,7 +1,7 @@
 # Typical use case flows
 
 These flows describe application orchestration. Domain operations enforce all
-business rules. Each use case changes exactly one aggregate root. Authorization
+business rules. Each use case changes exactly one aggregate root (except for bulk operation on the same aggregate type). Authorization
 is optional and follows the documented policy; if it needs aggregate data,
 perform it after fetching and before invoking the state-changing operation.
 

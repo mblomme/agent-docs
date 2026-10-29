@@ -7,7 +7,7 @@ description: Replace a target project's spec/architecture folder with the canoni
 
 ## Description
 
-Use this skill to refresh an existing project's architecture reference from this repository, `mblomme/agent-docs`. This is a full replacement: obsolete files and local edits inside `spec/architecture/` are removed. Keep product specifications and other project documentation intact.
+Use this skill to refresh an existing project's architecture reference from this repository, `mblomme/agent-docs`. This is a full replacement: obsolete files and local edits inside `spec/technical/architecture/` are removed. Keep product specifications and other project documentation intact.
 
 Resolve the target repository from the user's request or workspace. Run the bundled script using its absolute path, replacing `<skill-directory>` and `<target-repository>`:
 
@@ -22,7 +22,7 @@ The default destination is `spec/technical/architecture/`. Use `--architecture-d
 
 The script stages the complete source directory, including dotfiles and `architecture/llms.txt`, before replacing `spec/technical/architecture/`. It excludes `.git` metadata and refreshes a managed architecture section in `spec/llms.txt`, listing the current Markdown documents and linking the canonical architecture index. Other index content is preserved. An absent `spec/` or index is created.
 
-After running the script, review `spec/llms.txt`. Reconcile any older architecture entries outside the managed section: remove obsolete or duplicate entries and correct stale architecture links while retaining company information, bounded context information, product links, and other unrelated content. Use `spec/architecture/llms.txt` and the copied documents as the source of descriptions and dependency rules; do not invent them or change the canonical files.
+After running the script, review `spec/llms.txt`. Reconcile any older architecture entries outside the managed section: remove obsolete or duplicate entries and correct stale architecture links while retaining company information, bounded context information, product links, and other unrelated content. Use `spec/technical/architecture/llms.txt` and the copied documents as the source of descriptions and dependency rules; do not invent them or change the canonical files.
 
 Verify that the replacement matches the source, that obsolete files are gone, and that architecture links in the specification index resolve. Report the source used, the updated paths, and any links elsewhere in the project that still refer to removed documents.
 

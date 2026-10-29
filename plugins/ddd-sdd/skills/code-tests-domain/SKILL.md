@@ -20,7 +20,7 @@ The domain unit tests verifies the domain layer only in a BDD style.
 
 ## Scope and workflow
 
-Inspect the domain model specification folder to understand the required behavior and verification tests. Use the specification as the sole source of truth for required behavior. Do not infer requirements from existing code, existing tests, or examples.
+Inspect the domain model specification folder to understand the required behavior and verification tests. Use the specification as the sole source of truth for required behavior. Do not infer requirements from existing code, existing tests, or examples. Extra domain events in the code could be possible and are allowed.
 
 ## Type of testing
 
