@@ -117,9 +117,10 @@ of duplicating them in `AGENTS.md`.
 Use the technology-specific skill's checks and returned commands for stack
 verification; retain ownership of the overall checks and report below.
 
-- Restore tools and packages, build or type-check as appropriate, run the tests, and check
-  formatting using the generated configuration. Report any unavailable tools,
-  restore failures, or checks that could not be completed accurately.
+- Restore packages, build or type-check as appropriate, and run the tests.
+  Restore local tools only when configured and check formatting only when a
+  formatter is configured, using the configured versions. Report any unavailable
+  tools, restore failures, or checks that could not be completed accurately.
 - Confirm `AGENTS.md` links and commands resolve to the generated files.
 - Confirm omitted company names leave no stray separators, project or module dependencies follow
   the architecture, and no unrequested adapter folders or template examples

@@ -1,7 +1,8 @@
 # ddd-sdd .NET plugin
 
-A .NET bootstrap skill, code-style skill, and quality-check hook for agents. The
-language-neutral DDD/SDD skills are in [`ddd-sdd`](../ddd-sdd/).
+A .NET bootstrap skill, optional formatter and code-style skills, and
+quality-check hook for agents. The language-neutral DDD/SDD skills are in
+[`ddd-sdd`](../ddd-sdd/).
 
 ## Install
 
@@ -26,11 +27,22 @@ scaffolding and verification. If a required technology-specific skill is
 unavailable, the main workflow stops before generating files.
 
 The .NET skill must read its bundled [.NET reference](./skills/code-bootstrap-dotnet/references/dotnet.md).
-That reference defines project boundaries, naming, CSharpier, xUnit, and
+That reference defines project boundaries, naming, xUnit, and
 ArchUnitNET requirements. The main workflow retains ownership of root
-`AGENTS.md` and the final report. CSharpier is part of the baseline; the
-analyzer/code-style installation below is optional. Enabling hooks is separate
-from bootstrapping.
+`AGENTS.md` and the final report. The .NET bootstrap asks "Want to install the
+CSharpier formatter?" with Yes/No options, independently of the optional
+analyzer/code-style choice. Enabling hooks is separate from bootstrapping.
+
+## Formatter
+
+Use the [`install-formatter`](./skills/install-formatter/SKILL.md) skill to install
+or reuse repository-local CSharpier in the root `dotnet-tools.json` and configure
+the root `.csharpierrc` with `printWidth: 80`. It preserves other tool entries,
+version pins, and unrelated formatter settings, and verifies the configuration
+and tool restoration. Choosing No during bootstrap skips installation and
+preserves existing formatter configuration. Bootstrap checks formatting only
+when a formatter is configured. The quality-check hook below still requires
+CSharpier when enabled.
 
 ## Code style
 

@@ -14,15 +14,11 @@ The architecture documents are mostly technology agnostic. This documents makes 
   - CompanyName is optional
 - Dotnet projects in the tests folder follow the same the same naming convention as above.
 - Run the application by running the Main project.
-- Use CSharpier with `.csharpierrc` and `printWidth: 80`.
-- Add `dotnet-tools.json` at the repository root.
 - Use xUnit for unit tests and ArchUnitNET for architecture tests.
 
 ## Check
 
 - Verify that all dotnet projects in the `src` and `tests` folder are named correctly according to the naming convention.
-- Verify that the `dotnet-tools.json` file is present at the repository root.
-- Verify that the `.csharpierrc` file is present at the repository root and has `printWidth: 80`.
 - Verify that the `Main` project is a Web project and the application entrypoint.
 - Verify that the `Main` project can run the application.
 - Verify that xUnit is used for unit tests and ArchUnitNET is used for architecture tests.
