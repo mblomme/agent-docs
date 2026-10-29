@@ -19,8 +19,7 @@ Business rules and invariants must exclusively belong to the domain model.
 - A normal command use case changes one aggregate root. Handle bulk operations
   only when specified, with explicit atomicity and failure semantics. Do not
   silently widen a common use case into a multi-aggregate workflow. Read-only
-  operations belong to queries; cross-context workflows require an explicit
-  coordination design.
+  operations belong to queries; cross use case workflows are not handled here.
 - Do not invent domain operations, business behavior, authorization policies,
   retry policies, or exception contracts to fill specification gaps.
 

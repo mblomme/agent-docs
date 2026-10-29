@@ -17,9 +17,10 @@ python3 <skill-directory>/scripts/update_architecture_docs.py <target-repository
 
 By default the script clones `https://github.com/mblomme/agent-docs.git` into a temporary directory and uses its default branch. To select a particular local checkout, add `--source-repo <agent-docs-checkout>`. Python 3 is required; fetching also requires Git and repository access. If fetching fails, report the failure or use an available checkout of this repository; do not substitute another architecture source.
 
-The default destination is `spec/technical/architecture/` when it already exists, otherwise `spec/architecture/`. Use `--architecture-dir architecture` or `--architecture-dir technical/architecture` to explicitly choose. Report the actual destination and flag any duplicate architecture directory.
+The default destination is `spec/technical/architecture/`. Use `--architecture-dir architecture` or `--architecture-dir technical/architecture` to explicitly choose. Report the actual destination and flag any duplicate architecture directory.
 
-The script stages the complete source directory, including dotfiles and `architecture/llms.txt`, before replacing `spec/architecture/`. It excludes `.git` metadata and refreshes a managed architecture section in `spec/llms.txt`, listing the current Markdown documents and linking the canonical architecture index. Other index content is preserved. An absent `spec/` or index is created.
+
+The script stages the complete source directory, including dotfiles and `architecture/llms.txt`, before replacing `spec/technical/architecture/`. It excludes `.git` metadata and refreshes a managed architecture section in `spec/llms.txt`, listing the current Markdown documents and linking the canonical architecture index. Other index content is preserved. An absent `spec/` or index is created.
 
 After running the script, review `spec/llms.txt`. Reconcile any older architecture entries outside the managed section: remove obsolete or duplicate entries and correct stale architecture links while retaining company information, bounded context information, product links, and other unrelated content. Use `spec/architecture/llms.txt` and the copied documents as the source of descriptions and dependency rules; do not invent them or change the canonical files.
 

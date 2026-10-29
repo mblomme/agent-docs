@@ -77,7 +77,7 @@ Do not delete unrelated documentation or change dates merely because of a rerun.
   that the shared typical flows are fully documented in the file, every entry
   has an action-oriented PascalCase **Use Case Name** property and a resolving
   local **Typical flow** link, and flow steps are not repeated per entry.
-  Confirm each common entry changes one aggregate root, contains no business-rule
+  Confirm each common entry changes one aggregate root (bulk is the exception), contains no business-rule
   enforcement, and is not already specified elsewhere.
 - Report the output path, changed indexes, uncovered operations and missing
   details. Generate

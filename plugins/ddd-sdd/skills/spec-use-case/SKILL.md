@@ -1,6 +1,6 @@
 ---
 name: spec-use-case
-description: Scaffold or fill in a Markdown use case (usecase) design document.
+description: Scaffold and optionally fill in a new Markdown use case (usecase) design document.
 ---
 
 # Use case design

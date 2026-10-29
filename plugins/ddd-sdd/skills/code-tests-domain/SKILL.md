@@ -57,7 +57,7 @@ Some.Prefix.UnitTests/
             └── ExchangeRateProviderMock.file-extension
 ```
 
-The names are illustrative; create test files only for domain types that exist and need coverage, and DSL files as needed to support those tests. An assert class means production domain logic, not a test assertion library or a test-only assertion helper.
+The names are illustrative; create test files and DSL files as needed to support those tests. An assert class means production domain logic, not a test assertion library or a test-only assertion helper.
 
 ## Rules
 

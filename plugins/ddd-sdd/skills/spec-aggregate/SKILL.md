@@ -5,7 +5,7 @@ description: Scaffold or fill in a Markdown Aggregate Design document for a name
 
 # Aggregate Design
 
-This skill creates or updates a specification document for an aggregate.
+This skill creates and optionally fills in this specification document for an aggregate.
 
 Example: “Use spec-aggregate for PurchaseOrder in the Purchasing bounded context.”
 
