@@ -1,0 +1,46 @@
+[*.cs]
+# Shared is an intentional namespace convention in this repository.
+dotnet_diagnostic.CA1716.severity = none
+
+# Application code: no explicit ConfigureAwait requirement.
+dotnet_diagnostic.CA2007.severity = none
+
+# Event-style method names are allowed throughout the repository.
+dotnet_diagnostic.CA1030.severity = none
+
+# Marker interfaces are an intentional architecture convention.
+dotnet_diagnostic.CA1040.severity = none
+
+# Check keyword conflicts on other symbols, but allow namespace names like Shared.
+dotnet_code_quality.CA1716.analyzed_symbol_kinds = NamedType, Method, Property, Parameter
+
+# Use primary constructors
+dotnet_diagnostic.IDE0290.severity = warning
+
+# Domain events use our own dispatch mechanism.
+[src/*.Domain/**/*.cs]
+dotnet_diagnostic.CA1030.severity = none
+
+[tests/**/*.cs]
+# Descriptive test names may contain underscores.
+dotnet_diagnostic.CA1707.severity = none
+
+# Allow nested fixtures and public test types.
+dotnet_diagnostic.CA1034.severity = none
+dotnet_diagnostic.CA1515.severity = none
+
+[src/**/*.cs]
+# Report unnecessary imports in both the editor and builds.
+dotnet_diagnostic.IDE0005.severity = warning
+
+# Make eligible private fields readonly.
+dotnet_diagnostic.IDE0044.severity = warning
+
+# Remove unused private members.
+dotnet_diagnostic.IDE0051.severity = warning
+
+# Remove private members whose values are never read.
+dotnet_diagnostic.IDE0052.severity = warning
+
+# Suggest removing unused parameters.
+dotnet_diagnostic.IDE0060.severity = suggestion

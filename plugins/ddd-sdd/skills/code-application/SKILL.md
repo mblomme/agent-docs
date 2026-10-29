@@ -112,7 +112,7 @@ domain patch. Report an absent domain layer as an unmet prerequisite and use
 - Write a complete application unit test suite for the in-scope application
   behavior, with expectations derived from the specification independently of
   current implementation output. Use compatible repository test tooling and
-  the application unit testing skill when available.
+  the `code-tests-application` skill when available.
 - Execute real application code and real domain objects. Mock injected ports and
   collaborators; return real aggregates from repository mocks. When a unit of
   work takes a callback, execute and await it in the mock so orchestration and

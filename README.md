@@ -13,8 +13,8 @@ not an application or a library to add to your project.
 | Resource | Purpose |
 | --- | --- |
 | [`ddd-sdd`](./plugins/ddd-sdd/) | Language-agnostic skills for creating specifications, scaffolding a project, and implementing and testing domain and application code. |
-| [`ddd-sdd-dotnet`](./plugins/ddd-sdd-dotnet/) | Optional agent hooks, skills and mcps suitable for .NET & C# |
-| [`architecture/`](./architecture/) | Canonical architecture rules, deployment topologies, and technology-specific guidance. |
+| [`ddd-sdd-dotnet`](./plugins/ddd-sdd-dotnet/) | .NET bootstrap skill and optional code-style configuration and quality-check hooks |
+| [`architecture/`](./architecture/) | Language-agnostic architecture rules and deployment topologies. |
 
 ## Get started
 
@@ -35,7 +35,7 @@ distribution; there is no build step.
    target, and enable the plugin.
 3. Open your target project and ask the agent to use the appropriate skill.
 
-To install the optional .NET hook, repeat these steps with
+For .NET bootstrapping, also install the .NET plugin by repeating these steps with
 `plugins/ddd-sdd-dotnet` and follow its [installation and trust instructions](./plugins/ddd-sdd-dotnet/README.md).
 See the [VS Code plugin reference](https://code.visualstudio.com/docs/agents/reference/agent-plugin-reference)
 for client details.
@@ -49,8 +49,9 @@ codex plugin marketplace add .
 ```
 
 In the ChatGPT desktop app's Plugins Directory, select the **Agent Docs**
-marketplace and install `ddd-sdd`. Install `ddd-sdd-dotnet` separately only if
-you want its .NET checks, and review and trust its hooks first. See the
+marketplace and install `ddd-sdd`. Also install `ddd-sdd-dotnet` for .NET
+bootstrapping; it includes optional code-style configuration and quality checks.
+Review and trust its hooks before enabling them. See the
 [OpenAI plugin packaging guide](https://developers.openai.com/plugins/build/plugins)
 and the [.NET plugin README](./plugins/ddd-sdd-dotnet/README.md).
 
@@ -66,7 +67,10 @@ it to use the relevant skills. For example:
 
 1. **Bootstrap:** Ask for `code-bootstrap` to set up a project. Provide the
    bounded context name, technology, and one topology: `single-service`,
-   `modular-monolith`, or `microservice`. A company name is optional.
+   `modular-monolith`, or `microservice`. A company name is optional. The main
+   skill requires a matching technology-specific bootstrap skill. For C#/.NET,
+   it loads [`code-bootstrap-dotnet`](./plugins/ddd-sdd-dotnet/skills/code-bootstrap-dotnet/SKILL.md).
+   If the required skill is unavailable, bootstrapping stops before generating files.
 2. **Describe the product:** Use `spec-product-brief` to create a product brief
    from your requirements.
 3. **Design:** Use `spec-imagine` to develop a domain specification from the
@@ -87,8 +91,10 @@ code.
 The [architecture index](./architecture/llms.txt) identifies the documents
 to read and their dependencies. It covers the core domain, application,
 infrastructure, and composition-root rules; single-service, modular-monolith,
-and microservice topologies; and a [.NET technology supplement](./architecture/technology-stacks/dotnet.md).
-The core rules are language-agnostic.
+and microservice topologies. These documents are language agnostic.
+.NET bootstrap guidance lives in the
+[.NET skill's bundled reference](./plugins/ddd-sdd-dotnet/skills/code-bootstrap-dotnet/references/dotnet.md),
+which the technology-specific skill must read.
 
 To refresh an existing project's copy, use `spec-architecture-update`. This
 replaces the selected architecture directory, **removing local edits and

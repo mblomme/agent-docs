@@ -28,7 +28,7 @@ The common aggregate base class provides a concurrency token but the concurrency
 - Create domain events for all documented domain events for that aggregate.
 - DomainEvents are raised by a common base class method.
 - Check invariants in public methods before changing state by calling intent-revealing `Ensure...` methods.
-- When using entities, make sure they make sure they are built according to the entity skill.
+- When using entities, make sure they make sure they are built according to the `code-entity` skill.
 - Mutate child entities or collections directly only through the aggregate root.
 - Avoid cross-aggregate invariants that require multiple roots to be loaded for one rule.
 - Use value objects for descriptive inputs and typed IDs for references.

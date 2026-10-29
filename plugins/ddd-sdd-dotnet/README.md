@@ -1,6 +1,6 @@
 # ddd-sdd .NET plugin
 
-A .NET quality-check hook for Agents. The
+A .NET bootstrap skill, code-style skill, and quality-check hook for agents. The
 language-neutral DDD/SDD skills are in [`ddd-sdd`](../ddd-sdd/).
 
 ## Install
@@ -15,6 +15,33 @@ Review and trust the scripts and hook configuration before enabling them.
   [VS Code plugin reference](https://code.visualstudio.com/docs/agents/reference/agent-plugin-reference).
 
 The checked-in plugin is the distribution; no build is needed.
+
+## Bootstrap
+
+Install this plugin alongside `ddd-sdd` for C#/.NET bootstrapping. Start with
+[`code-bootstrap`](../ddd-sdd/skills/code-bootstrap/SKILL.md); it collects the
+inputs and code-style choice, sets up specifications, and loads
+[`code-bootstrap-dotnet`](./skills/code-bootstrap-dotnet/SKILL.md) for .NET
+scaffolding and verification. If a required technology-specific skill is
+unavailable, the main workflow stops before generating files.
+
+The .NET skill must read its bundled [.NET reference](./skills/code-bootstrap-dotnet/references/dotnet.md).
+That reference defines project boundaries, naming, CSharpier, xUnit, and
+ArchUnitNET requirements. The main workflow retains ownership of root
+`AGENTS.md` and the final report. CSharpier is part of the baseline; the
+analyzer/code-style installation below is optional. Enabling hooks is separate
+from bootstrapping.
+
+## Code style
+
+Use the [`install-code-style`](./skills/install-code-style/SKILL.md) skill to configure
+the target repository's root `.editorconfig` and `Directory.Build.props` from
+the skill's references. It preserves unrelated settings and can be run
+repeatedly. For an existing props file it retains `NoWarn` entries, adds the
+required build properties, and reports conflicting values or imports rather
+than overwriting them. Later project-level settings or imports and more-specific
+`.editorconfig` files can still override the root configuration. The skill
+requires Python 3.9+.
 
 ## Checks
 

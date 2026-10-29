@@ -38,7 +38,7 @@ Server/
 │   ├── Infrastructure/
 │   └── Main/
 └── tests/
-    ├── UnitTests/
-    ├── IntegrationTests/
-    └── ArchTests/
+    ├── UnitTests/      # tests for domain, application, and infrastructure layers
+    ├── DesignTests/    # general design tests for DDD and ports & adapters
+    └── ArchitectureTests/      # general architecture tests for DDD and ports & adapters
 ```

@@ -1,0 +1,10 @@
+<Project>
+  <PropertyGroup>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <!-- IDE0005 requires documentation generation during builds. -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <!-- Documentation generation does not require documenting every public member. -->
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+  </PropertyGroup>
+</Project>

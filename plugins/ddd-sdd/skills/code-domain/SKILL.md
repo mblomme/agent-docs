@@ -14,13 +14,13 @@ Implement the domain layer in a TDD manner. First create the complete domain uni
 ## Pre-requisites
 
 - Read the whole product specification.
-- Use the domain unit testing skill.
+- Use the `code-tests-domain` skill.
 
 ## Steps
 
 1. Build a traceability table with a specification path and section or rule ID, required behavior to keep track of your progress.
 2. Mark in this table what is already tested and implemented.
-3. Write the domain unit test first based on the specification by using unit tests domain skill. Don't implement any code yet, the goals is to make the failing unit tests pass after all the unit tests are written.
+3. Write the domain unit test first based on the specification by using the `code-tests-domain` skill. Don't implement any code yet, the goals is to make the failing unit tests pass after all the unit tests are written.
 4. Import statement should not be added while writing the unit tests, they should be added when implementing the domain layer to make the unit tests pass. Because you cannot guess the location of the domain layer classes and methods before implementing them.
 5. Implement the domain layer according to the specification and the unit tests.
 6. On contradictions between the code and the unit tests suite, the specification is the source of truth. Correct the code or the unit tests to match the specification.
@@ -36,4 +36,3 @@ This skill is only done when all of the following are true:
 - No verification rules remain untested.
 - The domain layer unit test suite is complete and all tests pass.
 - Only the domain layer is implemented or contains changes.
-
