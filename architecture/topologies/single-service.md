@@ -28,7 +28,7 @@ This diagram shows runtime communication, not source imports. A database is opti
 
 ## Single Service: Language-Agnostic Server Layout
 
-Names without extensions describe file roles; use the language's normal file and package conventions. Create only the components the service needs, rather than empty folders for every possible pattern.
+Names without extensions describe file roles.
 
 ```text
 Server/
@@ -38,7 +38,7 @@ Server/
 │   ├── Infrastructure/
 │   └── Main/
 └── tests/
-    ├── UnitTests/      # tests for domain, application, and infrastructure layers
-    ├── DesignTests/    # general design tests for DDD and ports & adapters
-    └── ArchitectureTests/      # general architecture tests for DDD and ports & adapters
+    ├── UnitTests/          # tests for domain, application, and infrastructure layers
+    ├── DesignTests/        # general design tests for DDD and ports & adapters
+    └── ArchitectureTests/  # general architecture tests for DDD and ports & adapters
 ```

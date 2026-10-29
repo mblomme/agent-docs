@@ -84,7 +84,7 @@ of duplicating them in `AGENTS.md`.
    `https://github.com/mblomme/agent-docs`.
 3. Place the contents of the architecture directory into the appropriate sub folder of `spec/`, preserving
    relative paths and dotfiles.
-4. Read `spec/technical/llms.txt` as the entry point for all architecture
+4. Read `spec/technical/llms.txt` as the entry point for all technical specification
    information. Read the topology overview, the selected topology
    specification, and the core layer rules. Resolve each `depends_on` path
    relative to its declaring document and read dependencies before dependents.

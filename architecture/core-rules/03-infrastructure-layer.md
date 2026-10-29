@@ -49,6 +49,7 @@ An adapter may use its own implementation helpers, pure mappers, vendor clients,
 | Dependency | Allowed |
 | :--- | :---: |
 | Same-context domain for persistence mapping | YES |
+| Repository interfaces for persistence | YES |
 | Application driving/driven contracts | YES |
 | Adapter-local helpers, pure mappers, vendor libraries, and shared technical resources | YES |
 | Another driving or driven adapter, directly or through an interface | NO |

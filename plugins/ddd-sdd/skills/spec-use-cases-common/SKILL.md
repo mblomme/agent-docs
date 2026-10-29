@@ -87,4 +87,4 @@ Do not delete unrelated documentation or change dates merely because of a rerun.
 - This skill does not generate code or implementation artifacts. It only updates the specification.
 - Check that all public state-changing operations on aggregates are covered by a use case, either in this file or elsewhere in the specification.
 - Only one aggregate root change per use case. The only exception is a bulk operation on the same type of aggregat.
-- Only aggregate state changes are use cases; queries and multi-aggregate operations are not.
+- Only use cases that change the domain are use cases; queries and multi-aggregate operations are not.
