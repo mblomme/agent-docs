@@ -2,6 +2,7 @@
 """Replace spec/architecture from agent-docs and refresh its index section."""
 
 import argparse
+import hashlib
 from contextlib import contextmanager
 from pathlib import Path
 import shutil
@@ -63,6 +64,22 @@ def updated_index(existing, section):
     return prefix + "\n\n" + section + "\n"
 
 
+def file_hashes(directory):
+    """Capture content before replacement, excluding repository metadata."""
+    return {
+        path.relative_to(directory).as_posix(): hashlib.sha256(path.read_bytes()).hexdigest()
+        for path in directory.rglob("*")
+        if path.is_file() and ".git" not in path.relative_to(directory).parts
+    }
+
+
+def git_value(repository, *arguments):
+    result = subprocess.run(
+        ["git", "-C", str(repository), *arguments], capture_output=True, text=True,
+    )
+    return result.stdout.strip() if result.returncode == 0 else "unknown"
+
+
 def update(target, repository, architecture_directory=None):
     source = (repository / "architecture").resolve()
     if not (source / "llms.txt").is_file():
@@ -84,6 +101,8 @@ def update(target, repository, architecture_directory=None):
     if (source == resolved_destination or source in resolved_destination.parents
             or resolved_destination in source.parents):
         raise ValueError("Source and destination architecture directories must not overlap")
+    before = file_hashes(destination)
+    expected = file_hashes(source)
     existing = index.read_text(encoding="utf-8") if index.exists() else ""
     content = updated_index(existing, index_section(source, relative_destination))
     spec.mkdir(exist_ok=True)
@@ -109,18 +128,29 @@ def update(target, repository, architecture_directory=None):
             if had_destination:
                 backup.rename(destination)
             raise
+    if file_hashes(destination) != expected:
+        raise ValueError("Installed architecture files do not match the source snapshot")
+    added = sorted(expected.keys() - before.keys())
+    removed = sorted(before.keys() - expected.keys())
+    changed = sorted(name for name in before.keys() & expected.keys()
+                     if before[name] != expected[name])
+    unchanged = sorted(name for name in before.keys() & expected.keys()
+                       if before[name] == expected[name])
     print(f"Architecture source: {source}")
-    revision = subprocess.run(
-        ["git", "-C", str(repository), "rev-parse", "HEAD"],
-        capture_output=True, text=True,
-    )
-    if revision.returncode == 0:
-        print(f"Source checkout HEAD: {revision.stdout.strip()}")
+    print(f"Source origin: {git_value(repository, 'remote', 'get-url', 'origin')}")
+    print(f"Source branch: {git_value(repository, 'branch', '--show-current') or '(detached HEAD)'}")
+    print(f"Source checkout HEAD: {git_value(repository, 'rev-parse', 'HEAD')}")
+    print(f"Source architecture working-tree status: {git_value(repository, 'status', '--porcelain', '--', 'architecture') or 'clean'}")
+    for label, paths in (("Added", added), ("Changed", changed),
+                         ("Removed", removed), ("Unchanged", unchanged)):
+        print(f"{label} ({len(paths)}): {', '.join(paths) or '(none)'}")
+    if not (added or changed or removed) and content == existing:
+        print("Already up to date.")
     if architecture_directory is None and relative_destination == "technical/architecture" \
             and (spec / "architecture").exists():
         print("Also present: spec/architecture; reconcile this duplicate after reviewing project links.")
-    print(f"Replaced: {destination}")
-    print(f"Updated: {index}")
+    print(f"Verified destination: {destination}")
+    print(f"Index {'changed' if content != existing else 'unchanged'}: {index}")
     print("Review older architecture entries outside the managed index section.")
 
 
