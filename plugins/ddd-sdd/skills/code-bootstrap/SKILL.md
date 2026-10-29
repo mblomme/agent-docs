@@ -58,9 +58,7 @@ Do not install these optional checks when the answer is No.
 ## 3. Obtain and read the architecture
 
 1. Use the `spec-directory` skill to create a `spec/` folder.
-2. Locate the source architecture directory supplied by the user or available
-   in a local agent-docs checkout. Resolve relative paths against the declaring
-   file. When no source is provided, use the `architecture/` directory from
+2. Locate the source architecture directory supplied by the user.When no source is provided, use the `architecture/` directory from
    `https://github.com/mblomme/agent-docs`.
 3. Place the contents of the architecture directory into the appropriate sub folder of `spec/`, preserving
    relative paths and dotfiles.
