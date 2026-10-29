@@ -13,7 +13,6 @@ The domain unit tests verifies the domain layer only in a BDD style.
 
 - Read the product specification to understand the domain model.
 - Read the technical specification to understand folder structure.
-- Read the DesignTests suite to discover the location of the tactical ddd patterns.
 
 ## Scope and workflow
 
@@ -22,7 +21,7 @@ Inspect the domain model specification folder to understand the required behavio
 ## Type of testing
 
 Unit testing in BDD style.
-That means that the unit tests according to BDD, with a common DSL behind the test suite. Avoid technical details. The unit tests must be understandable by a non-technical domain expert. That means that all arrange, asserts, method invocations and mocks must be replaces by human readable alternative available a DSL respecting the ubiquitous language. 
+That means that the unit tests are according to BDD, with a common DSL behind the test suite. Avoid technical details. The unit tests must be understandable by a non-technical domain expert. That means that all technical details must be replaced by human readable alternative available a DSL respecting the ubiquitous language. 
 
 The unit tests reads like a sequence of steps written in the language of the domain experts and according to the ubiquitous language and builds up a story. Don't hide steps, just like a domain expert would not hide steps when explaining a process.
 
@@ -57,12 +56,51 @@ The names are illustrative; create files only for domain types that exist and ne
 ## Rules
 
 - Londen school of unit testing
+- Comply to the BDD rules and best practices below
+- Add a white space between the logical sections of the unit test to improve readability.
 - Readable for non-technical domain experts
 - Test the aggregates
 - Test the aggregate assert classes
 - Test the domain services
 - All domain layer unit test make use of the common DSL layer in `UnitTest/Domain/Dsl/` and the domain-specific test helpers, builders, and assert classes.
 - Only unit tests for the domain layer are written.
+
+## BDD rules and best practices
+
+1. Start with behavior
+- Describe **what the system should do and why it matters**, not how it is implemented.
+- Use the domain’s shared language consistently.
+
+2. Write focused scenarios
+- Give each scenario a descriptive, business-oriented name.
+- Cover one behavior or business rule per scenario.
+- Make the actor, relevant context, and expected outcome clear.
+- Keep scenarios independent and understandable without reading helper code.
+
+3. Use Given–When–Then
+- **Given:** Establish the relevant starting context.
+- **When:** Describe the action or event being examined.
+- **Then:** Verify the observable outcome.
+- Use **And** for additional context or related outcomes when it improves readability.
+- Avoid putting the behavior under test in a `Given` merely to make the scenario fit the format.
+
+4. Handle AND and OR deliberately
+- **AND:** Multiple conditions or outcomes can belong in one scenario when they describe the same behavior.
+- **OR:** Usually give each meaningful alternative its own scenario, so failures clearly identify which case broke.
+- For combined rules, include relevant success cases, failure cases, and boundaries—not necessarily every possible combination.
+- Multiple assertions are acceptable when they verify related consequences of the same action.
+
+5. Make the outcome specific
+- Check observable state or results, including that rejected actions leave important state unchanged.
+- Verify the relevant reason for rejection where it is a stable part of the domain contract; a generic exception alone may not prove the intended rule caused it.
+- Avoid assertions about incidental implementation details.
+
+6. Keep scenarios useful and reliable
+- Use concrete, meaningful examples, including boundary values.
+- Keep helpers readable; don’t hide important business conditions inside them.
+- Make tests deterministic and isolated, including control over time and external dependencies.
+- Use parameterized examples when they express the same rule clearly; avoid combining unrelated behaviors for brevity.
+- BDD does **not** require Gherkin or a particular framework. Given–When–Then is a communication aid, not the goal itself.
 
 
 ## Exclusions

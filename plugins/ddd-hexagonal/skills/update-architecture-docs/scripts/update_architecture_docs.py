@@ -19,10 +19,6 @@ def source_repository(explicit):
     if explicit is not None:
         yield explicit.resolve()
         return
-    for parent in Path(__file__).resolve().parents:
-        if (parent / "architecture/llms.txt").is_file():
-            yield parent
-            return
     with tempfile.TemporaryDirectory(prefix="agent-docs-source-") as temporary:
         checkout = Path(temporary) / "agent-docs"
         subprocess.run(
@@ -32,7 +28,7 @@ def source_repository(explicit):
         yield checkout
 
 
-def index_section(source):
+def index_section(source, architecture_path):
     lines = [
         START,
         "## Architecture",
@@ -40,7 +36,7 @@ def index_section(source):
         "Canonical Ports & Adapters (Hexagonal) and DDD architecture reference.",
         "Read the architecture index for document selection and dependency rules.",
         "",
-        "- [Architecture index](architecture/llms.txt)",
+        f"- [Architecture index]({architecture_path}/llms.txt)",
     ]
     for document in sorted(source.rglob("*.md")):
         title = next(
@@ -50,7 +46,7 @@ def index_section(source):
         )
         title = title.replace("[", r"\[").replace("]", r"\]")
         relative = document.relative_to(source).as_posix()
-        lines.append(f"- [{title}](<architecture/{relative}>)")
+        lines.append(f"- [{title}](<{architecture_path}/{relative}>)")
     return "\n".join([*lines, END])
 
 
@@ -67,17 +63,21 @@ def updated_index(existing, section):
     return prefix + "\n\n" + section + "\n"
 
 
-def update(target, repository):
+def update(target, repository, architecture_directory=None):
     source = (repository / "architecture").resolve()
     if not (source / "llms.txt").is_file():
         raise ValueError(f"Source architecture index is missing: {source / 'llms.txt'}")
     if not target.is_dir():
         raise ValueError(f"Target repository directory does not exist: {target}")
     spec = target / "spec"
-    destination = spec / "architecture"
+    relative_destination = architecture_directory or (
+        "technical/architecture" if (spec / "technical/architecture").exists()
+        else "architecture"
+    )
+    destination = spec / relative_destination
     index = spec / "llms.txt"
-    if any(path.is_symlink() for path in (spec, destination, index)):
-        raise ValueError("spec, spec/architecture, and spec/llms.txt must not be symlinks")
+    if any(path.is_symlink() for path in (spec, destination.parent, destination, index)):
+        raise ValueError("Architecture destination and index paths must not be symlinks")
     if destination.exists() and not destination.is_dir():
         raise ValueError(f"Architecture destination is not a directory: {destination}")
     resolved_destination = destination.resolve()
@@ -85,8 +85,9 @@ def update(target, repository):
             or resolved_destination in source.parents):
         raise ValueError("Source and destination architecture directories must not overlap")
     existing = index.read_text(encoding="utf-8") if index.exists() else ""
-    content = updated_index(existing, index_section(source))
+    content = updated_index(existing, index_section(source, relative_destination))
     spec.mkdir(exist_ok=True)
+    destination.parent.mkdir(exist_ok=True)
     # Stage on the same filesystem so directory renames are atomic. Retain the old
     # tree until both the replacement and the index have been installed.
     with tempfile.TemporaryDirectory(prefix=".architecture-update-", dir=spec) as temporary:
@@ -109,6 +110,15 @@ def update(target, repository):
                 backup.rename(destination)
             raise
     print(f"Architecture source: {source}")
+    revision = subprocess.run(
+        ["git", "-C", str(repository), "rev-parse", "HEAD"],
+        capture_output=True, text=True,
+    )
+    if revision.returncode == 0:
+        print(f"Source checkout HEAD: {revision.stdout.strip()}")
+    if architecture_directory is None and relative_destination == "technical/architecture" \
+            and (spec / "architecture").exists():
+        print("Also present: spec/architecture; reconcile this duplicate after reviewing project links.")
     print(f"Replaced: {destination}")
     print(f"Updated: {index}")
     print("Review older architecture entries outside the managed index section.")
@@ -118,10 +128,14 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("target_repository", type=Path)
     parser.add_argument("--source-repo", type=Path, help="Local agent-docs checkout")
+    parser.add_argument(
+        "--architecture-dir", choices=("architecture", "technical/architecture"),
+        help="Destination relative to spec (default: existing technical/architecture, otherwise architecture)",
+    )
     args = parser.parse_args()
     try:
         with source_repository(args.source_repo) as repository:
-            update(args.target_repository.resolve(), repository)
+            update(args.target_repository.resolve(), repository, args.architecture_dir)
     except (OSError, ValueError, subprocess.CalledProcessError) as error:
         parser.exit(1, f"Architecture update failed: {error}\n")
 
