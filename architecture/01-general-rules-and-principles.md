@@ -4,9 +4,6 @@ The following rules and principles apply to all layers of the architecture. They
 
 ## Premature optimization
 
-
-ZAKAMAKKA
-
 Avoid premature optimization. Optimize only when there is a clear performance problem, and only after measuring and analyzing the system. The measuring and analyzing should be explicitly documented or requested by the product owner. Do not optimize based on assumptions or guesses.
 
 ## Premature abstraction
