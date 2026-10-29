@@ -1,0 +1,12 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "ddd-sdd-dotnet",
+  "version": "0.1.0",
+  "description": ".NET specific DDD and specification-driven development.",
+  "keywords": ["dotnet", "ddd", "testing", "hooks", "hexagonal", "csharp"],
+  "extensions": {
+    "com.openai": {
+      "hooks": "./com.openai/hooks/hooks.json"
+    }
+  }
+}

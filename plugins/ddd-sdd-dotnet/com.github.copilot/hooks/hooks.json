@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "hooks": {
+    "agentStop": [
+      {
+        "type": "command",
+        "command": "python3 \"${PLUGIN_ROOT}/adapters/on_agent_stop.py\" copilot",
+        "timeoutSec": 600
+      }
+    ]
+  }
+}

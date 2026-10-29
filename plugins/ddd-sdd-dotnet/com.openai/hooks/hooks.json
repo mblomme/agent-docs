@@ -1,0 +1,17 @@
+{
+  "description": "Format, analyze, and test the target .NET repository before completing a turn.",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${PLUGIN_ROOT}/adapters/on_agent_stop.py\" codex",
+            "timeout": 600,
+            "statusMessage": "Formatting, checking analyzers, and running tests."
+          }
+        ]
+      }
+    ]
+  }
+}
