@@ -27,8 +27,7 @@ Domain/
 │   ├── OrderAsserts                # Aggregate invariant assertions
 │   ├── OrderLine                   # Aggregate-owned entity
 │   └── ...
-├── Shared/                           # location for common base classes or interfaces
-└── CrossAggregates                  # All concepts that span multiple aggregates
+└── CrossAggregates                  # All project specific concepts that span multiple aggregates
     ├── ValueObjects/                # If no single aggregate owns the value, put it here
     └── Domain1Service1.cs           # Location of a pure domain service that spans multiple aggregates
 ```

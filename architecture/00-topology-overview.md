@@ -13,7 +13,9 @@ summary: Defines architectural zones, source dependencies, and deployment topolo
 
 Each bounded context contains `domain` (business behavior with DDD) and `application` (orchestration and ports) on the inside
 
-The inside has no third-party runtime dependencies (except for date/datetime): language features and standard-library pure data utilities are allowed. Database, network, filesystem, environment belong outside and reach application code through ports.
+The inside has no third-party runtime dependencies (except for date/datetime ): language features and standard-library pure data utilities are allowed. Database, network, filesystem, environment belong outside and reach application code through ports.
+
+Technology specific tests determine which layers are allowed to import which libraries or concepts from the `/lib` folder.
 
 ### Outside: Infrastructure and Main
  `infrastructure` (frameworks, libraries and I/O adapters) is on the outside. `main` is the composition root, not a business layer. It constructs and connects the objects and manages process lifecycle.
@@ -23,6 +25,7 @@ The inside has no third-party runtime dependencies (except for date/datetime): l
 Use **driving** for application interfaces invoked by driving adapters, and **driven** for application interfaces that application workflows invoke and driven adapters implement. Keep these terms consistent across contracts, adapters, and setup.
 
 The arrows below represent source dependencies. A use case can call a driven port at runtime while a driven infrastructure adapter implements that port; this does not introduce an application import of infrastructure. Dependencies between business layers point inward. Construction dependencies originate in `main`.
+
 
 ```mermaid
 graph TD
