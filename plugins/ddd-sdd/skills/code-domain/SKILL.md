@@ -35,4 +35,4 @@ This skill is only done when all of the following are true:
 - The traceability table is complete and all rules are tested and implemented.
 - No verification rules remain untested.
 - The domain layer unit test suite is complete and all tests pass.
-- Only the domain layer is implemented or contains changes.
+- Only the domain layer is implemented or contains changes. Project agnostic abstractions are allowed to be added to the lib folder.
