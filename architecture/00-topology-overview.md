@@ -15,8 +15,6 @@ Each bounded context contains `domain` (business behavior with DDD) and `applica
 
 The inside has no third-party runtime dependencies (except for date/datetime ): language features and standard-library pure data utilities are allowed. Database, network, filesystem, environment belong outside and reach application code through ports.
 
-Technology specific tests determine which layers are allowed to import which libraries or concepts from the `/lib` folder.
-
 ### Outside: Infrastructure and Main
  `infrastructure` (frameworks, libraries and I/O adapters) is on the outside. `main` is the composition root, not a business layer. It constructs and connects the objects and manages process lifecycle.
 
@@ -72,3 +70,9 @@ The single-service topology provides the baseline client-server layout, request 
 4. Runtime invocation direction MUST NOT be mistaken for source dependency direction.
 5. A deployment topology MUST preserve bounded-context ownership and these inward dependency rules.
 6. Infrastructure adapters MUST NOT depend on one another; application workflows coordinate their operations through ports.
+
+## The overarching /lib general exception
+
+The following overrules all above:
+
+Each layer is allow to import it's project agnostic abstractions from the `lib` folder. What specific packages and librares from the /lib folder that are allowed to be imported by each layer is verified by technology specific unit tests. These tests are in the codebase not this documentation.q

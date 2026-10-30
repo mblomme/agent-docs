@@ -15,6 +15,7 @@ Implement the domain layer in a TDD manner. First create the complete domain uni
 
 - Read the whole product specification.
 - Use the `code-tests-domain` skill.
+- If no specific scope is given, implement the whole domain layer. If a specific scope is given, implement only the specified part of the domain layer.
 
 ## Steps
 
@@ -35,4 +36,4 @@ This skill is only done when all of the following are true:
 - The traceability table is complete and all rules are tested and implemented.
 - No verification rules remain untested.
 - The domain layer unit test suite is complete and all tests pass.
-- Only the domain layer is implemented or contains changes. Project agnostic abstractions are allowed to be added to the lib folder.
+- Only the domain layer is implemented or contains changes.

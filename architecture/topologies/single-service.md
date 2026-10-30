@@ -32,7 +32,7 @@ Names without extensions describe file roles.
 
 ```text
 Server/
-├── lib/                    # common project-agnostic libraries and abstractions, which layer can import which library is handled by technology specific tests.
+├── lib/                    # Project-agnostic libraries and abstractions, which layer can import which library is handled by technology specific tests.
 ├── src/
 │   ├── Domain/
 │   ├── Application/
@@ -43,4 +43,4 @@ Server/
     ├── DesignTests/        # general design tests for DDD and ports & adapters
     └── ArchitectureTests/  # general architecture tests for DDD and ports & adapters
 ```
-**lib/ dependency rule exception:** The `lib` folder is a special case. Technology-specific tests will verify which layers are allowed to import which libraries. These tests are in the codebase not this documentation.
+**The lib general exception**: see [00-topology-overview.md](./00-topology-overview.md) for details.
