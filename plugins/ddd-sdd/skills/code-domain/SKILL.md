@@ -11,10 +11,20 @@ constructs; do not assume a particular framework, SDK, or test library.
 
 Implement the domain layer in a TDD manner. First create the complete domain unit test suite based on the specification, then implement the domain layer to make the tests pass. The specification in `spec/` is the sole source of truth for required behavior unless it's for creating extra domain events.
 
+## Useful skills
+
+The following skills are useful for implementing the domain layer:
+
+- code-aggregate
+- code-entity
+- code-repository
+- code-domain-events
+- code-value-object
+- code-tests-domain
+
 ## Pre-requisites
 
 - Read the whole product specification.
-- Use the `code-tests-domain` skill.
 - If no specific scope is given, implement the whole domain layer. If a specific scope is given, implement only the specified part of the domain layer.
 
 ## Steps
@@ -29,11 +39,9 @@ Implement the domain layer in a TDD manner. First create the complete domain uni
 
 ## Done
 
-This skill is only done when all of the following are true:
+You are only done when all of the following are true:
 
+- Verify that all the created classes and methods are according to the rules of the relevant domain skills.
 - Verify the tracability table matches the domain model specification.
 - A carefull check is done to verify the domain model specification with the domain unit tests and the implemented domain layer.
-- The traceability table is complete and all rules are tested and implemented.
-- No verification rules remain untested.
-- The domain layer unit test suite is complete and all tests pass.
-- Only the domain layer is implemented or contains changes.
+- The traceability table is complete and all the rules are tested and implemented.
