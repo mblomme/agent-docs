@@ -57,8 +57,16 @@ requires Python 3.9+.
 
 ## Checks
 
-On each agent completion, the hook resolves the workspace to its Git root when
-possible, then runs:
+The Codex `PreToolUse` hook checks the first `apply_patch` in each session. It
+resolves the workspace to its Git root when possible and runs the checks below.
+It records a session marker in `/tmp` before running them. If they fail, the
+first edit is blocked and the agent asks for permission to continue; after the
+user approves, retrying `apply_patch` passes without rerunning the checks.
+Later edits in the same session also pass without checks. Other tools do not
+trigger this gate.
+
+The existing Codex `Stop` and Copilot `agentStop` hooks still run the same
+checks on each agent completion:
 
 ```sh
 dotnet tool restore --tool-manifest dotnet-tools.json
@@ -69,9 +77,9 @@ dotnet test ./SOLUTION --no-build -m:1
 ```
 
 `SOLUTION` must be the only `.sln` or `.slnx` at the repository root.
-**CSharpier modifies project files.** Checks run even when nothing has changed
-and fail if there is no solution or more than one, including in non-.NET
-repositories.
+**CSharpier modifies project files, including when run by the first-edit gate.**
+Completion checks run even when nothing has changed. Both hooks fail if there
+is no solution or more than one, including in non-.NET repositories.
 
 The target needs `dotnet`, its project's SDK and dependencies, a root
 `.editorconfig`, and a root `dotnet-tools.json` defining CSharpier. The hook
@@ -94,6 +102,7 @@ turns while the problem persists.
 ```sh
 python3 -m unittest discover -s plugins/ddd-sdd-dotnet/tests -v
 bash -n plugins/ddd-sdd-dotnet/scripts/quality_checks.sh
+bash -n plugins/ddd-sdd-dotnet/scripts/pre_quality_checks.sh
 ```
 
 ## Supported Agents

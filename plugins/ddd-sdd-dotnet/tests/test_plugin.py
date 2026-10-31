@@ -1,4 +1,5 @@
 import json
+import hashlib
 import os
 from pathlib import Path
 import shlex
@@ -91,6 +92,26 @@ class PluginTests(unittest.TestCase):
             check=True,
         )
         return json.loads(result.stdout)
+
+    def run_pre_hook(self, event, *, env=None, raw=None):
+        hook = json.loads((self.package / CLIENT_CONFIGS["codex"]["path"]).read_text())["hooks"]["PreToolUse"][0]
+        command = shlex.split(hook["hooks"][0]["command"].replace("${PLUGIN_ROOT}", str(self.package)))
+        result = subprocess.run(
+            command,
+            input=raw if raw is not None else json.dumps(event),
+            capture_output=True,
+            text=True,
+            env=env or self.env,
+            check=True,
+        )
+        return json.loads(result.stdout)
+
+    def pre_event(self, workspace, session_id):
+        return {"cwd": str(workspace), "session_id": session_id}
+
+    def clear_marker(self, session_id):
+        digest = hashlib.sha256(session_id.encode("utf-8")).hexdigest()
+        Path(f"/tmp/codex_quality_gate_{digest}.checked").unlink(missing_ok=True)
 
     @staticmethod
     def stop_event(workspace, **extra):
@@ -251,10 +272,80 @@ class PluginTests(unittest.TestCase):
             self.assertTrue((self.package / config["path"]).is_file())
         self.assertTrue((self.package / "scripts/quality_checks.sh").is_file())
         self.assertTrue((self.package / "adapters/on_agent_stop.py").is_file())
+        self.assertTrue((self.package / "scripts/pre_quality_checks.sh").is_file())
+        self.assertTrue((self.package / "adapters/on_pre_tool_use.py").is_file())
         self.assertTrue((self.package / "skills").is_dir())
         self.assertFalse((self.package / "io.github.mblomme").exists())
         self.assertFalse((self.package / ".claude-plugin").exists())
         self.assertFalse(any(path.is_symlink() for path in self.package.rglob("*")))
+
+    def test_pre_hook_registration_and_check_parity(self):
+        config = json.loads((self.package / CLIENT_CONFIGS["codex"]["path"]).read_text())
+        pre = config["hooks"]["PreToolUse"][0]
+        self.assertEqual(pre["matcher"], "apply_patch")
+        self.assertEqual(pre["hooks"][0]["timeout"], 600)
+        self.assertIn("Stop", config["hooks"])
+        workspace = self.create_workspace()
+        session_id = f"test-{self.base.name}-parity"
+        self.addCleanup(self.clear_marker, session_id)
+        self.assertEqual(self.run_pre_hook(self.pre_event(workspace, session_id)), {})
+        pre_calls = self.dotnet_calls()
+        self.assertEqual(len(pre_calls), 4)
+        self.assertEqual(self.run_hook("codex", self.stop_event(workspace)), {})
+        self.assertEqual(self.dotnet_calls()[4:], pre_calls)
+
+    def test_pre_hook_runs_once_per_session_and_retry_after_failure(self):
+        workspace = self.create_workspace()
+        failed_session = f"test-{self.base.name}-failed"
+        clean_session = f"test-{self.base.name}-clean"
+        self.addCleanup(self.clear_marker, failed_session)
+        self.addCleanup(self.clear_marker, clean_session)
+        failed_event = self.pre_event(workspace, failed_session)
+        response = self.run_pre_hook(failed_event, env=self.env | {"QA_TEST_FAIL": "tool restore"})
+        self.assertEqual(response["decision"], "block")
+        self.assertIn("permission", response["reason"])
+        self.assertIn("failure with", response["reason"])
+        self.assertEqual(self.run_pre_hook(failed_event), {})
+        self.assertEqual(len(self.dotnet_calls()), 1)
+        clean_event = self.pre_event(workspace, clean_session)
+        self.assertEqual(self.run_pre_hook(clean_event), {})
+        self.assertEqual(self.run_pre_hook(clean_event, env=self.env | {"QA_TEST_FAIL": "tool restore"}), {})
+        self.assertEqual(len(self.dotnet_calls()), 5)
+
+    def test_pre_hook_invalid_input_and_missing_requirements(self):
+        workspace = self.create_workspace()
+        for event, raw, expected in (
+            ({}, "{invalid", "Invalid hook JSON"),
+            ([], None, "JSON object"),
+            ({"cwd": str(workspace)}, None, "session_id"),
+            ({"cwd": "relative", "session_id": "bad"}, None, "absolute workspace"),
+        ):
+            response = self.run_pre_hook(event, raw=raw)
+            self.assertEqual(response["decision"], "block")
+            self.assertIn(expected, response["reason"])
+        (workspace / ".editorconfig").unlink()
+        session_id = f"test-{self.base.name}-missing"
+        self.addCleanup(self.clear_marker, session_id)
+        response = self.run_pre_hook(self.pre_event(workspace, session_id))
+        self.assertEqual(response["decision"], "block")
+        self.assertIn(".editorconfig", response["reason"])
+        self.assertEqual(self.dotnet_calls(), [])
+
+    def test_pre_hook_stops_at_each_failed_command(self):
+        failures = ("tool restore", "tool run", "build ./Example.slnx", "test ./Example.slnx")
+        for index, failing_command in enumerate(failures):
+            with self.subTest(command=failing_command):
+                workspace = self.create_workspace(f"pre-failure-{index}")
+                session_id = f"test-{self.base.name}-failure-{index}"
+                self.addCleanup(self.clear_marker, session_id)
+                before = len(self.dotnet_calls())
+                response = self.run_pre_hook(
+                    self.pre_event(workspace, session_id),
+                    env=self.env | {"QA_TEST_FAIL": failing_command},
+                )
+                self.assertEqual(response["decision"], "block")
+                self.assertIn('failure with "quotes"', response["reason"])
+                self.assertEqual(len(self.dotnet_calls()) - before, index + 1)
 
     def test_marketplace_sources(self):
         expected_plugins = {
