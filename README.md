@@ -30,6 +30,8 @@ distribution; there is no build step.
 
 ### VS Code Copilot
 
+These instructions are for the user level, not the workspace level.
+
 1. Run **Chat: Install Plugin from Source** from the Command Palette.
 2. Select the cloned `plugins/ddd-sdd` directory, choose the Copilot session
    target, and enable the plugin.
@@ -41,6 +43,8 @@ See the [VS Code plugin reference](https://code.visualstudio.com/docs/agents/ref
 for client details.
 
 ### Codex desktop
+
+These instructions are for the user level, not the workspace level.
 
 From the cloned repository, register its marketplace:
 
