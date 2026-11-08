@@ -19,7 +19,11 @@ The following information should be provided. If not, the agent should ask for i
 The target destination for the plugins is the `.agents` folder of the current workspace the agents is working in.
 The use of the `.agents` folder is recommended to avoid conflicts and make it vendor-agnostic.
 
-If the folder does not exist, create it. Make use of the marketplace.json file to register the plugins. If the file does not exist, create it according to the example in the next section. If the file exists, update it with the new plugins.
+If the folder does not exist, create it. 
+
+Verify that the container folder for the plugins exists, if not create it. The container folder is `.agents/plugins` in the current workspace.
+
+Make use of the marketplace.json file to register the plugins. If the file does not exist, create it according to the example in the next section. If the file exists, update it with the new plugins.
 
 The folder structure below is an example on where to place the plugins and how to register them in the marketplace.json file.
 
@@ -27,9 +31,9 @@ The folder structure below is an example on where to place the plugins and how t
 ```example target destination
 my-repo/
 └── .agents/
-    └── plugins/
+    └── plugins/                                   # Container folder for all plugins
         ├── marketplace.json                       # Registers local and/or remote Git plugins
-        └── some-pluging-of-this-repository/       # Local plugin
+        └── some-pluging-of-this-repository/       # Local plugin 1
 ```
 
 ## IDEMPOTENCY
