@@ -65,8 +65,8 @@ user approves, retrying `apply_patch` passes without rerunning the checks.
 Later edits in the same session also pass without checks. Other tools do not
 trigger this gate.
 
-The existing Codex `Stop` and Copilot `agentStop` hooks still run the same
-checks on each agent completion:
+The Codex `Stop` and Copilot `agentStop` hooks run the same checks at each
+agent completion:
 
 ```sh
 dotnet tool restore --tool-manifest dotnet-tools.json
@@ -93,9 +93,19 @@ from running, and failures or timeouts may be fail-open. This hook does not
 replace CI. Avoid enabling duplicate workspace, user, or plugin hooks, which
 would run the checks twice.
 
-On failure, Codex requests a retry; a repeated failure or invalid solution
-count stops continuation. Copilot blocks completion and may request additional
-turns while the problem persists.
+On a fixable failure, both clients request another turn and rerun the checks.
+They run at most three checks per stop-hook continuation chain. After the third
+failure, the agent is warned that the next stop will not rerun validation; the
+hook then allows the stop and reports the retry limit. A new user turn or a
+successful check resets the counter. If the runtime omits `stop_hook_active`,
+the counter is retained until a check succeeds or the limit is reached.
+Retry state is scoped to the client, workspace, and session in a private
+temporary directory. A missing session identifier is reported as an error.
+If retry state cannot be tracked, Copilot blocks the first stop when it can
+identify it, then allows a continuation to stop with a warning instead of
+blocking indefinitely.
+Codex still stops continuation immediately for fatal errors such as an invalid
+solution count.
 
 ## Verification
 

@@ -115,7 +115,7 @@ class PluginTests(unittest.TestCase):
 
     @staticmethod
     def stop_event(workspace, **extra):
-        event = {"cwd": str(workspace), "stop_hook_active": False}
+        event = {"cwd": str(workspace), "session_id": "test-session", "stop_hook_active": False}
         event.update(extra)
         return event
 
@@ -193,12 +193,11 @@ class PluginTests(unittest.TestCase):
         workspace = self.create_workspace()
         env = self.env | {"QA_TEST_FAIL": "tool restore"}
         response = self.run_hook("codex", self.stop_event(workspace, stop_hook_active=True), env=env)
-        self.assertIs(response["continue"], False)
-        self.assertIn("failure", response["systemMessage"])
+        self.assertEqual(response["decision"], "block")
+        self.assertIn("failure", response["reason"])
         response = self.run_hook("copilot", self.stop_event(workspace, stop_hook_active=True), env=env)
         self.assertEqual(response["decision"], "block")
         for client in CLIENT_CONFIGS:
-            message_field = "systemMessage" if client == "codex" else "reason"
             for event, raw_input, message in (
                 ({}, "{not valid json", "Invalid hook JSON"),
                 ([], None, "Hook input must be a JSON object"),
@@ -206,9 +205,120 @@ class PluginTests(unittest.TestCase):
             ):
                 with self.subTest(client=client, message=message):
                     response = self.run_hook(client, event, raw=raw_input)
-                    self.assertIn(message, response[message_field])
+                    self.assertIn(message, response["systemMessage"])
         response = self.run_hook("codex", self.stop_event(workspace, stop_hook_active="true"))
         self.assertIn("boolean", response["systemMessage"])
+        response = self.run_hook("codex", self.stop_event(workspace, stop_hook_active=None))
+        self.assertIn("boolean", response["systemMessage"])
+
+    def test_bounded_retries_run_checks_and_warn_before_allowing_stop(self):
+        for client in CLIENT_CONFIGS:
+            with self.subTest(client=client):
+                workspace = self.create_workspace(client)
+                env = self.env | {"QA_TEST_FAIL": "test ./Example.slnx"}
+                before = len(self.dotnet_calls())
+                for attempt in range(3):
+                    response = self.run_hook(
+                        client, self.stop_event(workspace, stop_hook_active=attempt > 0), env=env
+                    )
+                    self.assertEqual(response["decision"], "block")
+                    self.assertIn("failure", response["reason"])
+                    if attempt == 2:
+                        self.assertIn("next stop will not rerun", response["reason"])
+                    self.assertEqual(len(self.dotnet_calls()) - before, 4 * (attempt + 1))
+                response = self.run_hook(client, self.stop_event(workspace, stop_hook_active=True), env=env)
+                self.assertIn("retry limit", response["systemMessage"])
+                self.assertEqual(len(self.dotnet_calls()) - before, 12)
+                self.assertEqual(list((self.base / f"ddd-sdd-dotnet-stop-{os.getuid()}").glob("*.retries")), [])
+
+    def test_different_failures_are_rechecked_before_success(self):
+        for client in CLIENT_CONFIGS:
+            with self.subTest(client=client):
+                workspace = self.create_workspace(client)
+                fresh = self.stop_event(workspace)
+                continuation = self.stop_event(workspace, stop_hook_active=True)
+                before = len(self.dotnet_calls())
+                for event, failing_command in (
+                    (fresh, "build ./Example.slnx"),
+                    (continuation, "test ./Example.slnx"),
+                ):
+                    response = self.run_hook(client, event, env=self.env | {"QA_TEST_FAIL": failing_command})
+                    self.assertEqual(response["decision"], "block")
+                    self.assertIn(failing_command, response["reason"])
+                self.assertEqual(self.run_hook(client, continuation), {})
+                self.assertEqual(len(self.dotnet_calls()) - before, 11)
+
+    def test_retry_success_and_fresh_turn_reset_counter(self):
+        for client in CLIENT_CONFIGS:
+            with self.subTest(client=client):
+                workspace = self.create_workspace(client)
+                env = self.env | {"QA_TEST_FAIL": "tool restore"}
+                fresh = self.stop_event(workspace)
+                continuation = self.stop_event(workspace, stop_hook_active=True)
+                self.assertEqual(self.run_hook(client, fresh, env=env)["decision"], "block")
+                self.assertEqual(self.run_hook(client, continuation, env=env)["decision"], "block")
+                self.assertEqual(self.run_hook(client, continuation), {})
+                self.assertEqual(list((self.base / f"ddd-sdd-dotnet-stop-{os.getuid()}").glob("*.retries")), [])
+                for _ in range(2):
+                    self.assertEqual(self.run_hook(client, fresh, env=env)["decision"], "block")
+                self.assertEqual(self.run_hook(client, continuation, env=env)["decision"], "block")
+                self.assertEqual(self.run_hook(client, continuation, env=env)["decision"], "block")
+                self.assertIn("retry limit", self.run_hook(client, continuation, env=env)["systemMessage"])
+
+    def test_retry_state_is_isolated_by_session_workspace_and_client(self):
+        workspace = self.create_workspace("first")
+        other_workspace = self.create_workspace("second")
+        env = self.env | {"QA_TEST_FAIL": "tool restore"}
+        first = self.stop_event(workspace)
+        for attempt in range(3):
+            self.assertEqual(
+                self.run_hook("codex", first | {"stop_hook_active": attempt > 0}, env=env)["decision"],
+                "block",
+            )
+        for client, event in (
+            ("codex", self.stop_event(workspace, session_id="../other", stop_hook_active=True)),
+            ("codex", self.stop_event(other_workspace, stop_hook_active=True)),
+            ("copilot", self.stop_event(workspace, stop_hook_active=True)),
+        ):
+            self.assertEqual(self.run_hook(client, event, env=env)["decision"], "block")
+        self.assertIn(
+            "retry limit",
+            self.run_hook("codex", self.stop_event(workspace, stop_hook_active=True), env=env)["systemMessage"],
+        )
+
+    def test_copilot_camel_case_session_and_missing_active_flag(self):
+        workspace = self.create_workspace()
+        env = self.env | {"QA_TEST_FAIL": "tool restore"}
+        event = {"cwd": str(workspace), "sessionId": "copilot-session"}
+        for _ in range(3):
+            self.assertEqual(self.run_hook("copilot", event, env=env)["decision"], "block")
+        self.assertIn("retry limit", self.run_hook("copilot", event, env=env)["systemMessage"])
+
+    def test_missing_session_id_is_reported(self):
+        workspace = self.create_workspace()
+        for client in CLIENT_CONFIGS:
+            response = self.run_hook(client, {"cwd": str(workspace), "stop_hook_active": False})
+            field = "systemMessage" if client == "codex" else "reason"
+            self.assertIn("session_id", response[field])
+            if client == "copilot":
+                self.assertIn("next stop will be allowed", response[field])
+                response = self.run_hook(client, {"cwd": str(workspace), "stop_hook_active": True})
+                self.assertIn("session_id", response["systemMessage"])
+
+    def test_invalid_retry_state_is_reported(self):
+        for client in CLIENT_CONFIGS:
+            with self.subTest(client=client):
+                workspace = self.create_workspace(client)
+                env = self.env | {"QA_TEST_FAIL": "tool restore"}
+                before = len(self.dotnet_calls())
+                self.assertEqual(self.run_hook(client, self.stop_event(workspace), env=env)["decision"], "block")
+                state_directory = self.base / f"ddd-sdd-dotnet-stop-{os.getuid()}"
+                state_file, = state_directory.glob("*.retries")
+                state_file.write_text("invalid", encoding="utf-8")
+                response = self.run_hook(client, self.stop_event(workspace, stop_hook_active=True))
+                self.assertIn(".NET QA could not run", response["systemMessage"])
+                self.assertEqual(len(self.dotnet_calls()) - before, 1)
+                self.assertEqual(self.run_hook(client, self.stop_event(workspace)), {})
 
     def test_missing_dotnet_is_reported(self):
         workspace = self.create_workspace()
@@ -252,8 +362,10 @@ class PluginTests(unittest.TestCase):
 
     def test_output_file_creation_errors_are_reported(self):
         workspace = self.create_workspace()
-        env = self.env | {"TMPDIR": str(self.base / "missing")}
-        response = self.run_hook("codex", self.stop_event(workspace), env=env)
+        mktemp = self.bin / "mktemp"
+        mktemp.write_text("#!/bin/sh\nexit 1\n", encoding="utf-8")
+        mktemp.chmod(0o755)
+        response = self.run_hook("codex", self.stop_event(workspace))
         self.assertIn("Cannot create validation output file", response["systemMessage"])
         self.assertEqual(self.dotnet_calls(), [])
 
