@@ -61,18 +61,24 @@ Generate a short `AGENTS.md` at the target repository root with the actual
 values for the generated project. If one already exists, preserve
 its instructions and request guidance for conflicting changes.
 
-Include only the following in a structured way:
+```example AGENTS.md
 
-- The bounded context, company when supplied, selected technology, and topology.
-- A relative link to [`spec/llms.txt`](spec/llms.txt),
-  identifying it as the entry point for all technical and product information. Instruct
-  agents to read it and the applicable specifications and dependencies before
-  changing code, and to report missing or conflicting guidance.
-- A brief reminder that dependencies point inward, Main owns composition,
-  adapters remain independent, and adapter/setup folders are added only when
-  required.
-- Mention removing `.gitkeep` files when the folder is no longer empty.
-- Mention: When the design verification fails, fix the test problems by implementing the solution even if it extends beyond the current scope.
+# GENERAL INFORMATION
+
+- Company: <company> (optional)
+- Bounded context: <bounded-context>
+- Technology: <technology>
+- Topology: <topology>
+
+# RULES
+- Dependencies point inward; Main owns composition; adapters remain independent. Add adapter and setup folders only when required.
+
+- When the design verification fails, fix the test problems by implementing the solution even if it extends beyond the current scope.
+
+- Read [spec/llms.txt](spec/llms.txt), the entry point for all technical and product information, and applicable specifications and their dependencies before changing code. Report missing or conflicting guidance.
+
+- Remove `.gitkeep` when its folder is no longer empty.
+```
 
 Keep detailed design and architecture rules in `spec/`; link to them instead
 of duplicating them in `AGENTS.md`.
