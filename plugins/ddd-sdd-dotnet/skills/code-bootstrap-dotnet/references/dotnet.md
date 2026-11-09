@@ -22,6 +22,6 @@ The architecture documents are mostly technology agnostic. This documents makes 
 - Verify that all dotnet projects in the `src`, `tests` and `lib` folder are named correctly according to the naming convention.
 - Verify that the `Main` project is a Web project and the application entrypoint.
 - Verify that the `Main` project can run the application.
-- Verify a project is created for UnitTests, DesignTests, and ArchitectureTests in the `tests` folder.
+- Verify a project is created for AcceptanceTests, DesignTests, and ArchitectureTests in the `tests` folder.
 - Verify that xUnit is used for all tests and ArchUnitNET is extra used for architecture tests.
 

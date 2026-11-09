@@ -39,7 +39,7 @@ Server/
 │   ├── Infrastructure/
 │   └── Main/
 └── tests/
-    ├── UnitTests/          # tests for domain, application, and infrastructure layers
+    ├── AcceptanceTests/    # acceptance tests for domain, application, and infrastructure but also end-to-end for the whole system
     ├── DesignTests/        # general design tests for DDD and ports & adapters
     └── ArchitectureTests/  # general architecture tests for DDD and ports & adapters
 ```

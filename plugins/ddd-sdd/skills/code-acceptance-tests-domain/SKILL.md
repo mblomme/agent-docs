@@ -1,9 +1,9 @@
 ---
-name: code-tests-domain
+name: code-acceptance-tests-domain
 description: Write or refactor domain-layer unit tests for DDD aggregates, domain services, and domain assert classes. Use for domain behavior coverage and test organization; excludes application, infrastructure, integration, and end-to-end tests.
 ---
 
-# Domain Unit Testing
+# Domain Acceptance Tests
 
 Follow the target project's programming language, toolchain, and conventions.
 Express these object-oriented design rules using the language's supported
@@ -31,8 +31,8 @@ The unit tests reads like a sequence of steps written in the language of the dom
 
 ## Files and folders
 
-- The DSL layer is implemented in `UnitTests/Domain/Dsl/` and is shared across all domain unit tests. It contains the domain-specific test helpers, including the Given-When-Then DSL, the aggregate builders, and the domain assert classes.
-- Put all domain unit tests in `UnitTests/Domain/`, relative to the existing test project layout. If the unit test project is named with a prefix, such as `Sales.UnitTests`, use its `Domain/` folder rather than creating a second test project.
+- The DSL layer is implemented in `AcceptanceTests/Domain/Dsl/` and is shared across all domain unit tests. It contains the domain-specific test helpers, including the Given-When-Then DSL, the aggregate builders, and the domain assert classes.
+- Put all domain unit tests in `AcceptanceTests/Domain/`, relative to the existing test project layout. If the unit test project is named with a prefix, such as `Sales.AcceptanceTests`, use its `Domain/` folder rather than creating a second test project.
 - Bundle tests for each aggregate in `Domain/<AggregateName>/`.
 - Use one separate `<AggregateName>Tests` file per aggregate. Keep all tests for that aggregate in that file.
 - Use one separate `<DomainServiceName>Tests` file per domain service and put them in `Domain/DomainServices/`.
@@ -42,7 +42,7 @@ The unit tests reads like a sequence of steps written in the language of the dom
 Example layout:
 
 ```text
-Some.Prefix.UnitTests/
+Some.Prefix.AcceptanceTests/
 └── Domain/
     ├── Dsl/
     ├── DomainServices/
@@ -68,7 +68,7 @@ The names are illustrative; create test files and DSL files as needed to support
 - Test the aggregates
 - Test the aggregate assert classes
 - Test the domain services
-- All domain layer unit test make use of the common DSL layer in `UnitTests/Domain/Dsl/` and the domain-specific test helpers, builders, and assert classes.
+- All domain layer unit test make use of the common DSL layer in `AcceptanceTests/Domain/Dsl/` and the domain-specific test helpers, builders, and assert classes.
 - Only unit tests for the domain layer are written.
 
 ## BDD rules and best practices

@@ -19,7 +19,7 @@ The following skills are useful for implementing the domain layer components:
 - code-domain-event
 - code-value-object
 - code-domain-service
-- code-tests-domain
+- code-acceptance-tests-domain
 
 ## Pre-requisites
 
@@ -30,7 +30,7 @@ The following skills are useful for implementing the domain layer components:
 
 1. Build a traceability table with a specification path and section or rule ID, required behavior to keep track of your progress.
 2. Mark in this table what is already tested and implemented.
-3. First, write all the domain unit test based on the specification by using the `code-tests-domain` skill. Don't implement any code yet, the goals is to make the failing unit tests pass after all the unit tests are written.
+3. First, write all the domain unit test based on the specification by using the `code-acceptance-tests-domain` skill. Don't implement any code yet, the goals is to make the failing unit tests pass after all the unit tests are written.
 5. Secondly, implement the domain layer by making the unit tests pass AND using the appropriate domain skills (the location and construction of the domain components cannot be deduced from the unit tests).
 6. On contradictions between the code and the unit tests suite, the specification is the source of truth. Correct the code or the unit tests to match the specification.
 8. All created domain layer components are created or updated according 
