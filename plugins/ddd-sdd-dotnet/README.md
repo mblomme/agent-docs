@@ -65,8 +65,7 @@ user approves, retrying `apply_patch` passes without rerunning the checks.
 Later edits in the same session also pass without checks. Other tools do not
 trigger this gate.
 
-The Codex `Stop` and Copilot `agentStop` hooks run the same checks at each
-agent completion:
+The Codex `Stop` and Copilot `agentStop` hooks run the same checks at agent completion when the `lib`, `src`, or `tests` folders changed since the user prompt:
 
 ```sh
 dotnet tool restore --tool-manifest dotnet-tools.json
@@ -78,8 +77,11 @@ dotnet test ./SOLUTION --no-build -m:1
 
 `SOLUTION` must be the only `.sln` or `.slnx` at the repository root.
 **CSharpier modifies project files, including when run by the first-edit gate.**
-Completion checks run even when nothing has changed. Both hooks fail if there
-is no solution or more than one, including in non-.NET repositories.
+A prompt hook hashes the contents of the root `lib`, `src`, and `tests` folders.
+Read-only turns skip completion checks, including in non-Git workspaces. Changes
+outside those folders do not trigger the checks. If the baseline or current hash
+is unavailable, completion checks run as a fallback. Both hooks fail if checks
+run and there is no solution or more than one.
 
 The target needs `dotnet`, its project's SDK and dependencies, a root
 `.editorconfig`, and a root `dotnet-tools.json` defining CSharpier. The hook

@@ -15,27 +15,37 @@ class HookError(Exception):
 
 def main():
     try:
-        event = json.load(sys.stdin)
-        if not isinstance(event, dict):
-            raise HookError("Hook input must be a JSON object.")
-        session_id = event.get("session_id")
-        if not isinstance(session_id, str) or not session_id:
-            raise HookError("Hook event must contain a nonempty session_id.")
+        event = read_hook_event()
         workspace_root = find_workspace_root(event)
-        marker = marker_path(session_id)
-        try:
-            descriptor = os.open(marker, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
-        except FileExistsError:
-            response = {}
-        else:
-            os.close(descriptor)
+        if create_session_marker(event["session_id"]):
             response = run_quality_checks(workspace_root)
+        else:
+            response = {}
     except json.JSONDecodeError as error:
         response = block(f"Invalid hook JSON: {error}")
     except (HookError, OSError, UnicodeError) as error:
         response = block(f".NET pre-edit QA could not run: {error}")
     print(json.dumps(response, ensure_ascii=True))
     return 0
+
+
+def read_hook_event():
+    event = json.load(sys.stdin)
+    if not isinstance(event, dict):
+        raise HookError("Hook input must be a JSON object.")
+    session_id = event.get("session_id")
+    if not isinstance(session_id, str) or not session_id:
+        raise HookError("Hook event must contain a nonempty session_id.")
+    return event
+
+
+def create_session_marker(session_id):
+    try:
+        descriptor = os.open(marker_path(session_id), os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
+    except FileExistsError:
+        return False
+    os.close(descriptor)
+    return True
 
 
 def find_workspace_root(event):

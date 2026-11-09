@@ -24,50 +24,80 @@ def main():
     if len(sys.argv) != 2 or sys.argv[1] not in CLIENTS:
         print("Usage: on_agent_stop.py {codex|copilot}", file=sys.stderr)
         return 2
-    client = sys.argv[1]
+
+    response = handle_stop(sys.argv[1])
+    print(json.dumps(response, ensure_ascii=True))
+    return 0
+
+
+def handle_stop(client):
     stop_hook_active = None
-    retry_count = None
-    state_recorded = False
     try:
         event = read_hook_event()
         stop_hook_active = stop_hook_is_active(event)
-        workspace_root = find_workspace_root(event)
-        session_id = get_session_id(event)
-        state_file = retry_state_path(client, workspace_root, session_id)
-        if stop_hook_active is False:
-            state_file.unlink(missing_ok=True)
-        retry_count = read_retry_count(state_file)
-        if retry_count >= MAX_RETRIES:
-            state_file.unlink(missing_ok=True)
-            message = (
-                f".NET QA retry limit ({MAX_RETRIES} attempts) reached. "
-                "Validation was not rerun; check the previous failure before finishing."
-            )
-            print(message, file=sys.stderr)
-            response = {"systemMessage": message}
-        else:
-            retry_count += 1
-            write_retry_count(state_file, retry_count)
-            state_recorded = True
-            run_quality_checks(workspace_root)
-            state_file.unlink(missing_ok=True)
-            response = {}
+        return validate_stop(client, event, stop_hook_active)
     except json.JSONDecodeError as error:
-        response = failure_response(client, f"Invalid hook JSON: {error}", True, stop_hook_active, state_recorded)
+        return failure_response(client, f"Invalid hook JSON: {error}", True, stop_hook_active, False)
     except ValidationError as error:
-        reason = str(error)
-        if retry_count == MAX_RETRIES and not (client == "codex" and error.fatal):
-            reason += (
-                f"\n\n.NET QA has reached its limit of {MAX_RETRIES} attempts. "
-                "The next stop will not rerun validation; report any unresolved failures."
-            )
-        response = failure_response(client, reason, error.fatal, stop_hook_active, state_recorded)
+        return failure_response(client, str(error), error.fatal, stop_hook_active, False)
     except (OSError, UnicodeError, ValueError, subprocess.SubprocessError) as error:
-        response = failure_response(
-            client, f".NET QA could not run: {error}", True, stop_hook_active, state_recorded
+        return failure_response(client, f".NET QA could not run: {error}", True, stop_hook_active, False)
+
+
+def validate_stop(client, event, stop_hook_active):
+    workspace_root = find_workspace_root(event)
+    state_file = retry_state_path(client, workspace_root, get_session_id(event))
+    if stop_hook_active is False:
+        state_file.unlink(missing_ok=True)
+    if stop_hook_active is not True and workspace_matches_baseline(state_file, workspace_root):
+        return {}
+    return validate_workspace(client, workspace_root, state_file, stop_hook_active)
+
+
+def validate_workspace(client, workspace_root, state_file, stop_hook_active):
+    retry_count = read_retry_count(state_file)
+    if retry_count >= MAX_RETRIES:
+        return retry_limit_response(state_file)
+
+    retry_count += 1
+    write_retry_count(state_file, retry_count)
+    try:
+        run_quality_checks(workspace_root)
+        state_file.unlink(missing_ok=True)
+        return {}
+    except ValidationError as error:
+        return validation_failure_response(client, error, retry_count, stop_hook_active)
+    except (OSError, UnicodeError, ValueError, subprocess.SubprocessError) as error:
+        return failure_response(client, f".NET QA could not run: {error}", True, stop_hook_active, True)
+
+
+def validation_failure_response(client, error, retry_count, stop_hook_active):
+    reason = str(error)
+    if retry_count == MAX_RETRIES and not (client == "codex" and error.fatal):
+        reason += (
+            f"\n\n.NET QA has reached its limit of {MAX_RETRIES} attempts. "
+            "The next stop will not rerun validation; report any unresolved failures."
         )
-    print(json.dumps(response, ensure_ascii=True))
-    return 0
+    return failure_response(client, reason, error.fatal, stop_hook_active, True)
+
+
+def workspace_matches_baseline(state_file, workspace_root):
+    baseline = state_file.with_suffix(".baseline")
+    if not baseline.exists():
+        return False
+    expected = baseline.read_text(encoding="ascii")
+    actual = workspace_fingerprint(workspace_root)
+    return actual is not None and actual == expected
+
+
+def retry_limit_response(state_file):
+    state_file.unlink(missing_ok=True)
+    message = (
+        f".NET QA retry limit ({MAX_RETRIES} attempts) reached. "
+        "Validation was not rerun; check the previous failure before finishing."
+    )
+    print(message, file=sys.stderr)
+    return {"systemMessage": message}
 
 
 def read_hook_event():
@@ -150,6 +180,54 @@ def find_workspace_root(event):
     if result.returncode == 0:
         return Path(result.stdout.strip()).resolve()
     return workspace.resolve()
+
+
+def workspace_fingerprint(workspace_root):
+    """Hash the lib, src, and tests trees without following symbolic links."""
+    try:
+        digest = hashlib.sha256()
+        for folder in ("lib", "src", "tests"):
+            root = workspace_root / folder
+            add_path_to_fingerprint(digest, root, workspace_root)
+            if root.is_dir() and not root.is_symlink():
+                for current, directories, files in os.walk(
+                    root, followlinks=False, onerror=raise_walk_error
+                ):
+                    directories.sort()
+                    files.sort()
+                    for name in directories + files:
+                        add_path_to_fingerprint(digest, Path(current) / name, workspace_root)
+        return digest.hexdigest()
+    except OSError:
+        return None
+
+
+def raise_walk_error(error):
+    raise error
+
+
+def add_path_to_fingerprint(digest, path, workspace_root):
+    name = os.fsencode(str(path.relative_to(workspace_root)))
+    digest.update(len(name).to_bytes(8, "big"))
+    digest.update(name)
+    if path.is_symlink():
+        target = os.fsencode(os.readlink(path))
+        digest.update(b"link" + len(target).to_bytes(8, "big") + target)
+    elif path.is_dir():
+        digest.update(b"directory")
+    elif path.is_file():
+        digest.update(b"file")
+        digest.update(file_fingerprint(path))
+    else:
+        digest.update(b"other" if path.exists() else b"missing")
+
+
+def file_fingerprint(path):
+    content = hashlib.sha256()
+    with path.open("rb") as file:
+        for chunk in iter(lambda: file.read(1024 * 1024), b""):
+            content.update(chunk)
+    return content.digest()
 
 
 def failure_response(client, reason, fatal, stop_hook_active, state_recorded):

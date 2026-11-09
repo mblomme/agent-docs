@@ -7,6 +7,12 @@
         "command": "python3 \"${PLUGIN_ROOT}/adapters/on_agent_stop.py\" copilot",
         "timeoutSec": 600
       }
+    ],
+    "userPromptSubmitted": [
+      {
+        "type": "command",
+        "command": "python3 \"${PLUGIN_ROOT}/adapters/on_user_prompt.py\" copilot"
+      }
     ]
   }
 }

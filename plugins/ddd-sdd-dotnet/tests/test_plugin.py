@@ -119,6 +119,42 @@ class PluginTests(unittest.TestCase):
         event.update(extra)
         return event
 
+    def test_read_only_turn_skips_checks_and_changes_run_them(self):
+        for client in CLIENT_CONFIGS:
+            with self.subTest(client=client):
+                workspace = self.create_workspace(client)
+                (workspace / "src").mkdir()
+                (workspace / "src" / "Program.cs").write_text("pre-existing change")
+                event = self.stop_event(workspace)
+                subprocess.run(
+                    [sys.executable, str(self.package / "adapters/on_user_prompt.py"), client],
+                    input=json.dumps(event), text=True, capture_output=True, env=self.env, check=True,
+                )
+                before = len(self.dotnet_calls())
+                self.assertEqual(self.run_hook(client, event), {})
+                self.assertEqual(len(self.dotnet_calls()), before)
+                (workspace / "src" / "Program.cs").write_text("edited during turn")
+                self.assertEqual(self.run_hook(client, event), {})
+                self.assertEqual(len(self.dotnet_calls()) - before, 4)
+
+    def test_each_source_folder_and_changes_outside_it(self):
+        for folder in ("lib", "src", "tests"):
+            with self.subTest(folder=folder):
+                workspace = self.create_workspace(folder)
+                event = self.stop_event(workspace)
+                subprocess.run(
+                    [sys.executable, str(self.package / "adapters/on_user_prompt.py"), "codex"],
+                    input=json.dumps(event), text=True, capture_output=True, env=self.env, check=True,
+                )
+                (workspace / "Program.cs").write_text("outside monitored folders")
+                before = len(self.dotnet_calls())
+                self.assertEqual(self.run_hook("codex", event), {})
+                self.assertEqual(len(self.dotnet_calls()), before)
+                (workspace / folder).mkdir()
+                (workspace / folder / "new.cs").write_text("new")
+                self.assertEqual(self.run_hook("codex", event), {})
+                self.assertEqual(len(self.dotnet_calls()) - before, 4)
+
     def test_all_client_commands_run_and_preserve_qa_arguments(self):
         for client in CLIENT_CONFIGS:
             with self.subTest(client=client):
