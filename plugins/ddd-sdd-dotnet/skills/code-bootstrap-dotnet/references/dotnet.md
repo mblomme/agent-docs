@@ -12,13 +12,14 @@ The architecture documents are mostly technology agnostic. This documents makes 
     - Acme.Inventory.Infrastructure/
     - Acme.Inventory.Main/
   - CompanyName is optional
+- lib folder is used for shared libraries and abstractions.
 - Dotnet projects in the tests folder follow the same the same naming convention as above.
 - Run the application by running the Main project.
 - Use xUnit for unit tests and ArchUnitNET for architecture tests.
 
 ## Check
 
-- Verify that all dotnet projects in the `src` and `tests` folder are named correctly according to the naming convention.
+- Verify that all dotnet projects in the `src`, `tests` and `lib` folder are named correctly according to the naming convention.
 - Verify that the `Main` project is a Web project and the application entrypoint.
 - Verify that the `Main` project can run the application.
 - Verify a project is created for UnitTests, DesignTests, and ArchitectureTests in the `tests` folder.

@@ -97,7 +97,7 @@ Use the selected language's compatible installed compiler, runtime, build tools,
 and package manager. Respect repository version pins and lockfiles; report
 unavailable required tooling rather than silently changing the language or stack.
 
-- Create root-level `src/` and `tests/` directories.
+- Create root-level `src/`, `tests/` and `lib/` directories.
 - Execute the loaded technology-specific skill with the established inputs and
   code-style choice. Follow its bundled references and the repository's
   compatible language, package, module, naming, and test conventions.
