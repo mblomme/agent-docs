@@ -61,7 +61,7 @@ Generate a short `AGENTS.md` at the target repository root with the actual
 values and commands for the generated project. If one already exists, preserve
 its instructions and request guidance for conflicting changes.
 
-Include only:
+Include only the following in a structured way:
 
 - The bounded context, company when supplied, selected technology, and topology.
 - A relative link to [`spec/llms.txt`](spec/llms.txt),
@@ -72,7 +72,6 @@ Include only:
   adapters remain independent, and adapter/setup folders are added only when
   required.
 - Mention removing `.gitkeep` files when the folder is no longer empty.
-- The most important commands to build, run, and test the project.
 
 Keep detailed design and architecture rules in `spec/`; link to them instead
 of duplicating them in `AGENTS.md`.
