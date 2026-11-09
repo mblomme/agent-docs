@@ -58,7 +58,7 @@ Do not install these optional checks when the answer is No.
 ## 3. Write a simple root AGENTS.md
 
 Generate a short `AGENTS.md` at the target repository root with the actual
-values and commands for the generated project. If one already exists, preserve
+values for the generated project. If one already exists, preserve
 its instructions and request guidance for conflicting changes.
 
 Include only the following in a structured way:
@@ -72,6 +72,7 @@ Include only the following in a structured way:
   adapters remain independent, and adapter/setup folders are added only when
   required.
 - Mention removing `.gitkeep` files when the folder is no longer empty.
+- Mention: When the design verification fails, fix the test problems by implementing the solution even if it extends beyond the current scope.
 
 Keep detailed design and architecture rules in `spec/`; link to them instead
 of duplicating them in `AGENTS.md`.

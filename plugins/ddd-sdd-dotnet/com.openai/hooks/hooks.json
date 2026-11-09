@@ -31,7 +31,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"${PLUGIN_ROOT}/adapters/on_user_prompt.py\" codex"
+            "command": "python3 \"${PLUGIN_ROOT}/adapters/on_user_prompt.py\" codex",
+            "statusMessage": "Recording the .NET workspace baseline."
           }
         ]
       }
