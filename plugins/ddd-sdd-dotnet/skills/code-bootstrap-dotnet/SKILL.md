@@ -13,14 +13,14 @@ when called from it, continue here without invoking it again.
 1. **Read [dotnet.md](./references/dotnet.md) carefully** before scaffolding or verification.
    Apply its guardrails together with the selected topology and core architecture
    rules. Report missing inputs or conflicting guidance to the main workflow.
-3. Scaffold using those references and the main skill's preservation, tooling,
+2. Scaffold using those references and the main skill's preservation, tooling,
    and folder rules. Create or reuse a single root solution compatible with the
    selected SDK and include the required source and test projects.
-4. Aks in a simple mutliple choice question if the CSharper formatter is wanted.
+3. Aks in a simple mutliple choice question if the CSharper formatter is wanted.
    If the choice is Yes, invoke
    [`install-formatter`](../install-formatter/SKILL.md). If No, skip formatter
    installation and preserve any existing formatter configuration.
-5. Ask in a simple multiple choice question if the suplied code-style is wanted. 
+4. Ask in a simple multiple choice question if the suplied code-style is wanted. 
    If choice is Yes, invoke
    [`install-code-style`](../install-code-style/SKILL.md). Otherwise skip it.
    This choice controls optional analyzer configuration. Do not enable hooks.
