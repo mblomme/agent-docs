@@ -54,7 +54,7 @@ run_check() {
     if "$@" >"$output_file" 2>&1; then
         return
     fi
-    printf 'Repository verification failed, FIX these failures first than rebuild and rerun validation before finishing: %s\n' "$*" >&2
+    printf 'Design verification failed, FIX these failures first by implementation: %s\n' "$*" >&2
     tail -c 16000 "$output_file" >&2
     exit 1
 }
