@@ -61,6 +61,8 @@ Generate a short `AGENTS.md` at the target repository root with the actual
 values for the generated project. If one already exists, preserve
 its instructions and request guidance for conflicting changes.
 
+Follow the template below and replace the placeholders with the actual values.
+
 ```example AGENTS.md
 
 # GENERAL INFORMATION

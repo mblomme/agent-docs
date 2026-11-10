@@ -1,40 +1,34 @@
 ---
 name: code-domain
-description: Implement the domain layer in a TDD manner, by writing the complete domain unit test suite first based on the specification and implementing the domain layer to make the tests pass.
+description: Implement the domain layer, based on the domain model specification.
 ---
 
 # Implement Domain
 
 Follow the target project's topology and technology.
 
-Implement the domain layer in a TDD manner. First create the complete domain unit test suite based on the specification, then implement the domain layer to make the tests pass. The specification in `spec/` is the sole source of truth for required behavior unless it's for creating extra domain events.
+The specification in `spec/` is the sole source of truth for required behavior unless it's for creating extra domain events.
+
+This folder contains the domain model specification.
 
 ## Useful skills
 
 The following skills are useful for implementing the domain layer components:
 
-- code-aggregate
-- code-entity
-- code-repository
-- code-domain-event
-- code-value-object
-- code-domain-service
-- code-acceptance-tests-domain
+- The tactical pattern skills.
 
 ## Pre-requisites
 
-- If no specific scope is given, implement the whole domain layer.
 - Read the product specification.
+- If no specific scope is given, implement the whole domain layer.
 
 ## Steps
 
 1. Build a traceability table with a specification path and section or rule ID, required behavior to keep track of your progress.
-2. Mark in this table what is already tested and implemented.
-3. First, write all the domain unit test based on the specification by using the `code-acceptance-tests-domain` skill. Don't implement any code yet, the goals is to make the failing unit tests pass after all the unit tests are written.
-5. Secondly, implement the domain layer by making the unit tests pass AND using the appropriate domain skills (the location and construction of the domain components cannot be deduced from the unit tests).
-6. On contradictions between the code and the unit tests suite, the specification is the source of truth. Correct the code or the unit tests to match the specification.
-8. All created domain layer components are created or updated according 
-7. When finnished, go to done section and verify that all the rules are tested and implemented.
+2. Implement the domain layer.
+3. Run the whole test suite, ALL THE TESTS MUST PASS.
+4. On contradictions between the code and the unit tests suite, the specification is the source of truth.
+5. When finnished, go to done section and verify that all the rules are tested and implemented.
 
 ## Done
 
