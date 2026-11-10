@@ -261,6 +261,61 @@ internal static class DomainTypeSourceInspection
             yield return $"{name}: cannot locate its source declaration to verify folder placement. Carefully read the domain-layer specification again for correct folder locations";
     }
 
+    public static IEnumerable<string> AggregateValueObjects(
+        IEnumerable<Type> roots,
+        IEnumerable<Type> valueObjects,
+        IEnumerable<(string Path, string Text)> sources,
+        string domainAssemblyName
+    ) =>
+        AggregateValueObjects(
+            roots.Select(root => (root.Name, root.Namespace)),
+            valueObjects.Select(type => type.FullName!),
+            sources,
+            domainAssemblyName
+        );
+
+    internal static IEnumerable<string> AggregateValueObjects(
+        IEnumerable<(string Name, string? Namespace)> roots,
+        IEnumerable<string> valueObjects,
+        IEnumerable<(string Path, string Text)> sources,
+        string domainAssemblyName
+    )
+    {
+        var concreteNames = valueObjects.ToHashSet(StringComparer.Ordinal);
+        var files = sources.ToArray();
+        foreach (var root in roots)
+        {
+            var prefix = domainAssemblyName + ".";
+            if (
+                root.Namespace is null
+                || !root.Namespace.StartsWith(prefix, StringComparison.Ordinal)
+            )
+            {
+                yield return $"{root.Name}: cannot map its namespace to an aggregate folder.";
+                continue;
+            }
+
+            var folder =
+                root.Namespace[prefix.Length..].Replace('.', '/')
+                + "/ValueObjects";
+            var count = files
+                .Where(file =>
+                    string.Equals(
+                        Path.GetDirectoryName(file.Path.Replace('\\', '/'))
+                            ?.Replace('\\', '/'),
+                        folder,
+                        StringComparison.Ordinal
+                    )
+                )
+                .SelectMany(file => Declarations(file.Text))
+                .Where(concreteNames.Contains)
+                .Distinct(StringComparer.Ordinal)
+                .Count();
+            if (count < 4 || count > 100)
+                yield return $"{root.Name}: {folder}/ contains {count} concrete value objects; Maximize the use of value objects: every public property of an aggregate or entity is a value object candidate.";
+        }
+    }
+
     private static IEnumerable<string> Declarations(string source) =>
         CSharpSyntaxTree
             .ParseText(source)

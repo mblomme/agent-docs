@@ -288,6 +288,30 @@ public class DddTacticalAggregateTests
             );
     }
 
+    [Fact]
+    [DddRule("DDD_TA_P002")]
+    public void EveryAggregateFolderMaximizesTheUseOfValueObjects() =>
+        Scenario
+            .Given("aggregate value object folders")
+            .When(
+                DomainTypeSourceInspection.InspectSources(
+                    AppContext.BaseDirectory,
+                    typeof(DddTacticalAggregateTests).Assembly.GetName().Name!,
+                    DomainAssembly.GetName().Name!,
+                    sources =>
+                        DomainTypeSourceInspection.AggregateValueObjects(
+                            DiscoveredRoots,
+                            ConcreteValueObjects,
+                            sources,
+                            DomainAssembly.GetName().Name!
+                        ),
+                    "aggregate value object"
+                )
+            )
+            .ThenNoViolations(
+                "Maximize the use of value objects in each aggregate."
+            );
+
     private static Type[] DiscoveredRoots =>
         DomainEventContractInspection.AggregateRoots(DomainAssembly, Root);
 

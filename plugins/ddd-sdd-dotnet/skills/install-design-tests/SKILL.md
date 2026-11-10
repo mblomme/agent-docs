@@ -15,3 +15,9 @@ A whole working testing suite is provided in the `references` folder. It contain
 Refactor it so the namespaces and project names match the target repository. 
 
 Do not add, remove or change the behavior of the tests. The tests are correct and should be kept as they are.
+
+The aggregate value-object rule (`DDD_TA_P002`) requires each aggregate's
+namespace-relative `ValueObjects` folder to contain 4 to 100 distinct concrete
+value-object declarations, inclusive. Only declarations directly in that folder
+count; identity types beside the aggregate and declarations in subfolders or
+other aggregates do not.

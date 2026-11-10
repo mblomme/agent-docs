@@ -62,9 +62,9 @@ run_check() {
 run_quality_checks() {
     run_check dotnet tool restore --tool-manifest dotnet-tools.json
     run_check dotnet tool run csharpier format .
+    run_check dotnet test "$solution" --no-build -m:1
     run_check dotnet build "$solution" --no-incremental -m:1 -warnaserror \
         -p:EnableNETAnalyzers=true -p:AnalysisMode=All -p:EnforceCodeStyleInBuild=true
-    run_check dotnet test "$solution" --no-build -m:1
 }
 
 main "$@"

@@ -46,6 +46,7 @@ Some examples, but do not limit to these examples:
 
 ## RULES
 
+- Always relative date and time values to the current date and time, never use absolute values.
 - The acceptance unit test can only import the DSL facade or other testing libraries
 - The initial dsl facade is a skeleton throwing not implemented exceptions with spec links or sections in spec documents.
 - Only write code in the Domain folder of the UnitTests project.

@@ -9,7 +9,6 @@ Follow the target project's topology and technology.
 
 The specification in `spec/` is the sole source of truth for required behavior unless it's for creating extra domain events.
 
-
 ## Useful skills
 
 The following skills are useful for implementing the domain layer components:
@@ -27,9 +26,9 @@ The following skills are useful for implementing the domain layer components:
 1. Build a traceability table with a specification path and section or rule ID, required behavior to keep track of your progress.
 2. Implement the domain layer.
 3. Run the whole test suite, ALL THE TESTS MUST PASS.
-3. When the domain layer acceptance test fail, follow section `Domain Acceptance Tests`.
-4. On contradictions between the code and the unit tests suite, the specification is the source of truth.
-5. When finnished, go to done section and verify that all the rules are tested and implemented.
+4. When the domain layer acceptance test fail, follow section `Domain Acceptance Tests`.
+5. On contradictions between the code and the unit tests suite, the specification is the source of truth.
+6. When finnished, go to done section and verify that all the rules are tested and implemented.
 
 ## Domain Acceptance Tests
 
@@ -38,7 +37,7 @@ Do no write unit tests for the domain layer, the acceptance tests are already wr
 ### Domain Layer Acceptance Tests rules
 - It's forbidden to change the unit tests, they are already written and should be used as is.
 - Make the domain layer acceptance tests pass by implementing the domain layer and using the implemented components in the DSL facade.
-- The skeleton of the DSL facade is already written, you are not allowed to change it.
+- The skeleton of the DSL facade is already written, you are only allowed to change the function body not the function signature.
 
 ## Done
 
