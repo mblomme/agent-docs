@@ -38,7 +38,7 @@ Each aggregate has its own plural-named folder. Keep its root, owned entities, a
 
 - **Aggregates:** Expose named command methods on aggregate roots. Keep child entity collections and mutation inaccessible to callers; root methods control invariant checks and event recording. Reference other aggregates by typed IDs, not live object references. Prefer one aggregate per consistency boundary; workflows spanning boundaries require an explicit application transaction or eventual consistency design.
 - **Entities:** Use private/protected construction where the language supports it, or equivalent encapsulation. `create(...)` validates a new entity. Child creation and mutation occur through the root.
-- **Value objects:** Model domain concepts such as email addresses, IDs, and money as immutable values with value equality and construction validation. Primitives remain appropriate inside value objects, for incidental values, and at DTO boundaries.
+- **Value objects:** Model domain concepts such as email addresses, IDs, and money as immutable values with value equality and construction validation. Primitives remain appropriate inside value objects, for incidental values, and at DTO boundaries. Value objects are a first-class citizen in the domain model, and should be used to express intent and enforce invariants.
 - **Domain events:** Immutable, past-tense business facts such as `OrderPlacedEvent`. Roots collect events in memory. Domain objects never publish to brokers or invoke policies; the application controls transaction and dispatch timing. These event types are private to the bounded context.
 - **Domain services:** Pure business calculations that do not fit an entity or value object. They can use supplied domain objects and values, but cannot load aggregates or coordinate external calls.
 - **Repositories:** Provide a persistence-agnostic interface for aggregate retrieval and storage. They are implemented in the infrastructure layer. A repository is a port interface that exceptionally is located in the domain because it's fundamental to the aggregate lifecyle.
@@ -109,3 +109,8 @@ In a ports-and-adapters architecture, the command-to-event flow is implemented a
 4. Domain events and entities MUST NOT become cross-context contracts.
 5. Public state changing methods on an aggregate MUST end with the raise of a domain event or a domain exception. Query methods MUST NOT raise events. If the specification does not specify a domain event, create a domain event for future use and raise it.
 6. Only public state changing methods on an aggregate root are allowed to raise domain events.
+
+## DDD Principles and best practices
+- Prefer value objects over primitives to express intent and enforce invariants.
+- The public api of the domain concepts should express the ubiquitous language of the domain specification.
+

@@ -1,121 +1,58 @@
 ---
 name: code-acceptance-tests-domain
-description: Write or refactor domain-layer unit tests for DDD aggregates, domain services, and domain assert classes. Use for domain behavior coverage and test organization; excludes application, infrastructure, integration, and end-to-end tests.
+description: Write or refactor domain-layer acceptance tests with unit tests.
 ---
 
 # Domain Acceptance Tests
 
-Follow the target project's programming language, toolchain, and conventions.
-Express these object-oriented design rules using the language's supported
-constructs; do not assume a particular framework, SDK, or test library.
+## GOAL
 
-## Goal
+For all the aggregates and domain services involved in the scope and documented in the `/spec/product/domain`, write unit test that read as gherkin steps. 
+The tests will fail, but another agent will make them pass by implementing the domain layer.
 
-The domain unit tests verifies the domain layer only in a BDD style.
+## PREREQUISITES
 
-## Prerequisites
+- Make sure there is a folder `Domain` in the UnitTests project.
+- Restrict to the provided scope, if no scope is provides this means the whole domain layer.
 
-- Read the product specification to understand the domain model.
-- Read the technical specification to understand folder structure.
+## DESCRIPTION
 
-## Scope and workflow
+Before any concrete implementation can be written, the domain model specification needs to be translated into acceptance unit tests that read like gherkin language.
+The unit tests should compile. Accomplish this by delegating all implementation calls to a DSL facade. 
+These parameterized functions in the dsl facade will throw a not implemented exception by default. 
+The exception message will include a link to a specification document from the spec folder or even a concrete section in the spec.
 
-Inspect the domain model specification folder to understand the required behavior and verification tests. Use the specification as the sole source of truth for required behavior. Do not infer requirements from existing code, existing tests, or examples. Extra domain events in the code could be possible and are allowed.
+Each testable component needs it's own dsl facade.
+Another agent will implement the domain layer and import components of the src folder into the dsl to make the acceptance tests pass. 
+Each scenario step is a function in the dsl.
 
-## Type of testing
+The goals is that the other agent can make the tests pass by importing the domain components and calling their behavior through the DSL facade.
 
-Unit testing in BDD style.
-That means that the unit tests are according to BDD, with a common DSL behind the test suite. Avoid technical details. The unit tests must be understandable by a non-technical domain expert. That means that all technical details must be replaced by human readable alternative available a DSL respecting the ubiquitous language. 
+The other agent will not have access to the unit tests but only to the DSL to prevent creating false positives.
 
-The unit tests reads like a sequence of steps written in the language of the domain experts and according to the ubiquitous language and builds up a story. Don't hide steps, just like a domain expert would not hide steps when explaining a process.
-
-## Files and folders
-
-- The DSL layer is implemented in `AcceptanceTests/Domain/Dsl/` and is shared across all domain unit tests. It contains the domain-specific test helpers, including the Given-When-Then DSL, the aggregate builders, and the domain assert classes.
-- Put all domain unit tests in `AcceptanceTests/Domain/`, relative to the existing test project layout. If the unit test project is named with a prefix, such as `Sales.AcceptanceTests`, use its `Domain/` folder rather than creating a second test project.
-- Bundle tests for each aggregate in `Domain/<AggregateName>/`.
-- Use one separate `<AggregateName>Tests` file per aggregate. Keep all tests for that aggregate in that file.
-- Use one separate `<DomainServiceName>Tests` file per domain service and put them in `Domain/DomainServices/`.
-- Use one separate `<AssertClassName>Tests` file per domain assert class. Keep it in the relevant aggregate folder.
-- Do not create separate test files or test classes for entities, value objects. Exercise their behavior through the owning aggregate's public operations in its aggregate test file.
-
-Example layout:
-
-```text
-Some.Prefix.AcceptanceTests/
-└── Domain/
-    ├── Dsl/
-    ├── DomainServices/
-    │   ├── OrderPricingServiceTests.file-extension
-    │   └── CurrencyConversionServiceTests.file-extension
-    ├── Order/
-    │   ├── OrderTests.file-extension
-    │   └── OrderAssertsTests.file-extension
-    └── Shared/
-        ├── MoneyAssertsTests.file-extension
-        └── Mocks/
-            └── ExchangeRateProviderMock.file-extension
-```
-
-The names are illustrative; create test files and DSL files as needed to support those tests. An assert class means production domain logic, not a test assertion library or a test-only assertion helper.
-
-## Rules
-
-- Londen school of unit testing
-- Comply to the BDD rules and best practices below
-- Add a white space between the logical sections of the unit test to improve readability.
-- Readable for non-technical domain experts
-- Test the aggregates
-- Test the aggregate assert classes
-- Test the domain services
-- All domain layer unit test make use of the common DSL layer in `AcceptanceTests/Domain/Dsl/` and the domain-specific test helpers, builders, and assert classes.
-- Only unit tests for the domain layer are written.
-
-## BDD rules and best practices
-
-1. Start with behavior
-- Describe **what the system should do and why it matters**, not how it is implemented.
-- Use the domain’s shared language consistently.
-
-2. Write focused scenarios
-- Give each scenario a descriptive, business-oriented name.
-- Cover one behavior or business rule per scenario.
-- Make the actor, relevant context, and expected outcome clear.
-- Keep scenarios independent and understandable without reading helper code.
-
-3. Use Given–When–Then
-- **Given:** Establish the relevant starting context.
-- **When:** Describe the action or event being examined.
-- **Then:** Verify the observable outcome.
-- Use **And** for additional context or related outcomes when it improves readability.
-- Avoid putting the behavior under test in a `Given` merely to make the scenario fit the format.
-
-4. Handle AND and OR deliberately
-- **AND:** Multiple conditions or outcomes can belong in one scenario when they describe the same behavior.
-- **OR:** Usually give each meaningful alternative its own scenario, so failures clearly identify which case broke.
-- For combined rules, include relevant success cases, failure cases, and boundaries—not necessarily every possible combination.
-- Multiple assertions are acceptable when they verify related consequences of the same action.
-
-5. Make the outcome specific
-- Check observable state or results, including that rejected actions leave important state unchanged.
-- Verify the relevant reason for rejection where it is a stable part of the domain contract; a generic exception alone may not prove the intended rule caused it.
-- Avoid assertions about incidental implementation details.
-
-6. Keep scenarios useful and reliable
-- Use concrete, meaningful examples, including boundary values.
-- Keep helpers readable; don’t hide important business conditions inside them.
-- Make tests deterministic and isolated, including control over time and external dependencies.
-- Use parameterized examples when they express the same rule clearly; avoid combining unrelated behaviors for brevity.
-- BDD does **not** require Gherkin or a particular framework. Given–When–Then is a communication aid, not the goal itself.
+Invoking the other agent is beyond scope.
 
 
-## Exclusions
+## PARAMETERIZED FUNCTIONS
 
-- Never test abstractions, they should be covered by the concrete implementations.
-- Do not add application orchestration, persistence, repository implementation, infrastructure, or transport tests under this skill.
-- Do not bypass aggregate boundaries with reflection, private-member access, or direct child mutation just to make assertions or setup easier.
+Although every step function is a descriptive function in the dsl facade, parameterized functions are preferred. 
+This improves parameterized unit tests, optimize for this.
 
-## Validation
+Some examples, but do not limit to these examples:
+- create `Given_minutes_capacity(int minutes)` instead of `Given_sixty_minutes_capacity()`
+- create `When_minutes_of_eligible_work_is_accepted(int minutes)` instead of `When_90_minutes_of_eligible_work_is_accepted();
+- etc ...
 
-- Run the relevant domain unit tests using the repository's existing test command.
-- The product specification must match the domain unit tests. If it doesn't, report the discrepancy and ask for clarification.
+
+## RULES
+
+- The acceptance unit test can only import the DSL facade or other testing libraries
+- The initial dsl facade is a skeleton throwing not implemented exceptions with spec links or sections in spec documents.
+- Only write code in the Domain folder of the UnitTests project.
+- Make use of the full Gherkin syntax("Given, When, Then, And, But, Background, Scenario, ...") to describe test scenarios.
+- Each scenario should be a separate unit test.
+- Each unit test function has a descriptive name.
+- Dsl function names are self descriptive.
+- Optimize for parameterized functions in the dsl facade.
+- `Then (assert) functions` really need parameters, good unit tests assert against hardcoded values, so the agent cannot create false possitives.
+- The parameter names are self descriptive.
