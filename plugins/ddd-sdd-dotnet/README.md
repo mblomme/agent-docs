@@ -10,6 +10,8 @@ Review and trust the scripts and hook configuration before enabling them.
 
 - **Codex desktop:** install `ddd-sdd-dotnet` from this repository's `.agents`
   marketplace, then trust its hooks. See the [OpenAI packaging guide](https://developers.openai.com/plugins/build/plugins).
+- **Antigravity CLI:** install the plugin from this repository and enable its hooks.
+  See the [Antigravity hooks reference](https://antigravity.google/docs/hooks?tab=cli).
 - **VS Code Copilot:** run **Chat: Install Plugin from Source**, select
   `plugins/ddd-sdd-dotnet`, choose the Copilot session target, and enable the
   plugin. Verify that `agentStop` runs in a trusted session. See the
@@ -57,7 +59,9 @@ requires Python 3.9+.
 
 ## Checks
 
-The Codex `PreToolUse` hook checks the first `apply_patch` in each session. It
+The Codex `PreToolUse` hook checks the first `apply_patch` in each session.
+Antigravity checks the first `write_to_file`, `replace_file_content`, or
+`multi_replace_file_content` call in each conversation. It
 resolves the workspace to its Git root when possible and runs the checks below.
 It records a session marker in `/tmp` before running them. If they fail, the
 first edit is blocked and the agent asks for permission to continue; after the
@@ -65,7 +69,7 @@ user approves, retrying `apply_patch` passes without rerunning the checks.
 Later edits in the same session also pass without checks. Other tools do not
 trigger this gate.
 
-The Codex `Stop` and Copilot `agentStop` hooks run the same checks at agent completion when the `lib`, `src`, or `tests` folders changed since the user prompt:
+The Codex and Antigravity `Stop` and Copilot `agentStop` hooks run the same checks at agent completion when the `lib`, `src`, or `tests` folders changed since the user prompt:
 
 ```sh
 dotnet tool restore --tool-manifest dotnet-tools.json
@@ -76,8 +80,15 @@ dotnet test ./SOLUTION --no-build -m:1
 ```
 
 `SOLUTION` must be the only `.sln` or `.slnx` at the repository root.
+At completion, `dotnet test` runs only when `lib` or `src` changed since the
+user prompt; a change confined to `tests` runs the other checks. If the source
+baseline or current fingerprint is unavailable, tests run as a fallback. The
+first-edit gate always runs all four checks.
 **CSharpier modifies project files, including when run by the first-edit gate.**
 A prompt hook hashes the contents of the root `lib`, `src`, and `tests` folders.
+Antigravity records this baseline at invocation 0; its hook event runs before
+each model invocation, not only for user prompts. Antigravity workspaces must
+contain exactly one workspace path.
 Read-only turns skip completion checks, including in non-Git workspaces. Changes
 outside those folders do not trigger the checks. If the baseline or current hash
 is unavailable, completion checks run as a fallback. Both hooks fail if checks
@@ -121,3 +132,4 @@ bash -n plugins/ddd-sdd-dotnet/scripts/pre_quality_checks.sh
 
 - Codex
 - VS Code Copilot
+- Antigravity CLI

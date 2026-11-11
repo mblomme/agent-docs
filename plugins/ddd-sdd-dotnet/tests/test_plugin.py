@@ -153,7 +153,9 @@ class PluginTests(unittest.TestCase):
                 (workspace / folder).mkdir()
                 (workspace / folder / "new.cs").write_text("new")
                 self.assertEqual(self.run_hook("codex", event), {})
-                self.assertEqual(len(self.dotnet_calls()) - before, 4)
+                calls = self.dotnet_calls()[before:]
+                self.assertEqual([call[0] for call in calls],
+                                 ["tool", "tool", "build"] + ([] if folder == "tests" else ["test"]))
 
     def test_all_client_commands_run_and_preserve_qa_arguments(self):
         for client in CLIENT_CONFIGS:
@@ -494,6 +496,45 @@ class PluginTests(unittest.TestCase):
                 self.assertEqual(response["decision"], "block")
                 self.assertIn('failure with "quotes"', response["reason"])
                 self.assertEqual(len(self.dotnet_calls()) - before, index + 1)
+
+    def test_antigravity_native_hooks(self):
+        workspace = self.create_workspace()
+        (workspace / "src").mkdir()
+        source = workspace / "src" / "Program.cs"
+        source.write_text("before")
+        session = f"test-{self.base.name}-antigravity"
+        self.addCleanup(self.clear_marker, session)
+        event = {"conversationId": session, "workspacePaths": [str(workspace)], "invocationNum": 0}
+        config = json.loads((self.package / "com.google.antigravity/hooks/hooks.json").read_text())["ddd-sdd-dotnet"]
+        self.assertIn("write_to_file", config["PreToolUse"][0]["matcher"])
+        def invoke(handler, payload, env=None):
+            command = shlex.split(handler["command"].replace("${PLUGIN_ROOT}", str(self.package)))
+            result = subprocess.run(command, input=json.dumps(payload), text=True, capture_output=True,
+                                    env=env or self.env, check=True)
+            return json.loads(result.stdout)
+
+        prompt = config["PreInvocation"][0]
+        stop = config["Stop"][0]
+        pre = config["PreToolUse"][0]["hooks"][0]
+        self.assertEqual(invoke(prompt, event), {})
+        self.assertEqual(invoke(stop, event), {"decision": "allow"})
+        self.assertEqual(invoke(pre, event, self.env | {"QA_TEST_FAIL": "tool restore"})["decision"], "deny")
+        self.assertEqual(invoke(pre, event), {"decision": "allow"})
+        source.write_text("after")
+        self.assertEqual(invoke(prompt, event | {"invocationNum": 1}), {})
+        failure = invoke(stop, event, self.env | {"QA_TEST_FAIL": "tool restore"})
+        self.assertEqual(failure["decision"], "continue")
+        self.assertIn("failure", failure["reason"])
+        self.assertEqual(invoke(prompt, event), {})
+        self.assertEqual(invoke(stop, event), {"decision": "allow"})
+        self.assertEqual(len(self.dotnet_calls()), 6)
+
+    def test_antigravity_rejects_ambiguous_workspace(self):
+        config = json.loads((self.package / "com.google.antigravity/hooks/hooks.json").read_text())["ddd-sdd-dotnet"]
+        command = shlex.split(config["PreToolUse"][0]["hooks"][0]["command"].replace("${PLUGIN_ROOT}", str(self.package)))
+        result = subprocess.run(command, input=json.dumps({"conversationId": "test", "workspacePaths": ["/tmp", "/"]}),
+                                text=True, capture_output=True, env=self.env, check=True)
+        self.assertEqual(json.loads(result.stdout)["decision"], "deny")
 
     def test_marketplace_sources(self):
         expected_plugins = {

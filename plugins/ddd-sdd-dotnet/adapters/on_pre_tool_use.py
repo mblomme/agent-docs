@@ -8,32 +8,38 @@ from pathlib import Path
 import subprocess
 import sys
 
+from on_agent_stop import ValidationError, find_workspace_root as shared_workspace_root, get_session_id
+
 
 class HookError(Exception):
     pass
 
 
 def main():
+    client = sys.argv[1] if len(sys.argv) > 1 else "codex"
     try:
-        event = read_hook_event()
-        workspace_root = find_workspace_root(event)
-        if create_session_marker(event["session_id"]):
+        event = read_hook_event(client)
+        workspace_root = shared_workspace_root(event) if client == "antigravity" else find_workspace_root(event)
+        if create_session_marker(get_session_id(event)):
             response = run_quality_checks(workspace_root)
         else:
             response = {}
     except json.JSONDecodeError as error:
         response = block(f"Invalid hook JSON: {error}")
-    except (HookError, OSError, UnicodeError) as error:
+    except (HookError, ValidationError, OSError, UnicodeError) as error:
         response = block(f".NET pre-edit QA could not run: {error}")
+    if client == "antigravity":
+        response = ({"decision": "deny", "reason": response["reason"]}
+                    if response else {"decision": "allow"})
     print(json.dumps(response, ensure_ascii=True))
     return 0
 
 
-def read_hook_event():
+def read_hook_event(client="codex"):
     event = json.load(sys.stdin)
     if not isinstance(event, dict):
         raise HookError("Hook input must be a JSON object.")
-    session_id = event.get("session_id")
+    session_id = event.get("conversationId") if client == "antigravity" else event.get("session_id")
     if not isinstance(session_id, str) or not session_id:
         raise HookError("Hook event must contain a nonempty session_id.")
     return event
@@ -99,7 +105,7 @@ def run_quality_checks(workspace_root):
         "First-edit .NET quality checks failed:\n"
         f"{diagnostic}\n\n"
         "Ask the user for permission before editing any files. If the user approves "
-        "continuing anyway, retry apply_patch; later edits in this session will pass."
+        "continuing anyway, retry the edit; later edits in this session will pass."
     )
 
 

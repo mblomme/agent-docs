@@ -1,0 +1,29 @@
+{
+  "ddd-sdd-dotnet": {
+    "PreToolUse": [
+      {
+        "matcher": "write_to_file|replace_file_content|multi_replace_file_content",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${PLUGIN_ROOT}/adapters/on_pre_tool_use.py\" antigravity",
+            "timeout": 600
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "type": "command",
+        "command": "python3 \"${PLUGIN_ROOT}/adapters/on_agent_stop.py\" antigravity",
+        "timeout": 600
+      }
+    ],
+    "PreInvocation": [
+      {
+        "type": "command",
+        "command": "python3 \"${PLUGIN_ROOT}/adapters/on_user_prompt.py\" antigravity"
+      }
+    ]
+  }
+}

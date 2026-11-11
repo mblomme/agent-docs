@@ -10,7 +10,7 @@ import subprocess
 import sys
 import tempfile
 
-CLIENTS = {"codex", "copilot"}
+CLIENTS = {"codex", "copilot", "antigravity"}
 MAX_RETRIES = 3
 
 
@@ -22,10 +22,18 @@ class ValidationError(Exception):
 
 def main():
     if len(sys.argv) != 2 or sys.argv[1] not in CLIENTS:
-        print("Usage: on_agent_stop.py {codex|copilot}", file=sys.stderr)
+        print("Usage: on_agent_stop.py {codex|copilot|antigravity}", file=sys.stderr)
         return 2
 
     response = handle_stop(sys.argv[1])
+    if sys.argv[1] == "antigravity":
+        if response.get("decision") == "block":
+            response = {"decision": "continue", "reason": response["reason"]}
+        else:
+            message = response.get("systemMessage")
+            if message:
+                print(message, file=sys.stderr)
+            response = {"decision": "allow"}
     print(json.dumps(response, ensure_ascii=True))
     return 0
 
@@ -51,10 +59,11 @@ def validate_stop(client, event, stop_hook_active):
         state_file.unlink(missing_ok=True)
     if stop_hook_active is not True and workspace_matches_baseline(state_file, workspace_root):
         return {}
-    return validate_workspace(client, workspace_root, state_file, stop_hook_active)
+    run_tests = not workspace_matches_baseline(state_file, workspace_root, source_only=True)
+    return validate_workspace(client, workspace_root, state_file, stop_hook_active, run_tests)
 
 
-def validate_workspace(client, workspace_root, state_file, stop_hook_active):
+def validate_workspace(client, workspace_root, state_file, stop_hook_active, run_tests):
     retry_count = read_retry_count(state_file)
     if retry_count >= MAX_RETRIES:
         return retry_limit_response(state_file)
@@ -62,7 +71,7 @@ def validate_workspace(client, workspace_root, state_file, stop_hook_active):
     retry_count += 1
     write_retry_count(state_file, retry_count)
     try:
-        run_quality_checks(workspace_root)
+        run_quality_checks(workspace_root, run_tests)
         state_file.unlink(missing_ok=True)
         return {}
     except ValidationError as error:
@@ -81,12 +90,17 @@ def validation_failure_response(client, error, retry_count, stop_hook_active):
     return failure_response(client, reason, error.fatal, stop_hook_active, True)
 
 
-def workspace_matches_baseline(state_file, workspace_root):
+def workspace_matches_baseline(state_file, workspace_root, source_only=False):
     baseline = state_file.with_suffix(".baseline")
     if not baseline.exists():
         return False
-    expected = baseline.read_text(encoding="ascii")
-    actual = workspace_fingerprint(workspace_root)
+    try:
+        expected = json.loads(baseline.read_text(encoding="ascii"))
+        expected = expected["source" if source_only else "all"]
+    except (OSError, UnicodeError, ValueError, KeyError, TypeError):
+        return False
+    folders = ("lib", "src") if source_only else ("lib", "src", "tests")
+    actual = workspace_fingerprint(workspace_root, folders)
     return actual is not None and actual == expected
 
 
@@ -117,7 +131,7 @@ def stop_hook_is_active(event):
 
 
 def get_session_id(event):
-    session_id = event.get("session_id", event.get("sessionId"))
+    session_id = event.get("session_id", event.get("sessionId", event.get("conversationId")))
     if not isinstance(session_id, str) or not session_id:
         raise ValidationError("Hook event must contain a nonempty session_id or sessionId.", fatal=True)
     return session_id
@@ -155,6 +169,11 @@ def write_retry_count(state_file, retry_count):
 
 def find_workspace_root(event):
     workspace_path = event.get("cwd")
+    if workspace_path is None and "workspacePaths" in event:
+        paths = event["workspacePaths"]
+        if not isinstance(paths, list) or len(paths) != 1:
+            raise ValidationError("Hook event must contain exactly one workspace path.", fatal=True)
+        workspace_path = paths[0]
     if (
         not isinstance(workspace_path, str)
         or not workspace_path
@@ -182,11 +201,11 @@ def find_workspace_root(event):
     return workspace.resolve()
 
 
-def workspace_fingerprint(workspace_root):
-    """Hash the lib, src, and tests trees without following symbolic links."""
+def workspace_fingerprint(workspace_root, folders=("lib", "src", "tests")):
+    """Hash the selected trees without following symbolic links."""
     try:
         digest = hashlib.sha256()
-        for folder in ("lib", "src", "tests"):
+        for folder in folders:
             root = workspace_root / folder
             add_path_to_fingerprint(digest, root, workspace_root)
             if root.is_dir() and not root.is_symlink():
@@ -231,7 +250,7 @@ def file_fingerprint(path):
 
 
 def failure_response(client, reason, fatal, stop_hook_active, state_recorded):
-    if client == "copilot":
+    if client in {"copilot", "antigravity"}:
         if not state_recorded:
             reason += "\n.NET QA cannot track retries; validation has not completed."
             if stop_hook_active is not False:
@@ -244,10 +263,10 @@ def failure_response(client, reason, fatal, stop_hook_active, state_recorded):
     return {"decision": "block", "reason": reason}
 
 
-def run_quality_checks(workspace_root):
+def run_quality_checks(workspace_root, run_tests):
     script_path = Path(__file__).resolve().parent.parent / "scripts" / "quality_checks.sh"
     result = subprocess.run(
-        ["bash", str(script_path), str(workspace_root)],
+        ["bash", str(script_path), str(workspace_root), "run-tests" if run_tests else "skip-tests"],
         capture_output=True,
         text=True,
         errors="replace",
