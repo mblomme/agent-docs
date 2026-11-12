@@ -36,6 +36,8 @@ my-repo/
         └── some-plugin-of-this-repository/       # Local plugin 1
 ```
 
+Proceed to `### CLIENT SUPPORT` section for client-specific instructions.
+
 ## CLIENT SUPPORT
 
 This repository strives to use the .agents folder and the agents-plugins specification as much as possible, however not every clients has full support for it. That's why when the installation is done, the following needs to happen per client.
