@@ -42,13 +42,14 @@ Proceed to `### CLIENT SUPPORT` section for client-specific instructions.
 
 This repository strives to use the .agents folder and the agents-plugins specification as much as possible, however not every clients has full support for it. That's why when the installation is done, the following needs to happen per client.
 
-### ddd-sdd-dotnet
+### ddd-sdd-dotnet plugin
 
 1. **antigravity**
   - On the root of this plugin create a `hooks.json` file that is a symlink to ´com.google.antigravity/hooks.json´.
 
 2. **codex**
   - On the root of the git repository create a .codex/hooks.json that is a symlink to ´.agents/plugins/ddd-sdd-dotnet/com.openai/hooks/hooks.json´.
+  - Replace the `${PLUGIN_ROOT}` variable in the hooks.json file with the relative path to the plugin root starting from the root of the git repository. Check if this creates a valid path to the plugin root from the root of the git repository.
 
 
 ## IDEMPOTENCY
