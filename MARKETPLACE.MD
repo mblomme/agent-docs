@@ -33,8 +33,21 @@ my-repo/
 └── .agents/
     └── plugins/                                   # Container folder for all plugins
         ├── marketplace.json                       # Registers local and/or remote Git plugins
-        └── some-pluging-of-this-repository/       # Local plugin 1
+        └── some-plugin-of-this-repository/       # Local plugin 1
 ```
+
+## CLIENT SUPPORT
+
+This repository strives to use the .agents folder and the agents-plugins specification as much as possible, however not every clients has full support for it. That's why when the installation is done, the following needs to happen per client.
+
+### ddd-sdd-dotnet
+
+1. **antigravity**
+  - On the root of this plugin create a `hooks.json` file that is a symlink to ´com.google.antigravity/hooks.json´.
+
+2. **codex**
+  - On the root of the git repository create a .codex/hooks.json that is a symlink to ´.agents/plugins/ddd-sdd-dotnet/com.openai/hooks/hooks.json´.
+
 
 ## IDEMPOTENCY
 

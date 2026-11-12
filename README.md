@@ -59,10 +59,9 @@ Review and trust its hooks before enabling them. See the
 [OpenAI plugin packaging guide](https://developers.openai.com/plugins/build/plugins)
 and the [.NET plugin README](./plugins/ddd-sdd-dotnet/README.md).
 
-The repository also includes marketplace catalogs for
-[Claude](./.claude-plugin/marketplace.json) and
-[Cursor](./.cursor-plugin/marketplace.json), each listing `ddd-sdd`. Follow
-your client's marketplace documentation to install it.
+The repository also includes a marketplace catalog for
+[Claude](./.claude-plugin/marketplace.json), listing `ddd-sdd`. Follow
+Claude's marketplace documentation to install it.
 
 ## Example workflow
 

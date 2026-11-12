@@ -1,4 +1,6 @@
 import json
+import importlib.util
+from unittest.mock import patch
 import hashlib
 import os
 from pathlib import Path
@@ -110,8 +112,10 @@ class PluginTests(unittest.TestCase):
         return {"cwd": str(workspace), "session_id": session_id}
 
     def clear_marker(self, session_id):
-        digest = hashlib.sha256(session_id.encode("utf-8")).hexdigest()
-        Path(f"/tmp/codex_quality_gate_{digest}.checked").unlink(missing_ok=True)
+        for host in ("codex", "antigravity"):
+            key = json.dumps([host, session_id])
+            digest = hashlib.sha256(key.encode("utf-8")).hexdigest()
+            Path(f"/tmp/quality_gate_{digest}.checked").unlink(missing_ok=True)
 
     @staticmethod
     def stop_event(workspace, **extra):
@@ -127,7 +131,7 @@ class PluginTests(unittest.TestCase):
                 (workspace / "src" / "Program.cs").write_text("pre-existing change")
                 event = self.stop_event(workspace)
                 subprocess.run(
-                    [sys.executable, str(self.package / "adapters/on_user_prompt.py"), client],
+                    [sys.executable, str(self.package / f"adapters/hooks/{client}/on_user_prompt.py")],
                     input=json.dumps(event), text=True, capture_output=True, env=self.env, check=True,
                 )
                 before = len(self.dotnet_calls())
@@ -143,7 +147,7 @@ class PluginTests(unittest.TestCase):
                 workspace = self.create_workspace(folder)
                 event = self.stop_event(workspace)
                 subprocess.run(
-                    [sys.executable, str(self.package / "adapters/on_user_prompt.py"), "codex"],
+                    [sys.executable, str(self.package / "adapters/hooks/codex/on_user_prompt.py")],
                     input=json.dumps(event), text=True, capture_output=True, env=self.env, check=True,
                 )
                 (workspace / "Program.cs").write_text("outside monitored folders")
@@ -362,18 +366,14 @@ class PluginTests(unittest.TestCase):
         workspace = self.create_workspace()
         (self.bin / "dotnet").unlink()
         (self.bin / "python3").symlink_to(sys.executable)
-        (self.bin / "bash").symlink_to(shutil.which("bash"))
         env = self.env | {"PATH": str(self.bin)}
         response = self.run_hook("codex", self.stop_event(workspace), env=env)
         self.assertIn("Required command not found: dotnet", response["reason"])
         self.assertEqual(self.dotnet_calls(), [])
 
-    def test_checks_do_not_require_hash_commands(self):
+    def test_checks_need_only_python_and_dotnet_on_path(self):
         workspace = self.create_workspace()
         (self.bin / "python3").symlink_to(sys.executable)
-        (self.bin / "bash").symlink_to(shutil.which("bash"))
-        for command in ("mktemp", "rm"):
-            (self.bin / command).symlink_to(shutil.which(command))
         env = self.env | {"PATH": str(self.bin)}
         response = self.run_hook("codex", self.stop_event(workspace), env=env)
         self.assertEqual(response, {})
@@ -400,11 +400,17 @@ class PluginTests(unittest.TestCase):
 
     def test_output_file_creation_errors_are_reported(self):
         workspace = self.create_workspace()
-        mktemp = self.bin / "mktemp"
-        mktemp.write_text("#!/bin/sh\nexit 1\n", encoding="utf-8")
-        mktemp.chmod(0o755)
-        response = self.run_hook("codex", self.stop_event(workspace))
-        self.assertIn("Cannot create validation output file", response["systemMessage"])
+        spec = importlib.util.spec_from_file_location(
+            "hook_quality", self.package / "adapters/hooks/_common/quality.py"
+        )
+        quality = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(quality)
+        with patch.dict(os.environ, self.env), patch.object(
+            quality.tempfile, "TemporaryFile", side_effect=OSError("disk unavailable")
+        ):
+            with self.assertRaisesRegex(quality.ValidationError, "Cannot create validation output file") as error:
+                quality.run_quality_checks(workspace)
+        self.assertTrue(error.exception.fatal)
         self.assertEqual(self.dotnet_calls(), [])
 
     def test_nested_git_directory_resolves_repository_root(self):
@@ -420,10 +426,10 @@ class PluginTests(unittest.TestCase):
         self.assertEqual(manifest["extensions"]["com.openai"]["hooks"], "./com.openai/hooks/hooks.json")
         for config in CLIENT_CONFIGS.values():
             self.assertTrue((self.package / config["path"]).is_file())
-        self.assertTrue((self.package / "scripts/quality_checks.sh").is_file())
-        self.assertTrue((self.package / "adapters/on_agent_stop.py").is_file())
-        self.assertTrue((self.package / "scripts/pre_quality_checks.sh").is_file())
-        self.assertTrue((self.package / "adapters/on_pre_tool_use.py").is_file())
+        self.assertFalse((self.package / "scripts").exists())
+        self.assertTrue((self.package / "adapters/hooks/codex/on_agent_stop.py").is_file())
+        self.assertTrue((self.package / "adapters/hooks/_common/quality.py").is_file())
+        self.assertTrue((self.package / "adapters/hooks/codex/on_pre_tool_use.py").is_file())
         self.assertTrue((self.package / "skills").is_dir())
         self.assertFalse((self.package / "io.github.mblomme").exists())
         self.assertFalse((self.package / ".claude-plugin").exists())
@@ -505,7 +511,7 @@ class PluginTests(unittest.TestCase):
         session = f"test-{self.base.name}-antigravity"
         self.addCleanup(self.clear_marker, session)
         event = {"conversationId": session, "workspacePaths": [str(workspace)], "invocationNum": 0}
-        config = json.loads((self.package / "com.google.antigravity/hooks/hooks.json").read_text())["ddd-sdd-dotnet"]
+        config = json.loads((self.package / "com.google.antigravity/hooks.json").read_text())["ddd-sdd-factory"]
         self.assertIn("write_to_file", config["PreToolUse"][0]["matcher"])
         def invoke(handler, payload, env=None):
             command = shlex.split(handler["command"].replace("${PLUGIN_ROOT}", str(self.package)))
@@ -530,7 +536,7 @@ class PluginTests(unittest.TestCase):
         self.assertEqual(len(self.dotnet_calls()), 6)
 
     def test_antigravity_rejects_ambiguous_workspace(self):
-        config = json.loads((self.package / "com.google.antigravity/hooks/hooks.json").read_text())["ddd-sdd-dotnet"]
+        config = json.loads((self.package / "com.google.antigravity/hooks.json").read_text())["ddd-sdd-factory"]
         command = shlex.split(config["PreToolUse"][0]["hooks"][0]["command"].replace("${PLUGIN_ROOT}", str(self.package)))
         result = subprocess.run(command, input=json.dumps({"conversationId": "test", "workspacePaths": ["/tmp", "/"]}),
                                 text=True, capture_output=True, env=self.env, check=True)
@@ -539,7 +545,6 @@ class PluginTests(unittest.TestCase):
     def test_marketplace_sources(self):
         expected_plugins = {
             ".claude-plugin/marketplace.json": {"ddd-sdd"},
-            ".cursor-plugin/marketplace.json": {"ddd-sdd"},
             ".agents/plugins/marketplace.json": {"ddd-sdd", "ddd-sdd-dotnet"},
         }
         for path, expected_names in expected_plugins.items():

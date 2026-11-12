@@ -1,12 +1,12 @@
 {
-  "ddd-sdd-dotnet": {
+  "ddd-sdd-factory": {
     "PreToolUse": [
       {
         "matcher": "write_to_file|replace_file_content|multi_replace_file_content",
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"${PLUGIN_ROOT}/adapters/on_pre_tool_use.py\" antigravity",
+            "command": "python3 \"${PLUGIN_ROOT}/adapters/hooks/antigravity/on_pre_tool_use.py\"",
             "timeout": 600
           }
         ]
@@ -15,14 +15,14 @@
     "Stop": [
       {
         "type": "command",
-        "command": "python3 \"${PLUGIN_ROOT}/adapters/on_agent_stop.py\" antigravity",
+        "command": "python3 \"${PLUGIN_ROOT}/adapters/hooks/antigravity/on_agent_stop.py\"",
         "timeout": 600
       }
     ],
     "PreInvocation": [
       {
         "type": "command",
-        "command": "python3 \"${PLUGIN_ROOT}/adapters/on_user_prompt.py\" antigravity"
+        "command": "python3 \"${PLUGIN_ROOT}/adapters/hooks/antigravity/on_user_prompt.py\""
       }
     ]
   }

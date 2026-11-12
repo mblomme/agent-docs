@@ -4,14 +4,14 @@
     "agentStop": [
       {
         "type": "command",
-        "command": "python3 \"${PLUGIN_ROOT}/adapters/on_agent_stop.py\" copilot",
+        "command": "python3 \"${PLUGIN_ROOT}/adapters/hooks/copilot/on_agent_stop.py\"",
         "timeoutSec": 600
       }
     ],
     "userPromptSubmitted": [
       {
         "type": "command",
-        "command": "python3 \"${PLUGIN_ROOT}/adapters/on_user_prompt.py\" copilot"
+        "command": "python3 \"${PLUGIN_ROOT}/adapters/hooks/copilot/on_user_prompt.py\""
       }
     ]
   }

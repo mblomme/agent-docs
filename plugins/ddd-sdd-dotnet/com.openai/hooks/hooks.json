@@ -7,7 +7,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"${PLUGIN_ROOT}/adapters/on_pre_tool_use.py\"",
+            "command": "python3 \"${PLUGIN_ROOT}/adapters/hooks/codex/on_pre_tool_use.py\"",
             "timeout": 600,
             "statusMessage": "Running first-edit .NET quality checks."
           }
@@ -19,7 +19,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"${PLUGIN_ROOT}/adapters/on_agent_stop.py\" codex",
+            "command": "python3 \"${PLUGIN_ROOT}/adapters/hooks/codex/on_agent_stop.py\"",
             "timeout": 600,
             "statusMessage": "Formatting, checking analyzers, and running tests."
           }
@@ -31,7 +31,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"${PLUGIN_ROOT}/adapters/on_user_prompt.py\" codex",
+            "command": "python3 \"${PLUGIN_ROOT}/adapters/hooks/codex/on_user_prompt.py\"",
             "statusMessage": "Recording the .NET workspace baseline."
           }
         ]

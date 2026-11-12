@@ -7,9 +7,6 @@
   "extensions": {
     "com.openai": {
       "hooks": "./com.openai/hooks/hooks.json"
-    },
-    "com.google.antigravity": {
-      "hooks": "./com.google.antigravity/hooks/hooks.json"
     }
   }
 }
