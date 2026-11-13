@@ -13,7 +13,7 @@ not an application or a library to add to your project.
 | Resource | Purpose |
 | --- | --- |
 | [`ddd-sdd`](./plugins/ddd-sdd/) | Language-agnostic skills for creating specifications, scaffolding a project, and implementing and testing domain and application code. |
-| [`ddd-sdd-dotnet`](./plugins/ddd-sdd-dotnet/) | .NET bootstrap skill and optional code-style configuration and quality-check hooks |
+| [`ddd-sdd-dotnet`](./plugins/ddd-sdd-dotnet/) | .NET bootstrap and domain acceptance-test skills, optional code-style configuration, and quality-check hooks |
 | [`architecture/`](./architecture/) | Language-agnostic architecture rules and deployment topologies. |
 
 ## Get started
@@ -37,7 +37,7 @@ These instructions are for the user level, not the workspace level.
    target, and enable the plugin.
 3. Open your target project and ask the agent to use the appropriate skill.
 
-For .NET bootstrapping, also install the .NET plugin by repeating these steps with
+For .NET bootstrapping and domain acceptance tests, also install the .NET plugin by repeating these steps with
 `plugins/ddd-sdd-dotnet` and follow its [installation and trust instructions](./plugins/ddd-sdd-dotnet/README.md).
 See the [VS Code plugin reference](https://code.visualstudio.com/docs/agents/reference/agent-plugin-reference)
 for client details.
@@ -54,7 +54,7 @@ codex plugin marketplace add .
 
 In the ChatGPT desktop app's Plugins Directory, select the **Agent Docs**
 marketplace and install `ddd-sdd`. Also install `ddd-sdd-dotnet` for .NET
-bootstrapping; it includes optional code-style configuration and quality checks.
+bootstrapping and domain acceptance tests; it includes optional code-style configuration and quality checks.
 Review and trust its hooks before enabling them. See the
 [OpenAI plugin packaging guide](https://developers.openai.com/plugins/build/plugins)
 and the [.NET plugin README](./plugins/ddd-sdd-dotnet/README.md).
@@ -79,7 +79,11 @@ it to use the relevant skills. For example:
 3. **Design:** Use `spec-imagine` to develop a domain specification from the
    brief, or use individual skills such as `spec-bounded-context`,
    `spec-aggregate`, and `spec-use-case`.
-4. **Implement:** Once the relevant specifications are ready, use `code-inside`
+4. **Acceptance tests:** Use [`code-acceptance-tests-domain`](./plugins/ddd-sdd/skills/code-acceptance-tests-domain/SKILL.md)
+   to create domain scenarios and DSL skeletons from the specifications. For
+   C#/.NET, it loads [`code-acceptance-tests-domain-dotnet`](./plugins/ddd-sdd-dotnet/skills/code-acceptance-tests-domain-dotnet/SKILL.md)
+   for Reqnroll bindings, test setup, and verification.
+5. **Implement:** Once the acceptance artifacts are ready, use `code-inside`
    to implement and test the domain and application layers in order.
    Infrastructure adapters and host implementation are outside its scope.
 

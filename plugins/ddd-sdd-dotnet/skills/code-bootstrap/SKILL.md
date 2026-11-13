@@ -1,5 +1,5 @@
 ---
-name: code-bootstrap-dotnet
+name: code-bootstrap
 description: Scaffold and verify the .NET C# stack as the technology-specific step of the DDD-SDD code-bootstrap workflow.
 ---
 
