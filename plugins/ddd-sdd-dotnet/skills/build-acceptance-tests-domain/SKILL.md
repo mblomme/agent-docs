@@ -12,17 +12,17 @@ The project must compile cleanly and the tests must fail with a `NotImplementedE
 
 ## PREREQUISITES
 
-- Ensure `Reqnroll.xUnit` is installed in `tests/Simplifyme.FocusFlow.UnitTests` and there is a `Domain` folder in the `UnitTests` project.
+- Ensure `Reqnroll.xUnit` is installed in `tests/Simplifyme.FocusFlow.AcceptanceTests and there is a `Domain` folder in the `AcceptanceTests` project.
 - `Reqnroll` MSBuild code-behind generation must be enabled in the test project.
   -  Set `ReqnrollUseIntermediateOutputPathForCodeBehind` to `true`
 - Restrict work to the provided scope; if no scope is provided, cover the entire domain layer documented in `/spec/product/domain` and nothing less.
 
 ## ARCHITECTURE & FOLDER STRUCTURE
 
-All domain acceptance test artifacts live under `tests/Simplifyme.FocusFlow.UnitTests/Domain`:
+All domain acceptance test artifacts live under `tests/Simplifyme.FocusFlow.AcceptanceTests/Domain`:
 
 ```text
-tests/Simplifyme.FocusFlow.UnitTests/Domain/
+tests/Simplifyme.FocusFlow.AcceptanceTests/Domain/
 ├── Features/                  # Owned by THIS agent (Read-only for Implementation Agent)
 │   └── <Component>.feature
 ├── StepDefinitions/           # Owned by THIS agent (Read-only for Implementation Agent)
@@ -100,7 +100,7 @@ Never use hardcoded absolute calendar dates (e.g., `"2026-11-10"`). Always expre
 
 ## RULES
 
-- **Strict Scope & Location:** Only create or modify files inside `tests/Simplifyme.FocusFlow.UnitTests/`. Never modify `src/**` or `lib/**`.
+- **Strict Scope & Location:** Only create or modify files inside `tests/Simplifyme.FocusFlow.AcceptanceTests/`. Never modify `src/**` or `lib/**`.
 - **Zero Domain Coupling in Tests:** `StepDefinitions` and `Dsl/Contracts` may only import `Dsl/Contracts`, standard .NET types, `Reqnroll`, and testing assertion libraries (`FluentAssertions` / `Xunit`). They must NEVER import `Simplifyme.FocusFlow.Domain`.
 - **Spec-Linked Skeletons:** Every method in `Dsl/Adapters/<Component>Dsl.cs` must initially throw:
 `throw new NotImplementedException("Spec: /spec/product/domain/<document>.md#<section-anchor>");`
