@@ -13,9 +13,13 @@ when called from it, continue here without invoking it again.
 1. **Read [dotnet.md](./references/dotnet.md) carefully** before scaffolding or verification.
    Apply its guardrails together with the selected topology and core architecture
    rules. Report missing inputs or conflicting guidance to the main workflow.
-2. Scaffold using those references and the main skill's preservation, tooling,
-   and folder rules. Create or reuse a single root solution compatible with the
-   selected SDK and include the required source and test projects.
+2. From the target repository root, run
+   `python3 <skill-directory>/scripts/scaffold.py --bounded-context <BoundedContext>`;
+   include `--company <Company>` when supplied. The script creates or reuses the
+   basic folders, projects, and root solution. Resolve reported conflicts without
+   overwriting existing work. Then complete required project dependencies,
+   topology-specific folders, and configuration using the references and the
+   main skill's preservation, tooling, and folder rules.
 3. Aks in a simple mutliple choice question if the CSharper formatter is wanted.
    If the choice is Yes, invoke
    [`install-formatter`](../install-formatter/SKILL.md). If No, skip formatter
