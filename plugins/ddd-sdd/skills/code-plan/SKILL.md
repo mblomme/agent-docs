@@ -1,6 +1,6 @@
 ---
 name: code-plan
-description: Create a goal-oriented, inside-out work plan and task breakdown in /spec/work/<TYPE>-XXX-Title/ (plan.md and tasks.md) referencing /spec without duplicating its content.
+description: Create a goal-oriented, inside-out work plan and task breakdown under /spec/work/ (plan.md and tasks.md) referencing /spec without duplicating its content.
 ---
 
 # Plan Work Implementation (Inside-Out)
@@ -26,6 +26,12 @@ Assume `/spec` is already up to date and is the sole source of truth. Do **not**
 5. **Omit Unaffected Layers:** Not every plan requires changes in every layer. Explicitly mark unaffected layers as `No` in `plan.md`'s Layer Impact Summary and omit them from the layer goals and `tasks.md`.
 6. **Prefixed Task Identifiers & Plan Back-Link:** Prefix every task ID with the plan identifier (`<TYPE>-XXX-T-DOM-01`, `<TYPE>-XXX-T-APP-01`, `<TYPE>-XXX-T-INF-01`, `<TYPE>-XXX-T-MAIN-01`). `tasks.md` must explicitly state and link to its parent `plan.md`.
 7. **Domain Task Verification Scenarios:** Every task for the Domain layer (`<TYPE>-XXX-T-DOM-XX`) must include a **Verification** section containing a table of `Given / When / Then` scenarios covering the task's happy paths, boundaries, and invariant rejections.
+8. **Completion Tracking:** Every task must have a concise Definition of Done (DOD) table of declarative, verifiable criteria. Track acceptance tests, DOD results, and verification in the Task Traceability Table; do not mark unverified work as verified.
+
+For each task, fill the traceability table's tracking columns as follows and update them as work progresses:
+- **AcceptanceTests (missing + available/pass):** Record the counts of relevant acceptance tests still missing, available, and passing. Passing tests are a subset of available tests. Use `unknown` when a count has not been established and `N/A` when acceptance tests do not apply.
+- **DOD (done/fails):** Record the counts of the task's DOD criteria that are done and that have been evaluated and fail. Unevaluated criteria count as neither; initialize to `0/0`.
+- **Verified (y/n):** Initialize to `n`; change to `y` only after the task's completion and relevant evidence have been verified.
 
 ## Workflow
 
@@ -54,7 +60,7 @@ Evaluate which architectural layers are affected by the work:
 ### 4. Generate `plan.md` and `tasks.md`
 1. Create `/spec/work/<TYPE>-XXX-<Title>/plan.md` following [references/plan-template.md](references/plan-template.md).
 2. Create `/spec/work/<TYPE>-XXX-<Title>/tasks.md` following [references/tasks-template.md](references/tasks-template.md).
-3. Verify that all relative links to `/spec/...` and between `plan.md` and `tasks.md` resolve accurately, no `/spec` knowledge is duplicated, no commands or test-ordering instructions appear, all task IDs follow `<TYPE>-XXX-T-<LAYER>-<XX>`, and every Domain task includes its `Given / When / Then` verification table.
+3. Verify that all relative links to `/spec/...` and between `plan.md` and `tasks.md` resolve accurately, no `/spec` knowledge is duplicated, no commands or test-ordering instructions appear, all task IDs follow `<TYPE>-XXX-T-<LAYER>-<XX>`, every task has a DOD table and tracking entries, and every Domain task includes its `Given / When / Then` verification table.
 
 ### 5. Review & Iterate
 - Review the generated `plan.md` and `tasks.md` for completeness and accuracy.
