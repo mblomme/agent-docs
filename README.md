@@ -68,22 +68,22 @@ Claude's marketplace documentation to install it.
 In your target project, supply the agent with the product information and ask
 it to use the relevant skills. For example:
 
-1. **Bootstrap:** Ask for `code-bootstrap` to set up a project. Provide the
+1. **Bootstrap:** Ask for `bootstrap` to set up a project. Provide the
    bounded context name, technology, and one topology: `single-service`,
    `modular-monolith`, or `microservice`. A company name is optional. The main
    skill requires a matching technology-specific bootstrap skill. For C#/.NET,
-   it loads [`code-bootstrap-dotnet`](./plugins/ddd-sdd-dotnet/skills/code-bootstrap-dotnet/SKILL.md).
+   it loads [`bootstrap`](./plugins/ddd-sdd-dotnet/skills/bootstrap/SKILL.md).
    If the required skill is unavailable, bootstrapping stops before generating files.
 2. **Describe the product:** Use `spec-product-brief` to create a product brief
    from your requirements.
 3. **Design:** Use `spec-imagine` to develop a domain specification from the
    brief, or use individual skills such as `spec-bounded-context`,
    `spec-aggregate`, and `spec-use-case`.
-4. **Acceptance tests:** Use [`code-acceptance-tests-domain`](./plugins/ddd-sdd/skills/code-acceptance-tests-domain/SKILL.md)
+4. **Acceptance tests:** Use [`build-acceptance-tests-domain`](./plugins/ddd-sdd/skills/build-acceptance-tests-domain/SKILL.md)
    to create domain scenarios and DSL skeletons from the specifications. For
-   C#/.NET, it loads [`code-acceptance-tests-domain-dotnet`](./plugins/ddd-sdd-dotnet/skills/code-acceptance-tests-domain-dotnet/SKILL.md)
+   C#/.NET, it loads [`build-acceptance-tests-domain`](./plugins/ddd-sdd-dotnet/skills/build-acceptance-tests-domain/SKILL.md)
    for Reqnroll bindings, test setup, and verification.
-5. **Implement:** Once the acceptance artifacts are ready, use `code-inside`
+5. **Implement:** Once the acceptance artifacts are ready, use `build-hexagonal-inside`
    to implement and test the domain and application layers in order.
    Infrastructure adapters and host implementation are outside its scope.
 
@@ -100,7 +100,7 @@ to read and their dependencies. It covers the core domain, application,
 infrastructure, and composition-root rules; single-service, modular-monolith,
 and microservice topologies. These documents are language agnostic.
 .NET bootstrap guidance lives in the
-[.NET skill's bundled reference](./plugins/ddd-sdd-dotnet/skills/code-bootstrap-dotnet/references/dotnet.md),
+[.NET skill's bundled reference](./plugins/ddd-sdd-dotnet/skills/bootstrap/references/dotnet.md),
 which the technology-specific skill must read.
 
 To refresh an existing project's copy, use `spec-architecture-update`. This

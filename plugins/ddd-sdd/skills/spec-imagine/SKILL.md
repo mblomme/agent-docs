@@ -9,7 +9,7 @@ Imagine a domain driven design analysis for the backend side of the system based
 
 ## Pre-requisites
 
-- The repository is already bootstrapped with the `code-bootstrap` skill.
+- The repository is already bootstrapped with the `bootstrap` skill.
 - The product-brief document is available in the product specification folder.
 - The repository can be built and run with the provided technology stack.
 

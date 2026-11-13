@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "ddd-sdd",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Language-agnostic specification and implementation skills for DDD and hexagonal architecture.",
   "keywords": [
     "language-agnostic",
