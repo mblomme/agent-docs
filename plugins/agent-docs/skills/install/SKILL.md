@@ -4,5 +4,3 @@ description: Installation skill for Agent Docs. Only use this skill when explici
 ---
 
 Execute the installation flow described in the `MARKETPLACE.MD` from the references folder. Also apply any client-specific instructions in that file. 
-
-
