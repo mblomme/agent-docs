@@ -4,6 +4,8 @@
     "agentStop": [
       {
         "type": "command",
+        "bash": "python3 \"${PLUGIN_ROOT}/adapters/hooks/copilot/on_agent_stop.py\"",
+        "powershell": "python \"${PLUGIN_ROOT}/adapters/hooks/copilot/on_agent_stop.py\"",
         "command": "python3 \"${PLUGIN_ROOT}/adapters/hooks/copilot/on_agent_stop.py\"",
         "timeoutSec": 600
       }
@@ -11,6 +13,8 @@
     "userPromptSubmitted": [
       {
         "type": "command",
+        "bash": "python3 \"${PLUGIN_ROOT}/adapters/hooks/copilot/on_user_prompt.py\"",
+        "powershell": "python \"${PLUGIN_ROOT}/adapters/hooks/copilot/on_user_prompt.py\"",
         "command": "python3 \"${PLUGIN_ROOT}/adapters/hooks/copilot/on_user_prompt.py\""
       }
     ]

@@ -435,6 +435,22 @@ class PluginTests(unittest.TestCase):
         self.assertFalse((self.package / ".claude-plugin").exists())
         self.assertFalse(any(path.is_symlink() for path in self.package.rglob("*")))
 
+    def test_copilot_cli_hooks_schema(self):
+        config = json.loads((self.package / CLIENT_CONFIGS["copilot"]["path"]).read_text())
+        self.assertEqual(config["version"], 1)
+        self.assertEqual(set(config["hooks"]), {"agentStop", "userPromptSubmitted"})
+        for event_name, expected_script in (
+            ("agentStop", "on_agent_stop.py"),
+            ("userPromptSubmitted", "on_user_prompt.py"),
+        ):
+            entry = config["hooks"][event_name][0]
+            self.assertEqual(entry["type"], "command")
+            for key in ("bash", "powershell", "command"):
+                self.assertIn(key, entry)
+                self.assertIn("${PLUGIN_ROOT}", entry[key])
+                self.assertIn(expected_script, entry[key])
+        self.assertEqual(config["hooks"]["agentStop"][0]["timeoutSec"], 600)
+
     def test_pre_hook_registration_and_check_parity(self):
         config = json.loads((self.package / CLIENT_CONFIGS["codex"]["path"]).read_text())
         pre = config["hooks"]["PreToolUse"][0]
