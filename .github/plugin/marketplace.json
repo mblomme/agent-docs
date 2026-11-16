@@ -8,16 +8,10 @@
   },
   "plugins": [
     {
-      "name": "ddd-sdd",
-      "source": "./plugins/ddd-sdd",
-      "description": "Language-agnostic specification and implementation skills for DDD and hexagonal architecture.",
-      "version": "0.1.1"
-    },
-    {
-      "name": "ddd-sdd-dotnet",
-      "source": "./plugins/ddd-sdd-dotnet",
-      "description": ".NET specific DDD and specification-driven development.",
-      "version": "0.1.1"
+      "name": "agent-docs",
+      "source": "./plugins/agent-docs",
+      "description": "Agent Docs plugin.",
+      "version": "0.1.0"
     }
   ]
 }
