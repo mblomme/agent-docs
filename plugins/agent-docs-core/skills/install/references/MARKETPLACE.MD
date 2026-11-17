@@ -54,9 +54,26 @@ This repository strives to use the .agents folder and the agents-plugins specifi
   - Replace the `${PLUGIN_ROOT}` variable in the hooks.json file with the relative path to the plugin root starting from the root of the git repository. Check if this creates a valid path to the plugin root from the root of the git repository.
 
 3. **copilot**
-  - Create a file .github/plugin/marketplace.json on the root of the repository and add the requested plugins.
-  - The marketplace file should point to the workspace level plugins
+  - Create a file .github/copilot/settings.json on the root of the repository and add the requested plugins.
+  - The settings file should enable the requested plugens on the local repository level
   - If the file already exists, update the file, if not create the file and directories as needed.
+  - Example settings file
+```example settings.json
+{
+  "extraKnownMarketplaces": {
+    "agent-docs-workspace-plugins": {
+      "source": {
+        "source": "directory",
+        "path": "."
+      }
+    }
+  },
+  "enabledPlugins": {
+    "some-plugin@marketplace-name": true,
+    "some-plugin2@marketplace-name": true
+  }
+}
+```
  
 ## IDEMPOTENCY
 

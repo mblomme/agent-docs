@@ -6,4 +6,4 @@ description: Installation skill for Agent Docs. Only use this skill when explici
 Execute the installation flow described in the `MARKETPLACE.MD` from the references folder. Also apply any client-specific instructions in that file. 
 
 - RULES
-  - Never used cached versions of this repository, always fetch the latest version of the agent-docs repository.
+  - Never use cached versions of this repository, always pull the latest version of the agent-docs repository in a unique temp folder
