@@ -16,6 +16,9 @@ The following information should be provided. If not, the agent should ask for i
 
 ## INSTALLATION
 
+The installation contains 2 phase that must be completed in order:
+
+### Phase 1: install base
 The target destination for the plugins is the `.agents` folder of the current workspace the agents is working in.
 The use of the `.agents` folder is recommended to avoid conflicts and make it vendor-agnostic.
 
@@ -36,9 +39,7 @@ my-repo/
         └── some-plugin-of-this-repository/       # Local plugin 1
 ```
 
-Proceed to `### CLIENT SUPPORT` section for client-specific instructions.
-
-## CLIENT SUPPORT
+### Phase 2: install clients
 
 This repository strives to use the .agents folder and the agents-plugins specification as much as possible, however not every clients has full support for it. That's why when the installation is done, the following needs to happen per client.
 
