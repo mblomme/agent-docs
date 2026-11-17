@@ -51,7 +51,11 @@ This repository strives to use the .agents folder and the agents-plugins specifi
   - On the root of the git repository create a .codex/hooks.json that is a symlink to ´.agents/plugins/ddd-sdd-dotnet/com.openai/hooks/hooks.json´.
   - Replace the `${PLUGIN_ROOT}` variable in the hooks.json file with the relative path to the plugin root starting from the root of the git repository. Check if this creates a valid path to the plugin root from the root of the git repository.
 
-
+3. **copilot**
+  - Create a file .github/plugin/marketplace.json on the root of the repository and add the requested plugins.
+  - The marketplace file should point to the workspace level plugins
+  - If the file already exists, update the file, if not create the file and directories as needed.
+ 
 ## IDEMPOTENCY
 
 This section is only relevant if the `.agents` folders already has some of the available plugins installed.
