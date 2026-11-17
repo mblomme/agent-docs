@@ -1,7 +1,7 @@
 {
-  "name": "agent-docs-core",
+  "name": "agent-docs",
   "interface": {
-    "displayName": "Agent Docs Core"
+    "displayName": "Agent Docs"
   },
   "plugins": [
     {
