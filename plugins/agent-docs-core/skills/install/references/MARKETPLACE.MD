@@ -43,7 +43,8 @@ my-repo/
 
 This repository strives to use the .agents folder and the agents-plugins specification as much as possible, however not every clients has full support for it. That's why when the installation is done, the following needs to happen per client.
 
-### ddd-sdd-dotnet plugin
+
+**client: ddd-sdd-dotnet plugin**
 
 1. **antigravity**
   - On the root of this plugin create a `hooks.json` file that is a symlink to ´com.google.antigravity/hooks.json´.
