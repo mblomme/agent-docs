@@ -1,0 +1,17 @@
+{
+  "name": "agent-docs-core",
+  "owner": {
+    "name": "mblomme"
+  },
+  "metadata": {
+    "description": "Reusable agent plugins for software design and development."
+  },
+  "plugins": [
+    {
+      "name": "agent-docs-core",
+      "source": "./plugins/agent-docs-core",
+      "description": "Agent Docs Core plugin.",
+      "version": "0.1.0"
+    }
+  ]
+}
