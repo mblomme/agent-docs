@@ -63,7 +63,7 @@ This repository strives to use the .agents folder and the agents-plugins specifi
 ```example settings.json
 {
   "extraKnownMarketplaces": {
-    "agent-docs-workspace-plugins": {
+    "workspace-plugins": {
       "source": {
         "source": "directory",
         "path": "."
@@ -71,8 +71,8 @@ This repository strives to use the .agents folder and the agents-plugins specifi
     }
   },
   "enabledPlugins": {
-    "some-plugin@marketplace-name": true,
-    "some-plugin2@marketplace-name": true
+    "some-plugin@workspace-plugins": true,
+    "some-plugin2@workspace-plugins": true
   }
 }
 ```
