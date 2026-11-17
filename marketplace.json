@@ -1,14 +1,14 @@
 {
-  "name": "agent-docs",
+  "name": "agent-docs-core",
   "interface": {
-    "displayName": "Agent Docs"
+    "displayName": "Agent Docs Core"
   },
   "plugins": [
     {
-      "name": "agent-docs",
+      "name": "agent-docs-core",
       "source": {
         "source": "local",
-        "path": "./plugins/agent-docs"
+        "path": "./plugins/agent-docs-core"
       },
       "policy": {
         "installation": "AVAILABLE",
