@@ -19,8 +19,7 @@ The following information should be provided. If not, the agent should ask for i
 The installation contains 2 phase that must be completed in order:
 
 ### Phase 1: install base
-The target destination for the plugins is the `.agents` folder of the current workspace the agents is working in.
-The use of the `.agents` folder is recommended to avoid conflicts and make it vendor-agnostic.
+The target destination for the plugins is the `.agents` folder of the current workspace the agents is working in. The use of the `.agents` folder is recommended to avoid conflicts and make it vendor-agnostic.
 
 If the folder does not exist, create it. 
 
@@ -79,6 +78,26 @@ Install ALL the clients listed below.
   }
 }
 ```
+
+### VERIFICATION
+
+Verify that Phase 1 and Phase 2 have been completed in order and all checks below pass:
+
+- **Phase 1 (install base)**
+  - Verify that `.agents/` and `.agents/plugins/` exist in the current workspace.
+  - Verify that each requested plugin is present in `.agents/plugins/<plugin-name>/`.
+  - Verify that `.agents/plugins/marketplace.json` exists and registers all requested plugins.
+- **Phase 2 (install clients — all listed clients must be verified)**
+  - **antigravity** (`ddd-sdd-dotnet` plugin):
+    - Verify that `.agents/plugins/ddd-sdd-dotnet/hooks.json` exists and is a symlink to `com.google.antigravity/hooks.json`.
+  - **codex**:
+    - Verify that `.codex/hooks.json` at the git repository root exists and is a symlink to `.agents/plugins/ddd-sdd-dotnet/com.openai/hooks/hooks.json`.
+    - Verify that `${PLUGIN_ROOT}` in `hooks.json` has been replaced with a relative path to the plugin root that resolves validly from the git repository root.
+    - Verify that `.codex/agents/` exists and contains a symlink for every subagent in the `com.openai` extension folder.
+    - Verify that `.codex/config.toml` exists at the repository root and enables every requested plugin under `[plugins."<name>@<marketplace>"]` with `enabled = true`.
+  - **copilot**:
+    - Verify that `.github/plugin/marketplace.json` exists at the repository root and contains all requested plugins.
+    - Verify that `.github/copilot/settings.json` exists at the repository root and enables all requested plugins at the local repository level.
  
 ## IDEMPOTENCY
 
