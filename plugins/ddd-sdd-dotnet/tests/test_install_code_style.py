@@ -94,6 +94,10 @@ class CodeStyleTests(unittest.TestCase):
         first = self.config.read_bytes()
         first_props = self.props.read_bytes()
         self.assertEqual(first_props, (SKILL / "references/Directory.Build.props").read_bytes())
+        self.assertEqual(
+            ET.fromstring(first_props).findtext("PropertyGroup/ArtifactsPath"),
+            "$(MSBuildThisFileDirectory).net-build",
+        )
         self.assertEqual(parse_block(first.decode("utf-8")), EXPECTED)
         self.assertEqual(first.count(START.encode()), 1)
         self.assertEqual(first.count(END.encode()), 1)
@@ -127,6 +131,7 @@ class CodeStyleTests(unittest.TestCase):
         self.assertEqual(managed.findtext("EnforceCodeStyleInBuild"), "true")
         self.assertEqual(managed.findtext("GenerateDocumentationFile"), "true")
         self.assertEqual(managed.findtext("NoWarn"), "$(NoWarn);CS1591")
+        self.assertEqual(managed.findtext("ArtifactsPath"), "$(MSBuildThisFileDirectory).net-build")
         self.assertEqual(merged.count(PROPS_START.encode()), 1)
         self.assertEqual(merged.count(PROPS_END.encode()), 1)
         result = self.run_skill()
@@ -149,6 +154,10 @@ class CodeStyleTests(unittest.TestCase):
                 namespace = root.tag.partition("}")[0] + "}" if "}" in root.tag else ""
                 self.assertEqual(root.findtext(f"{namespace}PropertyGroup/{namespace}NoWarn"),
                                  "$(NoWarn);CS1591")
+                self.assertEqual(
+                    root.findtext(f"{namespace}PropertyGroup/{namespace}ArtifactsPath"),
+                    "$(MSBuildThisFileDirectory).net-build",
+                )
                 self.assertEqual(self.run_skill().returncode, 0)
                 self.assertEqual(self.props.read_bytes(), merged)
 
@@ -169,8 +178,14 @@ class CodeStyleTests(unittest.TestCase):
         self.assertEqual(self.props.read_bytes(), merged)
 
     def test_reports_props_conflicts_before_changing_either_file(self):
-        for name in ("EnableNETAnalyzers", "EnforceCodeStyleInBuild", "GenerateDocumentationFile"):
-            for value in ("false", "$(AnalyzerSetting)", ""):
+        cases = (
+            ("EnableNETAnalyzers", ("false", "$(AnalyzerSetting)", "")),
+            ("EnforceCodeStyleInBuild", ("false", "$(AnalyzerSetting)", "")),
+            ("GenerateDocumentationFile", ("false", "$(AnalyzerSetting)", "")),
+            ("ArtifactsPath", ("artifacts", "$(ArtifactsDir)", "")),
+        )
+        for name, values in cases:
+            for value in values:
                 with self.subTest(name=name, value=value):
                     config = b"root = true\n"
                     props = (
@@ -313,7 +328,7 @@ class CodeStyleTests(unittest.TestCase):
             '<Project><Import Project="Directory.Build.props"/>'
             '<Target Name="Inspect"><Message Importance="high" '
             'Text="PROPS=$(EnableNETAnalyzers)|$(EnforceCodeStyleInBuild)|'
-            '$(GenerateDocumentationFile)|$(NoWarn)"/></Target></Project>',
+            '$(GenerateDocumentationFile)|$(ArtifactsPath)|$(NoWarn)"/></Target></Project>',
             encoding="utf-8",
         )
         for configuration, expected_existing in (("Debug", 1), ("Release", 0)):
@@ -328,8 +343,9 @@ class CodeStyleTests(unittest.TestCase):
                 self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
                 line = next(line.strip() for line in result.stdout.splitlines()
                             if line.strip().startswith("PROPS="))
-                analyzers, style, docs, nowarn = line.removeprefix("PROPS=").split("|")
+                analyzers, style, docs, artifacts, nowarn = line.removeprefix("PROPS=").split("|")
                 self.assertEqual((analyzers, style, docs), ("true", "true", "true"))
+                self.assertEqual(Path(artifacts), self.workspace / ".net-build")
                 self.assertEqual(nowarn.split(";").count("CS0168"), expected_existing)
                 self.assertEqual(nowarn.split(";").count("CS1591"), 1)
 
@@ -365,9 +381,10 @@ class CodeStyleTests(unittest.TestCase):
         self.assertEqual(before.returncode, 0, before.stderr + before.stdout)
         self.assertNotIn("warning IDE0005", before.stdout + before.stderr)
         self.props.write_bytes(template)
-        after = subprocess.run(command + ["--no-restore"], cwd=self.workspace,
+        after = subprocess.run(command, cwd=self.workspace,
                                text=True, capture_output=True)
         self.assertEqual(after.returncode, 0, after.stderr + after.stdout)
+        self.assertTrue((self.workspace / ".net-build").is_dir())
         self.assertIn("warning IDE0005", after.stdout + after.stderr)
         self.assertNotIn("warning CS1591", after.stdout + after.stderr)
 

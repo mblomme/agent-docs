@@ -33,8 +33,9 @@ migrated to the new markers; mixed or duplicate marker pairs are errors.
 The script creates a missing root `Directory.Build.props` from the reference.
 For an existing file, it preserves the original XML and adds a managed
 property group at the end of the project. This enables analyzers and build-time
-style enforcement, enables documentation generation for IDE0005, and appends
-`CS1591` to the existing `NoWarn` value. The XML between the corresponding
+style enforcement, enables documentation generation for IDE0005, appends
+`CS1591` to the existing `NoWarn` value, and sets `ArtifactsPath` to
+`$(MSBuildThisFileDirectory).net-build`. The XML between the corresponding
 `BEGIN` and `END` comments is managed and may be replaced on later runs.
 Other project properties and `NoWarn` entries remain in place.
 

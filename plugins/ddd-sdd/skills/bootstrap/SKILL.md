@@ -77,6 +77,24 @@ Follow the template below and replace the placeholders with the actual values.
 - Read [spec/llms.txt](spec/llms.txt), the entry point for all technical and product information, and applicable specifications and their dependencies before changing code. Report missing or conflicting guidance.
 
 - Remove `.gitkeep` when its folder is no longer empty.
+
+# WORKFLOW
+
+When given a `plan.md` from the `work` folder, execute the assigned plan. The plain contain one or more tasks that must be executed in the order provided in the plan. Some of those tasks need special subagents ad described below.
+
+## Domain tasks
+
+Each task of type domain (`T-DOM`) contains 3 phases: acceptance-test authoring, domain implementation and verification. The phases must be executed in order:
+
+1. Start by assigning the task to the subagent `domain-acceptance-test` to author the acceptance tests.
+2. When this subagent is successfully completed, assign the task to the subagent `domain-build` to implement the domain behavior and wire the existing acceptance-test adapters to real domain components.
+3. Verify the task is correctly implemented and tested
+
+When one of the subagents fails, read the failure report and fix the problem before reassigning the task to the same subagent. Do not skip or bypass any of the two phases. When giving remarks or instruction to the subagent, make sure the order of the phases is respected.
+
+## WORKFLOW RULES
+
+- Do not implement anything extra beyond the assigned plan.
 ```
 
 Keep detailed design and architecture rules in `spec/`; link to them instead
