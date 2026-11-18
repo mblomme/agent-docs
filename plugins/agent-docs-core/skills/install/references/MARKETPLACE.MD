@@ -48,7 +48,8 @@ Install ALL the clients listed below.
 **client: ddd-sdd-dotnet plugin**
 
 1. **antigravity**
-  - On the root of this plugin create a `hooks.json` file that is a symlink to ´com.google.antigravity/hooks.json´.
+  - On the root of the `ddd-sdd-dotnet` plugin (when installed), create a `hooks.json` file that is a symlink to `com.google.antigravity/hooks.json`.
+  - Create or update the folder `.gemini/agents` at the root of the git repository and create a copy of each subagent found in each selected plugin's `com.google.antigravity/agents` extension folder.
 
 2. **codex**
   - On the root of the git repository create a .codex/hooks.json that is a symlink to ´.agents/plugins/ddd-sdd-dotnet/com.openai/hooks/hooks.json´.
@@ -89,8 +90,9 @@ After completing Phase 1, the scripted Phase 2 steps, and `.github/plugin/market
   - Verify that each requested plugin is present in `.agents/plugins/<plugin-name>/`.
   - Verify that `.agents/plugins/marketplace.json` exists and registers all requested plugins.
 - **Phase 2 (install clients — all listed clients must be verified)**
-  - **antigravity** (`ddd-sdd-dotnet` plugin):
-    - Verify that `.agents/plugins/ddd-sdd-dotnet/hooks.json` exists and is a symlink to `com.google.antigravity/hooks.json`.
+  - **antigravity**:
+    - (`ddd-sdd-dotnet` plugin): Verify that `.agents/plugins/ddd-sdd-dotnet/hooks.json` exists and is a symlink to `com.google.antigravity/hooks.json`.
+    - Verify that `.gemini/agents/` exists at the git repository root and contains a copy for every subagent in each selected plugin's `com.google.antigravity/agents` extension folder.
   - **codex**:
     - Verify that `.codex/hooks.json` at the git repository root exists and is a symlink to `.agents/plugins/ddd-sdd-dotnet/com.openai/hooks/hooks.json`.
     - Verify that `${PLUGIN_ROOT}` in `hooks.json` has been replaced with a relative path to the plugin root that resolves validly from the git repository root.

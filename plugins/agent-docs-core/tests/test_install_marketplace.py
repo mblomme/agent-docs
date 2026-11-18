@@ -148,6 +148,17 @@ class InstallMarketplaceTests(unittest.TestCase):
             (self.source_repo / "plugins" / "ddd-sdd" / "com.openai" / "agents" / "domain-build.toml").read_bytes(),
         )
 
+        for agent_name in ("domain-acceptance-test.md", "domain-build.md"):
+            antigravity_agent = self.workspace / ".gemini" / "agents" / agent_name
+            self.assertTrue(antigravity_agent.is_file())
+            self.assertFalse(antigravity_agent.is_symlink())
+            self.assertEqual(
+                antigravity_agent.read_bytes(),
+                (
+                    self.source_repo / "plugins" / "ddd-sdd" / "com.google.antigravity" / "agents" / agent_name
+                ).read_bytes(),
+            )
+
         # verify fails before .github/plugin/marketplace.json exists
         failed_verify = self.run_cli("verify", str(self.workspace), check=False)
         self.assertEqual(failed_verify.returncode, 1)
@@ -210,6 +221,7 @@ class InstallMarketplaceTests(unittest.TestCase):
             "ddd-sdd-dotnet",
         )
         self.assertIn("Phase 2 (antigravity): verified", verify_result.stdout)
+        self.assertIn("Phase 2 (antigravity agents): verified 2 copied agent file(s)", verify_result.stdout)
         self.assertIn("Phase 2 (codex hooks): verified", verify_result.stdout)
         self.assertIn("Phase 2 (codex agents): verified 2 copied agent file(s)", verify_result.stdout)
 
@@ -222,8 +234,13 @@ class InstallMarketplaceTests(unittest.TestCase):
         custom_codex_agent.parent.mkdir(parents=True)
         custom_codex_agent.write_text('name = "custom"\n', encoding="utf-8")
 
-        # Simulate an older symlink in .codex/agents that should become a regular file copy
+        custom_antigravity_agent = self.workspace / ".gemini" / "agents" / "custom-agent.md"
+        custom_antigravity_agent.parent.mkdir(parents=True)
+        custom_antigravity_agent.write_text("---\nname: custom\n---\n", encoding="utf-8")
+
+        # Simulate older symlinks in .codex/agents and .gemini/agents that should become regular file copies
         (self.workspace / ".codex" / "agents" / "domain-build.toml").symlink_to("broken-target")
+        (self.workspace / ".gemini" / "agents" / "domain-build.md").symlink_to("broken-target")
 
         config_toml = self.workspace / ".codex" / "config.toml"
         config_toml.write_text(
@@ -278,6 +295,8 @@ class InstallMarketplaceTests(unittest.TestCase):
         self.assertEqual((unrelated_agent_dir / "notes.txt").read_text(encoding="utf-8"), "keep me")
         self.assertEqual(custom_codex_agent.read_text(encoding="utf-8"), 'name = "custom"\n')
         self.assertFalse((self.workspace / ".codex" / "agents" / "domain-build.toml").is_symlink())
+        self.assertEqual(custom_antigravity_agent.read_text(encoding="utf-8"), "---\nname: custom\n---\n")
+        self.assertFalse((self.workspace / ".gemini" / "agents" / "domain-build.md").is_symlink())
 
         marketplace = json.loads(
             (self.workspace / ".agents" / "plugins" / "marketplace.json").read_text(encoding="utf-8")
@@ -322,6 +341,8 @@ class InstallMarketplaceTests(unittest.TestCase):
             settings["extraKnownMarketplaces"]["workspace-plugins"]["source"]["path"],
             "packages/service a",
         )
+        self.assertTrue((self.workspace / ".gemini" / "agents" / "domain-build.md").is_file())
+        self.assertFalse((nested_workspace / ".gemini").exists())
 
         write_copilot_marketplace(self.workspace, nested_workspace, ["ddd-sdd", "ddd-sdd-dotnet"])
         self.run_cli("verify", str(nested_workspace))
@@ -349,6 +370,25 @@ class InstallMarketplaceTests(unittest.TestCase):
         shutil.copy2(
             self.workspace / ".agents" / "plugins" / "ddd-sdd" / "com.openai" / "agents" / "domain-build.toml",
             agent_copy,
+        )
+
+        antigravity_copy = self.workspace / ".gemini" / "agents" / "domain-build.md"
+        antigravity_copy.unlink()
+        antigravity_copy.symlink_to("../.agents/plugins/ddd-sdd/com.google.antigravity/agents/domain-build.md")
+        failed_antigravity_agent = self.run_cli("verify", str(self.workspace), check=False)
+        self.assertEqual(failed_antigravity_agent.returncode, 1)
+        self.assertIn("Expected copied regular file", failed_antigravity_agent.stderr)
+
+        antigravity_copy.unlink()
+        shutil.copy2(
+            self.workspace
+            / ".agents"
+            / "plugins"
+            / "ddd-sdd"
+            / "com.google.antigravity"
+            / "agents"
+            / "domain-build.md",
+            antigravity_copy,
         )
 
         hooks_file = (

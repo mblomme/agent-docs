@@ -291,8 +291,9 @@ def replace_symlink(link_path: Path, target: str) -> None:
     link_path.symlink_to(target)
 
 
-def configure_antigravity(workspace: Path, selected_plugins: list[str]) -> None:
-    """Create Antigravity hooks.json symlink for ddd-sdd-dotnet if installed."""
+def configure_antigravity(workspace: Path, git_root: Path, selected_plugins: list[str]) -> None:
+    """Copy Antigravity subagents into .gemini/agents and symlink ddd-sdd-dotnet hooks.json."""
+    copy_antigravity_agents(workspace, git_root, selected_plugins)
     if DOTNET_PLUGIN_NAME not in selected_plugins:
         return
     plugin_root = workspace / ".agents" / "plugins" / DOTNET_PLUGIN_NAME
@@ -355,14 +356,19 @@ def validate_codex_hook_commands(hooks_data: dict, git_root: Path, hooks_path: P
                 )
 
 
-def copy_codex_agents(workspace: Path, git_root: Path, selected_plugins: list[str]) -> list[Path]:
-    """Copy subagent files from each selected plugin's com.openai/agents into .codex/agents/."""
-    codex_agents_dir = git_root / ".codex" / "agents"
-    codex_agents_dir.mkdir(parents=True, exist_ok=True)
+def copy_client_agents(
+    workspace: Path,
+    selected_plugins: list[str],
+    client_ext: str,
+    dest_dir: Path,
+    client_label: str,
+) -> list[Path]:
+    """Copy subagent files from each selected plugin's <client_ext>/agents into dest_dir."""
+    dest_dir.mkdir(parents=True, exist_ok=True)
     copied: list[Path] = []
     seen_filenames: dict[str, str] = {}
     for plugin_name in selected_plugins:
-        agents_src = workspace / ".agents" / "plugins" / plugin_name / "com.openai" / "agents"
+        agents_src = workspace / ".agents" / "plugins" / plugin_name / client_ext / "agents"
         if not agents_src.is_dir():
             continue
         for agent_file in sorted(agents_src.iterdir(), key=lambda item: item.name):
@@ -370,11 +376,11 @@ def copy_codex_agents(workspace: Path, git_root: Path, selected_plugins: list[st
                 continue
             if agent_file.name in seen_filenames:
                 raise InstallError(
-                    f"Duplicate Codex agent filename '{agent_file.name}' across "
+                    f"Duplicate {client_label} agent filename '{agent_file.name}' across "
                     f"{seen_filenames[agent_file.name]} and {plugin_name}"
                 )
             seen_filenames[agent_file.name] = plugin_name
-            dest = codex_agents_dir / agent_file.name
+            dest = dest_dir / agent_file.name
             if dest.is_dir() and not dest.is_symlink():
                 raise InstallError(f"Cannot overwrite directory with agent file: {dest}")
             if dest.is_symlink():
@@ -382,6 +388,28 @@ def copy_codex_agents(workspace: Path, git_root: Path, selected_plugins: list[st
             shutil.copy2(agent_file, dest)
             copied.append(dest)
     return copied
+
+
+def copy_antigravity_agents(workspace: Path, git_root: Path, selected_plugins: list[str]) -> list[Path]:
+    """Copy subagent files from each selected plugin's com.google.antigravity/agents into .gemini/agents/."""
+    return copy_client_agents(
+        workspace,
+        selected_plugins,
+        "com.google.antigravity",
+        git_root / ".gemini" / "agents",
+        "Antigravity",
+    )
+
+
+def copy_codex_agents(workspace: Path, git_root: Path, selected_plugins: list[str]) -> list[Path]:
+    """Copy subagent files from each selected plugin's com.openai/agents into .codex/agents/."""
+    return copy_client_agents(
+        workspace,
+        selected_plugins,
+        "com.openai",
+        git_root / ".codex" / "agents",
+        "Codex",
+    )
 
 
 def parse_toml_table_name(header: str) -> Optional[tuple[str, ...]]:
@@ -554,7 +582,7 @@ def install(
             install_plugin_directory(catalog[name]["path"], plugins_dir / name)
 
     marketplace_name = update_local_marketplace(workspace, selected)
-    configure_antigravity(workspace, selected)
+    configure_antigravity(workspace, git_root, selected)
     configure_codex(workspace, git_root, selected, marketplace_name)
     configure_copilot_settings(workspace, git_root, selected, marketplace_name)
 
@@ -564,6 +592,30 @@ def install(
         include_copilot_marketplace=False,
     )
     return checks
+
+
+def verify_client_agents(
+    plugins_dir: Path,
+    plugins_to_check: list[str],
+    client_ext: str,
+    dest_dir: Path,
+    client_label: str,
+) -> list[Path]:
+    """Verify every subagent in <client_ext>/agents has a matching regular file copy in dest_dir."""
+    expected_agent_files: list[Path] = []
+    for name in plugins_to_check:
+        agents_src = plugins_dir / name / client_ext / "agents"
+        if agents_src.is_dir():
+            expected_agent_files.extend(item for item in sorted(agents_src.iterdir()) if item.is_file())
+    if expected_agent_files and not dest_dir.is_dir():
+        raise InstallError(f"Missing {client_label} agents directory: {dest_dir}")
+    for src_agent in expected_agent_files:
+        copied_agent = dest_dir / src_agent.name
+        if copied_agent.is_symlink() or not copied_agent.is_file():
+            raise InstallError(f"Expected copied regular file at {copied_agent}")
+        if copied_agent.read_bytes() != src_agent.read_bytes():
+            raise InstallError(f"{client_label} agent copy differs from source: {copied_agent}")
+    return expected_agent_files
 
 
 def verify_copilot_marketplace(
@@ -692,18 +744,22 @@ def verify_installation(
         validate_codex_hook_commands(hooks_data, git_root, expected_hooks_target)
         checks.append(f"Phase 2 (codex hooks): verified {codex_hooks_link}")
 
-    codex_agents_dir = git_root / ".codex" / "agents"
-    expected_agent_files: list[Path] = []
-    for name in plugins_to_check:
-        agents_src = plugins_dir / name / "com.openai" / "agents"
-        if agents_src.is_dir():
-            expected_agent_files.extend(item for item in sorted(agents_src.iterdir()) if item.is_file())
-    for src_agent in expected_agent_files:
-        copied_agent = codex_agents_dir / src_agent.name
-        if copied_agent.is_symlink() or not copied_agent.is_file():
-            raise InstallError(f"Expected copied regular file at {copied_agent}")
-        if copied_agent.read_bytes() != src_agent.read_bytes():
-            raise InstallError(f"Codex agent copy differs from source: {copied_agent}")
+    antigravity_agent_files = verify_client_agents(
+        plugins_dir,
+        plugins_to_check,
+        "com.google.antigravity",
+        git_root / ".gemini" / "agents",
+        "Antigravity",
+    )
+    checks.append(f"Phase 2 (antigravity agents): verified {len(antigravity_agent_files)} copied agent file(s)")
+
+    expected_agent_files = verify_client_agents(
+        plugins_dir,
+        plugins_to_check,
+        "com.openai",
+        git_root / ".codex" / "agents",
+        "Codex",
+    )
     checks.append(f"Phase 2 (codex agents): verified {len(expected_agent_files)} copied agent file(s)")
 
     codex_config_path = git_root / ".codex" / "config.toml"
