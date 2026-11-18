@@ -10,13 +10,14 @@ Install or update the requested agent plugins on a workspace level and provide a
 
 The following information should be provided. If not, the agent should ask for it in simple multiple-choice questions. One question at a time, until all information is collected.
 
-- Requested plugins: 
-  - Iterate through the plugins folder in this repository and ask a confirmation for each plugin. If the user confirms, add it to the list of requested plugins.
+- Run `python3 "<skill-directory>/scripts/install_marketplace.py" discover "<target-workspace>"` first to inspect the latest plugins in this repository and compare them against the target workspace without relying on a cached checkout.
+- Requested plugins:
+  - Iterate through the discovered plugins from the `plugins` folder in this repository and ask a confirmation for each plugin (unless already installed during an update/refresh). If the user confirms, add it to the list of requested plugins.
 
 
 ## INSTALLATION
 
-The installation contains 2 phase that must be completed in order:
+The installation contains 2 phases that must be completed in order. Execute `python3 "<skill-directory>/scripts/install_marketplace.py" install "<target-workspace>" --plugins <requested-plugins...>` to perform Phase 1 and the deterministic Phase 2 steps (Antigravity, Codex, and Copilot `settings.json`), then complete the GitHub Copilot `.github/plugin/marketplace.json` step manually before running `verify`.
 
 ### Phase 1: install base
 The target destination for the plugins is the `.agents` folder of the current workspace the agents is working in. The use of the `.agents` folder is recommended to avoid conflicts and make it vendor-agnostic.
@@ -52,7 +53,7 @@ Install ALL the clients listed below.
 2. **codex**
   - On the root of the git repository create a .codex/hooks.json that is a symlink to ´.agents/plugins/ddd-sdd-dotnet/com.openai/hooks/hooks.json´.
   - Replace the `${PLUGIN_ROOT}` variable in the hooks.json file with the relative path to the plugin root starting from the root of the git repository. Check if this creates a valid path to the plugin root from the root of the git repository.
-  - create or update the folder .codex/agents and create a symlink to each subagent you can find in com.openai extension folder.
+  - create or update the folder .codex/agents and create a copy of each subagent you can find in com.openai extension folder.
   - Create a file .codex/config.toml on the root of the repository and add the requested plugins by adding a '[plugins."<name>@<marketplace>"]' and set the property enabled to true of each requested plugin.
 
 3. **copilot**
@@ -81,7 +82,7 @@ Install ALL the clients listed below.
 
 ### VERIFICATION
 
-Verify that Phase 1 and Phase 2 have been completed in order and all checks below pass:
+After completing Phase 1, the scripted Phase 2 steps, and `.github/plugin/marketplace.json`, run `python3 "<skill-directory>/scripts/install_marketplace.py" verify "<target-workspace>" --plugins <requested-plugins...>` and ensure all checks below pass:
 
 - **Phase 1 (install base)**
   - Verify that `.agents/` and `.agents/plugins/` exist in the current workspace.
@@ -93,7 +94,7 @@ Verify that Phase 1 and Phase 2 have been completed in order and all checks belo
   - **codex**:
     - Verify that `.codex/hooks.json` at the git repository root exists and is a symlink to `.agents/plugins/ddd-sdd-dotnet/com.openai/hooks/hooks.json`.
     - Verify that `${PLUGIN_ROOT}` in `hooks.json` has been replaced with a relative path to the plugin root that resolves validly from the git repository root.
-    - Verify that `.codex/agents/` exists and contains a symlink for every subagent in the `com.openai` extension folder.
+    - Verify that `.codex/agents/` exists and contains a copy for every subagent in the `com.openai` extension folder.
     - Verify that `.codex/config.toml` exists at the repository root and enables every requested plugin under `[plugins."<name>@<marketplace>"]` with `enabled = true`.
   - **copilot**:
     - Verify that `.github/plugin/marketplace.json` in the repository and contains all requested plugins.
@@ -112,6 +113,30 @@ If this repository yields new plugins, the agent should ask for confirmation bef
 
 The agent should not ask for confirmation if the plugin contains updated or new content, it should update the existing plugin.
 
+
+## EXAMPLE .github/plugin/marketplace.json
+
+When creating `.github/plugin/marketplace.json` for GitHub Copilot (matching the `"workspace-plugins"` marketplace in `.github/copilot/settings.json` and reading `name`, `description`, and `version` from each installed plugin's `plugin.json`):
+
+```example copilot marketplace.json
+{
+  "name": "workspace-plugins",
+  "owner": {
+    "name": "your-org-or-user"
+  },
+  "metadata": {
+    "description": "Workspace agent plugins."
+  },
+  "plugins": [
+    {
+      "name": "some-plugin",
+      "source": "./.agents/plugins/some-plugin",
+      "description": "Plugin description from plugin.json.",
+      "version": "0.1.0"
+    }
+  ]
+}
+```
 
 ## EXAMPLE marketplace.json
 
