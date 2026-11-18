@@ -56,7 +56,7 @@ Install ALL the clients listed below.
   - Create a file .codex/config.toml on the root of the repository and add the requested plugins by adding a '[plugins."<name>@<marketplace>"]' and set the property enabled to true of each requested plugin.
 
 3. **copilot**
-  - Create a file .github/plugin/marketplace.json in the repository and add the requested plugins.
+  - Create a github copilot .github/plugin/marketplace.json file in the repository and add the requested plugins.
   - If the marketplace.json file already exists, update the file, if not create the file and directories as needed.
   - Create a file .github/copilot/settings.json on the root of the repository and add the requested plugins.
   - The settings file should enable the requested plugens on the local repository level
@@ -97,6 +97,7 @@ Verify that Phase 1 and Phase 2 have been completed in order and all checks belo
     - Verify that `.codex/config.toml` exists at the repository root and enables every requested plugin under `[plugins."<name>@<marketplace>"]` with `enabled = true`.
   - **copilot**:
     - Verify that `.github/plugin/marketplace.json` in the repository and contains all requested plugins.
+    - Verify that `.github/plugin/marketplace.json` format is github copilot compatible
     - Verify that `.github/copilot/settings.json` exists at the repository root and enables all requested plugins at the local repository level.
  
 ## IDEMPOTENCY
