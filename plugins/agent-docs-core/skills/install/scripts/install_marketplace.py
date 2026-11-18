@@ -291,9 +291,9 @@ def replace_symlink(link_path: Path, target: str) -> None:
     link_path.symlink_to(target)
 
 
-def configure_antigravity(workspace: Path, git_root: Path, selected_plugins: list[str]) -> None:
-    """Copy Antigravity subagents into .gemini/agents and symlink ddd-sdd-dotnet hooks.json."""
-    copy_antigravity_agents(workspace, git_root, selected_plugins)
+def configure_antigravity(workspace: Path, selected_plugins: list[str]) -> None:
+    """Copy Antigravity subagents into <plugin-root>/agents and symlink ddd-sdd-dotnet hooks.json."""
+    copy_antigravity_agents(workspace, selected_plugins)
     if DOTNET_PLUGIN_NAME not in selected_plugins:
         return
     plugin_root = workspace / ".agents" / "plugins" / DOTNET_PLUGIN_NAME
@@ -390,15 +390,23 @@ def copy_client_agents(
     return copied
 
 
-def copy_antigravity_agents(workspace: Path, git_root: Path, selected_plugins: list[str]) -> list[Path]:
-    """Copy subagent files from each selected plugin's com.google.antigravity/agents into .gemini/agents/."""
-    return copy_client_agents(
-        workspace,
-        selected_plugins,
-        "com.google.antigravity",
-        git_root / ".gemini" / "agents",
-        "Antigravity",
-    )
+def copy_antigravity_agents(workspace: Path, selected_plugins: list[str]) -> list[Path]:
+    """Copy subagent files from each selected plugin's com.google.antigravity/agents into <plugin-root>/agents/."""
+    copied: list[Path] = []
+    for plugin_name in selected_plugins:
+        plugin_root = workspace / ".agents" / "plugins" / plugin_name
+        if not (plugin_root / "com.google.antigravity" / "agents").is_dir():
+            continue
+        copied.extend(
+            copy_client_agents(
+                workspace,
+                [plugin_name],
+                "com.google.antigravity",
+                plugin_root / "agents",
+                "Antigravity",
+            )
+        )
+    return copied
 
 
 def copy_codex_agents(workspace: Path, git_root: Path, selected_plugins: list[str]) -> list[Path]:
@@ -582,7 +590,7 @@ def install(
             install_plugin_directory(catalog[name]["path"], plugins_dir / name)
 
     marketplace_name = update_local_marketplace(workspace, selected)
-    configure_antigravity(workspace, git_root, selected)
+    configure_antigravity(workspace, selected)
     configure_codex(workspace, git_root, selected, marketplace_name)
     configure_copilot_settings(workspace, git_root, selected, marketplace_name)
 
@@ -744,14 +752,19 @@ def verify_installation(
         validate_codex_hook_commands(hooks_data, git_root, expected_hooks_target)
         checks.append(f"Phase 2 (codex hooks): verified {codex_hooks_link}")
 
-    antigravity_agent_files = verify_client_agents(
-        plugins_dir,
-        plugins_to_check,
-        "com.google.antigravity",
-        git_root / ".gemini" / "agents",
-        "Antigravity",
-    )
-    checks.append(f"Phase 2 (antigravity agents): verified {len(antigravity_agent_files)} copied agent file(s)")
+    antigravity_agent_count = 0
+    for name in plugins_to_check:
+        if (plugins_dir / name / "com.google.antigravity" / "agents").is_dir():
+            antigravity_agent_count += len(
+                verify_client_agents(
+                    plugins_dir,
+                    [name],
+                    "com.google.antigravity",
+                    plugins_dir / name / "agents",
+                    "Antigravity",
+                )
+            )
+    checks.append(f"Phase 2 (antigravity agents): verified {antigravity_agent_count} copied agent file(s)")
 
     expected_agent_files = verify_client_agents(
         plugins_dir,
