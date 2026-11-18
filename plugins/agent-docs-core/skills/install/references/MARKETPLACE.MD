@@ -53,7 +53,7 @@ Install ALL the clients listed below.
 2. **codex**
   - On the root of the git repository create a .codex/hooks.json that is a symlink to ´.agents/plugins/ddd-sdd-dotnet/com.openai/hooks/hooks.json´.
   - Replace the `${PLUGIN_ROOT}` variable in the hooks.json file with the relative path to the plugin root starting from the root of the git repository. Check if this creates a valid path to the plugin root from the root of the git repository.
-  - create or update the folder .codex/agents and create a symlink to each you can find in com.openai extension folder.
+  - create or update the folder .codex/agents and create a symlink to each subagent you can find in com.openai extension folder.
   - Create a file .codex/config.toml on the root of the repository and add the requested plugins by adding a '[plugins."<name>@<marketplace>"]' and set the property enabled to true of each requested plugin.
 
 3. **copilot**
